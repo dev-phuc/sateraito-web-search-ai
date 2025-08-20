@@ -7,7 +7,7 @@ services:
       - ./:/app
       - ./service-account-key.json:/app/service-account-key.json:ro
     environment:
-      - FLASK_APP=main.py
+      - FLASK_APP=main:app
       - FLASK_ENV=development
       - OAUTHLIB_INSECURE_TRANSPORT=1
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json

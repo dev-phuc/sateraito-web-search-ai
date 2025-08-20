@@ -13,7 +13,7 @@ import time
 import os
 import datetime
 
-# import sateraito_logger as logging  # GAEGEN2対応:独自ロガー
+import sateraito_logger as logging  # GAEGEN2対応:独自ロガー
 import sateraito_inc
 from sateraito_inc import developer_mode
 
