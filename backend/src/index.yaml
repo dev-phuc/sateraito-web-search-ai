@@ -1,0 +1,335 @@
+indexes:
+    
+- kind: GoogleAppsUserEntry
+  ancestor: no
+  properties:
+  - name: opensocial_viewer_id
+    direction: asc
+  - name: opensocial_container
+    direction: asc
+  - name: user_email
+    direction: asc
+    
+- kind: GoogleAppsUserEntry
+  ancestor: no
+  properties:
+  - name: opensocial_viewer_id
+    direction: asc
+  - name: opensocial_container
+    direction: asc
+
+- kind: DocFolder
+  properties:
+  - name: del_flag
+  - name: parent_folder_code
+  - name: folder_name
+
+- kind: DocFolder
+  properties:
+  - name: del_flag
+  - name: parent_folder_code
+  - name: folder_name
+    direction: desc
+
+- kind: DocFolder
+  properties:
+  - name: del_flag
+  - name: parent_folder_code
+  - name: created_date
+
+- kind: DocFolder
+  properties:
+  - name: del_flag
+  - name: parent_folder_code
+  - name: created_date
+    direction: desc
+
+- kind: DocFolder
+  properties:
+  - name: accessible_users
+  - name: folder_code
+
+- kind: DocFolder
+  properties:
+  - name: creatable_users
+  - name: folder_code
+
+- kind: DocFolder
+  properties:
+  - name: downloadable_users
+  - name: folder_code
+
+- kind: DocFolder
+  properties:
+  - name: deletable_users
+  - name: folder_code
+
+- kind: DocFolder
+  properties:
+  - name: subfolder_creatable_users
+  - name: folder_code
+
+- kind: DocFolder
+  properties:
+    - name: del_flag
+    - name: folder_name
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: folder_code
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: folder_code
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: folder_code
+  - name: created_date
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: gg_drive_file_id
+  - name: workflow_doc_id
+
+- kind: FileflowDoc
+  properties:
+  - name: workflow_doc_id
+  - name: del_flag
+  - name: publish_flag
+  - name: author_email
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: folder_code
+  - name: file_name
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: publish_flag
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: folder_code
+  - name: publish_flag
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: publish_flag
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: publish_flag
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: folder_code
+  - name: publish_flag
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: folder_code
+  - name: publish_flag
+  - name: created_date
+
+- kind: FileflowDoc
+  properties:
+  - name: folder_code
+  - name: publish_flag
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: folder_code
+  - name: publish_flag
+  - name: file_name
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+  - name: file_name
+    direction: desc
+
+- kind: CsvImportLog
+  properties:
+  - name: import_kind
+  - name: import_date
+    direction: desc
+
+- kind: GoogleDriveImportLogEach
+  properties:
+  - name: import_id
+  - name: created_date
+
+- kind: WorkflowDoc
+  properties:
+  - name: author_email
+  - name: del_flag
+  - name: updated_date
+    direction: desc
+
+- kind: WorkflowDoc
+  properties:
+  - name: accessible_users
+  - name: del_flag
+  - name: updated_date
+    direction: desc
+
+- kind: Categories
+  properties:
+  - name: del_flag
+  - name: is_tag
+  - name: updated_date
+    direction: desc
+
+- kind: Categories
+  properties:
+  - name: is_tag
+  - name: updated_date
+    direction: desc
+
+- kind: Categories
+  properties:
+  - name: del_flag
+  - name: is_tag
+  - name: name
+  - name: categorie_id
+
+- kind: Categories
+  properties:
+  - name: del_flag
+  - name: is_tag
+  - name: sort_order
+
+- kind: GoogleDriveImportLogEach
+  properties:
+  - name: import_id
+  - name: created_date
+
+- kind: CsvDownloadData
+  properties:
+  - name: csv_download_id
+  - name: data_order
+
+- kind: OperationLog
+  properties:
+  - name: operation
+  - name: operation_date
+    direction: desc
+
+- kind: OperationLog
+  properties:
+  - name: screen
+  - name: operation_date
+    direction: desc
+
+- kind: OperationLog
+  properties:
+  - name: email
+  - name: operation_date
+    direction: desc
+
+- kind: OperationLog
+  properties:
+  - name: user_email
+  - name: operation_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: created_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: workflow_doc_id
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: workflow_doc_id
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+  - name: file_name
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: workflow_doc_id
+  - name: created_date
+    direction: desc
+  - name: file_name
+
+- kind: MasterData
+  properties:
+  - name: master_code
+  - name: data_key
+
+- kind: CsvImportErrorLogEach
+  properties:
+  - name: import_id
+  - name: created_date
+    direction: desc
+
+- kind: WorkflowDoc
+  properties:
+  - name: client_id
+  - name: updated_date
+    direction: desc
+
+- kind: FileflowDoc
+  properties:
+  - name: del_flag
+  - name: created_date
+    direction: desc
+  - name: file_name
+    direction: desc
+
+- kind: CsvDownloadData
+  properties:
+  - name: csv_download_id
+  - name: created_date

@@ -1,0 +1,148 @@
+runtime: python311
+instance_class: F1
+automatic_scaling:  # for dev
+  max_idle_instances: 2
+  #min_pending_latency: 200ms  # シングルプロセスシングルスレッドの場合min_pending_latencyは若干長めに取ってもOK
+  min_pending_latency: 300ms
+  #max_concurrent_requests: 4  # 1ワーカープロセスでの動作設定（1プロセス4スレッド）
+  max_concurrent_requests: 1  # 1ワーカープロセスでの動作設定（app.yamlは1プロセス1スレッドに変更 2023-08-29）
+
+#automatic_scaling:  # for production
+#  min_idle_instances: 1
+#  max_idle_instances: 3
+##  min_pending_latency: 250ms
+#  min_pending_latency: 100ms  # from 2020-01-29
+
+app_engine_apis: true
+#default_expiration: "4d 5h"
+
+env_variables:
+  MEMCACHE_USE_CROSS_COMPATIBLE_PROTOCOL: 'True'
+  NDB_USE_CROSS_COMPATIBLE_PICKLE_PROTOCOL: 'True'
+  GAE_USE_SOCKETS_HTTPLIB: 'true'
+  SATERAITO_SET_SINGLETHREAD_MODE: 'True'  # defaultサービスをF1かつシングルスレッドで動作させる 2023-08-29
+
+# 1ワーカープロセスでの動作設定（1プロセス4スレッド） --> app.yamlは1プロセス1スレッドに変更 2023-08-29
+#entrypoint: gunicorn --timeout 0 -b :$PORT --workers 1 --threads 4 main:app
+entrypoint: gunicorn --timeout 0 -b :$PORT --workers 1 --threads 4 main:app
+
+inbound_services:
+- warmup
+
+#automatic_scaling:
+#  max_idle_instances: 4
+#  min_pending_latency: 250ms
+
+handlers:
+  # This configures Google App Engine to serve the files in the app's static
+  # directory.
+- url: /static
+  static_dir: static
+  expiration: 1d
+
+- url: /js
+  static_dir: js
+  expiration: 60s
+
+- url: /css
+  static_dir: css
+  expiration: 10s
+
+- url: /images
+  static_dir: images
+  expiration: 1d
+
+- url: /build
+  static_dir: build
+  expiration: 10s
+  http_headers:
+    Access-Control-Allow-Origin: '*'    # for SSITE
+
+- url: /lib
+  static_dir: lib
+  expiration: 3h
+
+- url: /lang
+  static_dir: lang
+  expiration: 1h
+  http_headers:
+    Access-Control-Allow-Origin: "*" # for SSITE
+
+- url: /favicon.ico
+  static_files: images/favicon.ico
+  upload: images/favicon.ico
+  expiration: 1d
+
+# todo: edited start: tan@vn.sateraito.co.jp (version: 2)
+- url: /htmlbuilder/js
+  static_dir: htmlbuilder/js
+  expiration: 1h
+
+- url: /htmlbuilder/(css|images)/([^\r\n]+)
+  static_files: htmlbuilder/\1/\2
+  upload: htmlbuilder/(css|images)/([^\r\n]+)
+  expiration: 1h
+
+- url: /xlsxbuilder/js/
+  static_dir: xlsxbuilder/js
+  expiration: 1h
+
+- url: /xlsxbuilder/(css|images|static)/([^\r\n]+)
+  static_files: xlsxbuilder/res/\1/\2
+  upload: xlsxbuilder/res/(css|images|static)/([^\r\n]+)
+  expiration: 1h
+
+- url: /googlefef242688f119cf7.html
+  static_files: static/googlefef242688f119cf7.html
+  upload: static/googlefef242688f119cf7.html
+
+- url: /apple-touch-icon(.*).png
+  static_files: images/apple-touch-icon.png
+  upload: images/apple-touch-icon.png
+
+#- url: /(?:[^/]+/)?(?:[^/]+/)?bot(?:_config|_res)?/
+- url: /bot(?:_config|_res)?/
+  static_dir: bot_res
+  expiration: 10s
+
+# for smart phone
+- url: /([^/]*)/mobile/(.*\.appcache)
+  static_files: mobile/\2
+  upload: mobile/(.*\.appcache)
+  mime_type: text/cache-manifest
+  expiration: 10s
+
+- url: /mobile
+  static_dir: mobile
+  expiration: 1h
+
+- url: /([^/]*)/mobile/(.*)
+  static_files: mobile/\2
+  upload: mobile/(.*)
+  expiration: 1h
+
+# testing page
+- url: /test_page/(.*)
+#  script: test_page.app
+  script: auto
+  secure: always
+  login: required
+
+- url: /([^/]*)/tq/sendmail
+  script: auto
+  secure: always
+  login: admin
+
+- url: (/batch/(.*))
+#  script: batch.app
+  script: auto
+  secure: always
+  login: admin
+
+  # This handler routes all requests not caught above to your main app. It is
+  # required when static routes are defined, but can be omitted (along with
+  # the entire handlers section) when there are no static files defined.
+# g2対応
+- url: /(.*)
+  script: auto
+  secure: always

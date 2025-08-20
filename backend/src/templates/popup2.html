@@ -1,0 +1,37 @@
+<html>
+<head>
+<title id='title_html'></title>
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{ version }}" />
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.10.2.min.js"></script>
+
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.7.1.min.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/ext/adapter/jquery/ext-jquery-adapter.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/ext/adapter/ext/ext-base.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/ext/ext-all.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ site_url }}/static/ext/src/locale/ext-lang-ja.js?v={{version}}"></script>-->
+<!--<script type="text/javascript" src="{{ my_site_url }}/static/ext/src/locale/{{ extjs_locale_file }}"></script>-->
+
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/piklor/jquery.piklor.min.css" />
+<script type="text/javascript" src="{{ my_site_url }}/static/piklor/jquery.piklor.min.js?v={{ version }}"></script>
+
+{% include 'mixins/microloader.html' ignore missing with context %}
+<script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?v={{version}}"></script>
+<script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_lang.js?v={{version}}"></script>
+<script type="text/javascript">
+  SATERAITO_LANG = '{{ sateraito_lang }}';
+
+  Ext.onReady(function(){
+    var title = MyLang.getMsg('SIGN_IN');
+    $("#title_html").html(title);
+
+    var body = MyLang.getMsg('AUTHENTICATION');
+    $("#show_notification_sign_in").html(body);
+  });
+
+</script>
+</head>
+<body onLoad="setTimeout(function(){window.close();}, 3000);">
+<div id="show_notification_sign_in"></div>
+</body>
+</html>

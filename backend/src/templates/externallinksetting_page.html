@@ -1,0 +1,198 @@
+<html>
+<head>
+  <style type="text/css">
+    h1 {
+      font-size: 19px;
+      color: #333;
+      font-family: メイリオ, Meiryo, arial, sans-serif;
+      line-height: 26px;
+      border-bottom: solid 1px #CCC;
+      margin: 0px 0px 10px 0px;
+      padding: 5px;
+    }
+
+    a {
+      text-decoration: underline !important;
+    }
+
+    p.description {
+      color: #55E;
+      font-size: 12px;
+      font-family: メイリオ, Meiryo, arial, sans-serif;
+      padding: 5px 5px 5px 8px;
+    }
+
+    div.section {
+      margin: 0px 0px 2em 0px;
+    }
+
+    div.loading_img {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      background-image: url(/static/ext7/desktop/resources/images/loadmask/loading.gif?v={{version}});
+    }
+
+    /* panel header text font size */
+    .x-panel-header-text {
+      font-size: 12px;
+    }
+
+    /* button font size */
+    button.x-btn-text {
+      font-size: 12px;
+    }
+
+    /* checkbox label font size */
+    .x-form-cb-label {
+      font-size: 12px;
+    }
+
+    pre {
+      white-space: pre-wrap;
+    }
+
+    .emphasis {
+      color: red !important;
+    }
+
+    .api_key_area {
+      width: 100%;
+    }
+
+    .api_key_area table {
+      font-size: 12px;
+      margin-top: 15px;
+      margin-left: 10px;
+    }
+
+    .api_key_area table tr {
+      margin: 1px 0px 0px 4px;
+    }
+
+    .api_key_area table tr td.title {
+      padding: 5px;
+    }
+
+    .api_key_area table tr td.api_key {
+      padding: 0px 2px 0px 2px;
+    }
+
+    .api_key_area table tr td.creator_email {
+      padding: 5px;
+    }
+
+    .api_key_area table tr td.created_date {
+      padding: 5px;
+    }
+
+    .api_key_area table tr th.title, .api_key_area table tr td.title,
+    .api_key_area table tr th.api_key, .api_key_area table tr td.api_key,
+    .api_key_area table tr th.creator_email, .api_key_area table tr td.creator_email,
+    .api_key_area table tr th.created_date, .api_key_area table tr td.created_date {
+      position: relative;
+    }
+
+    .api_key_area table tr th.title::after, .api_key_area table tr td.title::after,
+    .api_key_area table tr th.api_key::after,
+    .api_key_area table tr th.creator_email::after, .api_key_area table tr td.creator_email::after,
+    .api_key_area table tr th.created_date::after, .api_key_area table tr td.created_date::after {
+      content: '';
+      position: absolute;
+      height: 100%;
+      width: 100%;
+      top: 0;
+      left: 0;
+      background-color: var(--base-color);
+      opacity: 0.1;
+    }
+
+    .api_key_area table tr td.del {
+      padding: 5px;
+    }
+  </style>
+  <script type="text/javascript">
+
+    var MY_SITE_URL = '{{ my_site_url }}';
+    var SATERAITO_MY_SITE_URL = '{{ my_site_url }}';
+    var SATERAITO_GOOGLE_APPS_DOMAIN = '{{ tenant }}';
+    var TENANT = '{{ tenant }}';
+    var TENANT_OR_DOMAIN = '{{ tenant }}';
+
+    var APP_ID = '{{ app_id }}';
+    var SATERAITO_LANG = '{{ lang }}';
+    var LANG = '{{ lang }}';
+    var IS_OPENID_MODE = true;
+    var IS_GADGET_OR_IFRAME_WINDOW = true;
+    var IS_POPUP_MODE = !IS_GADGET_OR_IFRAME_WINDOW;
+    var IS_PRINT_WINDOW = false;
+    var MODE = '{{ mode }}';
+    var URL_SAVE_SHAREPOINT_URL = '{{ my_site_url }}/{{ tenant_or_domain }}/{{ app_id }}/externallinksetting/savesharepointurl';
+    var URL_CREATE_NEW_API_KEY = '{{ my_site_url }}/{{ tenant_or_domain }}/{{ app_id }}/externallinksetting/createnewapikey';
+    var URL_DELETE_API_KEY = '{{ my_site_url }}/{{ tenant_or_domain }}/{{ app_id }}/externallinksetting/deleteapikey';
+    var URL_RETRIEVE_API_KEY_LIST = '{{ my_site_url }}/{{ tenant_or_domain }}/{{ app_id }}/externallinksetting/getapikeylist';
+    var SHAREPOINT_AUTH_URL = '{{ sharepoint_auth_url | safe }}';
+    var USER_TOKEN = '{{ user_token }}';
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/bootstrap/iconfont/material-icons.css?v={{ version }}">
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{ version }}"/>
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/print.css?v={{ version }}" media="print"/>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.7.1.min.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?v={{ version }}"></script>
+
+  {% include 'mixins/microloader.html' ignore missing with context %}
+
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/common_new_ui.css?v={{ version }}"/>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_lang.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_common.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}externallinksetting.js?v={{ version }}"></script>
+
+  <script type="text/javascript">
+
+    Ext.onReady(function () {
+
+      MyLang.setLocale(SATERAITO_LANG);
+
+      DisplayMgr.buildPage();
+
+      $('.set_message').each(function () {
+        var element = this;
+        var messageCode = $(this).attr('msg');
+        $(element).html(MyLang.getMsg(messageCode));
+      });
+    });
+  </script>
+
+</head>
+<body>
+<div style="margin:5px; padding:5px;">
+
+  <div id="section_api_key" class="section">
+    <!-- API KEY設定 -->
+    <div style="margin:0px 5px;padding:5px;">
+      <form id="api_key_form" method="post" action="{{ my_site_url }}/{{ tenant_or_domain }}/externallinksetting/dummy">
+        <p class="description">
+          <span class="set_message" msg="EXP_SETTING_API_KEY"></span>&nbsp;
+          {% if lang == 'ja': %}
+            <a href="https://sites.sateraito.jp/sateraitooffice/site/manual/home/workflow/api" target="_blank"
+               class="description set_message" msg="READ_MORE_ABOUT_PUBLICAPI"></a>
+          {% else: %}
+            <a href="https://sites.sateraito.jp/sateraitooffice/site/manual-en/home/workflow/api" target="_blank"
+               class="description set_message" msg="READ_MORE_ABOUT_PUBLICAPI"></a>
+          {% endif %}
+        </p>
+
+        <div id="new_api_key_create_button_render_area" style="display:inline-block; vertical-align: middle;margin-left:20px;margin-top:10px;"></div>
+        <div id="api_key_render_area" style="margin-left:10px;" class="api_key_area"></div>
+        <div class="loading_img"></div>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

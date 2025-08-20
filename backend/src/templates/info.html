@@ -1,0 +1,46 @@
+{# LINE WORKS直接認証対応…汎用的なメッセージ表示用ページ #}
+<html>
+<head>
+<title>{{ lang.SATERAITO_OFFICE_BBS|safe }}</title>
+
+<link rel="stylesheet" type="text/css" href="/sateraito.css?v={{version}}" />
+<script type="text/javascript" src="/static/jquery.js?v={{version}}" ></script>
+
+<style type="text/css">
+div.main {margin:10px;}
+div.contents {margin-left:10px;margin-right:10px;}
+h1.title {color: black; font-size:22px; height:25px;}
+body {font-size: 13px;}
+p {font-size: 13px; margin:13px; line-height:20px;}
+input, select {margin-top:5px; border:1px solid #CCC; font-size:16px; font-weight: bold; padding:5px 10px 5px; font-family:"Helvetica Neue",Arial,sans-serif;}
+textarea {margin-top:5px; border:1px solid #CCC; font-size:16px; font-weight: bold; padding:5px 10px 5px; font-family:"Helvetica Neue",Arial,sans-serif;}
+form {margin:13px;}
+</style>
+
+</head>
+
+<body bgcolor="#FFFFFF" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
+
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td width="22" valign="top"><img src="/images/header_top.gif" width="62" height="61" border="0"></td>
+<td background="/images/header_bg.gif">
+<font size="4" color="#ffffff" face="メイリオ,Meiryo,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,ＭＳ Ｐゴシック">
+<b>{{ lang.SATERAITO_OFFICE_BBS|safe }}</b>
+</font>
+</td>
+</tr>
+</table>
+
+<div class="main">
+<div class="contents" style="font-family:メイリオ,Meiryo,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,ＭＳ Ｐゴシック;" >
+
+<h1>{{ msg|safe }}</h1>
+
+
+</div>  <!-- end contents -->
+</div>  <!-- end main -->
+
+</body>
+</html>
+

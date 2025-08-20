@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript">
+
+var DEBUG_MODE = false;
+var GOOGLE_APPS_DOMAIN = '{{ google_apps_domain }}';
+var MY_SITE_URL = '{{ my_site_url }}';
+var REDIRECT_URL = '{{ redirect_url }}';
+
+var redirectFinished = false;
+
+
+
+function doAction(){function c(a){if(DEBUG_MODE){a=document.createTextNode(a);var b=document.createElement("p");b.appendChild(a);document.body.appendChild(b)}}function k(){var a=window.navigator.userAgent.toLowerCase();return-1!=a.indexOf("chrome")||-1!=a.indexOf("safari")}function f(){document.getElementById("loading_image").style.display="none"}function l(){null!==g&&window.clearTimeout(g);g=setTimeout(function(){if(!redirectFinished){var a;c("Interval URL ="+b.contentWindow.document.URL);c("iframe.src ="+
+b.src);c("iframe.contentWindow.document.readyState ="+b.contentWindow.document.readyState);c("Set window.location.href = "+d);a="";0>d.indexOf("xfot=1")&&(a=0<=d.indexOf("?")?"&":"?",a+="xfot=1");f();window.location.href=d+a}},n)}function m(){var a;c("onload - readyState:"+b.readyState);try{a=b.contentWindow.document.URL,c("\u3000\u3000\u21d2 URL :"+a)}catch(g){c("\u30c9\u30e1\u30a4\u30f3\u5916\u3078\u30ea\u30c0\u30a4\u30ec\u30af\u30c8:"+d);f();window.location.href=d;return}a&&0===a.indexOf(h)?(c("\u30ed\u30b0\u30a4\u30f3\u6210\u529f"),
+f(),window.location.href=d,redirectFinished=!0):(e+=1,20>e?(k()&&l(),a="\u8aad\u307f\u8fbc\u307f\u4e2d - "+e,document.getElementById("idMsg").innerHTML=a,b.src=h+"?rtct="+e,c("iframe.src ="+b.src),c("iframe.contentWindow.document.readyState ="+b.contentWindow.document.readyState)):(f(),window.location.href=d))}var n=5E3,b,e,g=null,d,h;e=0;h=MY_SITE_URL+"/"+GOOGLE_APPS_DOMAIN+"/logincheck2";d=REDIRECT_URL;b=document.getElementById("ifr");b.src=h;"function"===typeof window.getSelection?b.onload=m:b.onreadystatechange=
+function(){"complete"===b.readyState&&(c("onreadystatechange - readyState:"+b.readyState),m())};k()&&l()}window.doAction=doAction;
+
+/*
+function doAction(){function c(a){if(DEBUG_MODE){a=document.createTextNode(a);var b=document.createElement("p");b.appendChild(a);document.body.appendChild(b)}}function h(){var a=window.navigator.userAgent.toLowerCase();return-1!=a.indexOf("chrome")||-1!=a.indexOf("safari")}function k(){null!==f&&window.clearTimeout(f);f=setTimeout(function(){var a;c("Interval URL ="+b.contentWindow.document.URL);c("iframe.src ="+b.src);c("iframe.contentWindow.document.readyState ="+b.contentWindow.document.readyState);
+c("Set window.location.href = "+d);a="";0>d.indexOf("xfot=1")&&(a=0<=d.indexOf("?")?"&":"?",a+="xfot=1");window.location.href=d+a},m)}function l(){var a;c("onload - readyState:"+b.readyState);try{a=b.contentWindow.document.URL,c("\u3000\u3000\u21d2 URL :"+a)}catch(f){c("\u30c9\u30e1\u30a4\u30f3\u5916\u3078\u30ea\u30c0\u30a4\u30ec\u30af\u30c8:"+d);window.location.href=d;return}a&&0===a.indexOf(g)?(c("\u30ed\u30b0\u30a4\u30f3\u6210\u529f"),window.location.href=d):(e+=1,20>e?(h()&&k(),a="\u8aad\u307f\u8fbc\u307f\u4e2d - "+
+e,document.getElementById("idMsg").innerHTML=a,b.src=g+"?rtct="+e,c("iframe.src ="+b.src),c("iframe.contentWindow.document.readyState ="+b.contentWindow.document.readyState)):window.location.href=d)}var m=5E3,b,e,f=null,d,g;e=0;g=MY_SITE_URL+"/"+GOOGLE_APPS_DOMAIN+"/logincheck";d=REDIRECT_URL;b=document.getElementById("ifr");b.src=g;"function"===typeof window.getSelection?b.onload=l:b.onreadystatechange=function(){"complete"===b.readyState&&(c("onreadystatechange - readyState:"+b.readyState),l())};
+h()&&k()}window.doAction=doAction;
+*/
+
+
+
+</script>
+
+<style type="text/css">
+body {
+  font: small/normal Arial,Sans-serif;
+  paddin: 0;
+  margin: 0;
+}
+
+p {
+  margin:0;
+  padding-left:1em;
+  color: #808080;
+}
+
+</style>
+</head>
+<body onload="javascript:doAction();" style="overflow:hidden;">
+  <div style="margin:10px; padding:10px; font-size:1.4em;">&nbsp;</div>
+  <div style="margin-bottom:2em;">
+  <img id="loading_image" style="padding: 0em 30px;" src="/images/loading.gif" />
+  </div>
+  <iframe id="ifr" width="30" height="30" style="margin-left:4000px;" frameborder="0">></iframe>
+  <p id="idMsg"></p>
+</body>

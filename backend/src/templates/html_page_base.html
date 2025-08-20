@@ -1,0 +1,128 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="{{ locale }}">
+<head>
+  <title>
+    {% block title_page %} {% endblock %}
+  </title>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{ version }}" />
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?{{ version }}"></script>
+  <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/piklor/jquery.piklor.min.css" />
+  <script type="text/javascript" src="{{ my_site_url }}/static/piklor/jquery.piklor.min.js?v={{ version }}"></script>
+
+  <script type="text/javascript">
+    var NEW_UI = {% if new_ui %}true{% else %}false{% endif %};
+    var NEW_UI_AFU = {% if new_ui_afu %}true{% else %}false{% endif %};
+    var MODE = '{{ mode }}';
+    var IS_SHAREPOINT_MODE = false;
+    var SATERAITO_MY_SITE_URL = '{{ my_site_url }}';
+    var MY_SITE_URL  = '{{ my_site_url }}';
+    var SATERAITO_GOOGLE_APPS_DOMAIN = '{{ google_apps_domain }}';
+    var LIST_GOOGLE_APPS_DOMAIN = '{{ list_google_apps_domain | safe }}';
+    var RELATED_SATERAITO_ADDRESS_DOMAIN = '{{ related_sateraito_address_domain }}';
+    var IS_OPENID_MODE = true;
+    var IS_TOKEN_MODE  = false;
+    var MINI_PR = '{{ mini_pr }}';
+    var SATERAITO_LANG = '{{ lang }}';
+    var SATERAITO_TIMEZONE = '{{ tz }}';
+    var ATTACHED_FILE_VIEWER_TYPE = '{{ attached_file_viewer_type }}';
+    var IS_PREVIEW = {% if is_preview %}true{% else %}false{% endif %};
+
+    // in gadget iframe or popup window
+    var IS_POPUP_MODE = false;
+    var APP_ID = '{{ app_id }}';
+    var VIEWER_EMAIL = '{{ viewer_email }}';
+    var IS_GOOGLE_APPS_ADMIN = {% if is_google_apps_admin %}true{% else %}false{% endif %};
+    var USER_INFO_FOUND = {% if user_info_found %}true{% else %}false{% endif %};
+    var POPUP_URL = '{{ popup }}';
+    var DOMAIN_DISABLED = {% if domain_disabled %}true{% else %}false{% endif %};
+    var IS_NEED_SHOW_SIGNIN_LINK = {% if is_oidc_need_show_signin_link %}true{% else %}false{% endif %};
+    var IS_WORKFLOW_ADMIN = {% if is_workflow_admin %}true{% else %}false{% endif %};
+    var HIDE_AD = {% if hide_ad %}true{% else %}false{% endif %};
+    var NO_AUTO_LOGOUT = {% if no_auto_logout %}true{% else %}false{% endif %};
+    var IMPERSONATE_EMAIL = '{{ impersonate_email }}';
+  </script>
+
+  {% include 'mixins/microloader.html' ignore missing with context %}
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}gadgets.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_lang.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_common.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_request.js?v={{ version }}"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_common.js?v={{ version }}"></script>
+  {% block main_script %} {% endblock %}
+
+  <script type="text/javascript">
+    function initVariableFromPopup(is_need_show_signin_link, popup_url, viewer_email, user_info_found, user_disabled, is_workflow_admin, user_lang) {
+      IS_NEED_SHOW_SIGNIN_LINK = is_need_show_signin_link;
+      POPUP_URL = popup_url;
+      USER_INFO_FOUND = user_info_found;
+      USER_DISABLED = user_disabled;
+      VIEWER_EMAIL = viewer_email;
+      IS_WORKFLOW_ADMIN = is_workflow_admin;
+      SATERAITO_LANG = user_lang;
+    }
+
+    Ext.onReady(function(){
+      // メッセージの位置を再配置
+      var font_size = 14;
+      Sateraito.MiniMessage.initMessageArea(font_size);
+
+      // 読込中メッセージを表示
+      SateraitoUI.showLoadingMessage();
+
+      // Extロケールファイルをロード
+      MyLang.loadExtLangFile(SATERAITO_LANG);
+      MyLang.setLocale(SATERAITO_LANG);
+
+      // ユーザーチェックをし、OKならデータロード、NGなら認証リンクを表示する
+      LoginMgr.checkUserOid(SATERAITO_MY_SITE_URL, SATERAITO_GOOGLE_APPS_DOMAIN);
+      {# // G Suite 側がSameSite=None対応されたのでログアウトチェック処理は実施しない 2020.01.27
+      // SameSite対応の一環…高速化を標準とする対応：ログインステータスチェック対応（G Suiteのみ） 2016.12.20
+        {% if no_auto_logout %}
+        {% if not mode or mode == '': %}
+            // 初回チェック用iframe
+            OidcUtil.startCheckOidcCurrentUser();
+        {% endif %}
+        {% endif %}
+       #}
+    });
+
+    // SameSite対応の一環…高速化を標準とする対応：ログインステータスチェック対応 2016.12.20
+    function signOutAndShowOidcReSigninMessage(popup){
+        OidcUtil.signOutAndShowOidcReSigninMessage(popup);
+    }
+
+    // Use the API Loader script to load google.picker
+    function onApiLoad() {
+      gapi.load('picker');
+    }
+
+  </script>
+
+</head>
+<body lang="{{ lang }}">
+  <div id="output"></div>
+
+  <div id="splash">
+    <div class="main-loading">
+      <div class="wrap">
+        <div class="circle-border">
+        </div>
+        <div class="wrap-img">
+          <div class="spinner"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- Load the Google API Loader script. -->
+<script async defer src="https://apis.google.com/js/api.js" onload="onApiLoad()"></script>
+
+</html>

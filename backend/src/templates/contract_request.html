@@ -1,0 +1,860 @@
+{# サテライト・行先予定/在席確認/伝言メモ/共有TODO セットアップ画面 #}
+{% extends "contract_page_base.html" %}
+
+{% block header_script %}
+<script type="text/javascript" >
+<!--
+
+{#
+function getSSOProductName(sso_for_authorize){
+	var sso_product_name = '';
+	if(sso_for_authorize == 'WORKSMOBILE'){
+		sso_product_name = '{{lang.SSO_FOR_AUTHORIZE_WORKSMOBILE|safe|escapejs}}';
+	}else if(sso_for_authorize == 'WORKPLACE'){
+		sso_product_name = '{{lang.SSO_FOR_AUTHORIZE_WORKPLACE|safe|escapejs}}';
+	}else if(sso_for_authorize == 'APPS_PAID'){
+		sso_product_name = '{{lang.SSO_FOR_AUTHORIZE_PAID|safe|escapejs}}';
+	}else if(sso_for_authorize == 'APPS_FREE'){
+		sso_product_name = '{{lang.SSO_FOR_AUTHORIZE_FREE|safe|escapejs}}';
+	}else if(sso_for_authorize == 'APPS_KDDI'){
+		sso_product_name = '{{lang.SSO_FOR_AUTHORIZE_KDDI|safe|escapejs}}';
+	}
+	return sso_product_name;
+}
+#}
+{#
+function showSSOArea(){
+	$('.area_for_sso').show();
+	$('span.msg_about_use_sso').hide();
+}
+#}
+
+// 画面表示を制御
+function changeMsgAndShowOrHide(sso_for_authorize, addon_tenant_status, sso_tenant_status){
+
+	// アドオンのテナントID存在チェック
+	// 無効な形式
+	if(addon_tenant_status == 'invalid_format'){
+		$('img.check_ok_tenant').hide();
+		$('img.check_ng_tenant').attr('title', '{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+		$('span.check_ng_tenant').html('<br/>※{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+	// 既に存在
+	}else if(addon_tenant_status == 'already_exist'){
+		$('img.check_ok_tenant').hide();
+		$('img.check_ng_tenant').attr('title', '{{lang.ALREADY_REGIST_TENANT_NAME|safe|escapejs}}').show();
+		$('span.check_ng_tenant').html('<br/>※{{lang.ALREADY_REGIST_TENANT_NAME|safe|escapejs}}').show();
+	// 存在しない →　OK
+	}else if(addon_tenant_status == 'no_exist_tenant'){
+		// アドオンOKアイコン表示（緑チェック）
+		$('img.check_ok_tenant').show();
+		$('img.check_ng_tenant').hide();
+		$('span.check_ng_tenant').html('').hide();
+		$('.area_for_sso').show();
+	}
+
+	// SSOのテナントID存在チェック
+	// 無効な形式
+	if(sso_tenant_status == 'invalid_format'){
+		$('img.check_ok_sso_tenant').hide();
+		$('img.check_ng_sso_tenant').attr('title', '{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+		$('span.check_ng_sso_tenant').html('<br/>※{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+	}else if(sso_tenant_status != ''){
+		// G Suite 版はSSO側のテナントが存在しなければエラー
+		if(sso_tenant_status == 'no_exist_tenant' && sso_for_authorize != 'WORKSMOBILE' && sso_for_authorize != 'WORKPLACE'){
+			$('img.check_ok_sso_tenant').hide();
+			$('img.check_ng_sso_tenant').attr('title', '{{lang.NOTFOUND_SSO_DOMAIN|safe|escapejs}}').show();
+			$('span.check_ng_sso_tenant').html('<br/>※{{lang.NOTFOUND_SSO_DOMAIN|safe|escapejs}}').show();
+			$('.area_for_sso_for_newregist').hide();
+		}else{
+			$('img.check_ok_sso_tenant').show();
+			$('img.check_ng_sso_tenant').hide();
+			$('span.check_ng_sso_tenant').html('').hide();
+			// SSO側のテナントが存在しなければ、SSO新規登録を同時に行うのでID、パスワードを入力させる（G Suite版は対象外）
+			if(sso_tenant_status == 'no_exist_tenant'){
+				$('.area_for_sso_for_newregist').show();
+			}else{
+				$('.area_for_sso_for_newregist').hide();
+			}
+		}
+{#
+		$('span.msg_about_use_sso').html('<br/>' + getSSOProductName(sso_for_authorize) + '{{lang.EXP_SSO_FOR_AUTHORIZE|safe|escapejs}}' + '<a href="JavaScript:showSSOArea();">' + '{{lang.EXP_SSO_FOR_AUTHORIZE2|safe|escapejs}}' + '</a>').show();
+		$('span.msg_about_use_sso').html(getSSOProductName(sso_for_authorize) + '{{lang.EXP_SSO_FOR_AUTHORIZE|safe|escapejs}}' + '<br/>').show();
+#}
+	}
+
+	// 画面遷移時に持ち回りたいのでhiddenにセットしておく
+	$('#addon_tenant_status').val(addon_tenant_status);
+	$('#sso_tenant_status').val(sso_tenant_status);
+}
+
+	
+{# // LINE WORKS直接認証対応 2019.06.13 #}
+// 画面表示を制御（LINE WORKS認証用）	
+function changeMsgAndShowOrHideForLW(addon_tenant_status){
+
+	// アドオンのテナントID存在チェック
+	// 無効な形式
+	if(addon_tenant_status == 'invalid_format'){
+		$('img.check_ok_tenant').hide();
+		$('img.check_ng_tenant').attr('title', '{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+		$('span.check_ng_tenant').html('<br/>※{{lang.INVALID_FORMAT|safe|escapejs}}').show();
+	// 既に存在
+	}else if(addon_tenant_status == 'already_exist'){
+		$('img.check_ok_tenant').hide();
+		$('img.check_ng_tenant').attr('title', '{{lang.ALREADY_REGIST_TENANT_NAME|safe|escapejs}}').show();
+		$('span.check_ng_tenant').html('<br/>※{{lang.ALREADY_REGIST_TENANT_NAME|safe|escapejs}}').show();
+	// 存在しない →　OK
+	}else if(addon_tenant_status == 'no_exist_tenant'){
+		// アドオンOKアイコン表示（緑チェック）
+		$('img.check_ok_tenant').show();
+		$('img.check_ng_tenant').hide();
+		$('span.check_ng_tenant').html('').hide();
+		$('.area_for_lw').show();
+	}
+
+	// 画面遷移時に持ち回りたいのでhiddenにセットしておく
+	$('#addon_tenant_status').val(addon_tenant_status);
+}
+
+{# // LINE WORKS直接認証対応 2019.06.13 #}
+function copy_text_to_clipboard(id) {
+	var copyText = document.getElementById(id);
+	copyText.select();
+	document.execCommand("Copy");
+}
+
+
+$(document).ready(function(){
+
+	var set_sso_fqdn = function(){
+		var sso_for_authorize = $('select[name=sso_for_authorize]').val();
+		var sso_fqdn = '';
+		if(sso_for_authorize == 'WORKSMOBILE'){
+			sso_fqdn = 'sso.sateraito.jp';
+		// Workplace対応 2017.09.13
+		}else if(sso_for_authorize == 'WORKPLACE'){
+			sso_fqdn = 'sso.sateraito.jp';
+		}else if(sso_for_authorize == 'APPS_PAID'){
+			sso_fqdn = 'sateraito-apps-sso.appspot.com';
+		}else if(sso_for_authorize == 'APPS_FREE'){
+			sso_fqdn = 'sateraito-apps-sso3.appspot.com';
+		}else if(sso_for_authorize == 'APPS_KDDI'){
+			sso_fqdn = 'kddi-sso.appspot.com';
+		}
+		$('#sso_fqdn').html(sso_fqdn);
+	};
+	$('#sso_for_authorize').change(function(){
+		set_sso_fqdn();
+	});
+	set_sso_fqdn();
+
+	{% if sp_code in ['worksmobile']: %}
+		{# // LINE WORKS直接認証対応 2019.06.13 #}
+		$('input[name=worksmobile_domain]').on('input', function(){
+			$('input[name=tenant]').val($(this).val());
+			$('input[name=worksmobile_saml_url]').val('{{data.lineworks_saml_url_prefix}}' + $(this).val());
+			$('input[name=worksmobile_saml_issuer]').val('{{data.lineworks_entity_id_prefix}}' + $(this).val());
+			$('input[name=worksmobile_saml_acs_url]').val('{{data.my_site_url}}/' + $(this).val() + '/saml/acs');
+		});
+		$('input[name=tenant]').on('input', function(){
+			$('input[name=worksmobile_saml_acs_url]').val('{{data.my_site_url}}/' + $(this).val() + '/saml/acs');
+		});
+	{% endif %}
+
+	{% if sp_code in ['workplace']: %}
+		$('input[name=tenant]').on('input', function(){
+			$('input[name=sso_tenant]').val($(this).val());
+			//$('input[name=workplace_domain]').val($(this).val());
+		});
+	{% endif %}
+
+	{# // 申込簡単化対応 2018.02.05 #}
+
+	{% if sp_code in ['workplace']: %}		{# // LINE WORKS直接認証対応…SSO連携はworkplaceのみに変更 2019.06.13 #}
+
+		$('input[name=tenant]').on('change', function(){
+			var tenant = $('input[name=tenant]').val();
+			var sso_tenant = $('input[name=sso_tenant]').val();
+			var sso_for_authorize = $('select[name=sso_for_authorize]').val();
+			if(sso_tenant == ''){
+				$('img.check_ok_tenant').hide();
+				$('img.check_ng_tenant').hide();
+				$('span.check_ng_tenant').html('').hide();
+			}else{
+				// アドオン＆SSOのドメイン利用チェック
+				$.ajax({
+					url: '/{{oem_company_code}}/{{sp_code}}/contract/xtchecktenant',
+					type: 'POST',
+					dataType:'json',
+					data: {
+						tenant:tenant
+						,sso_tenant:sso_tenant
+						,sso_for_authorize:sso_for_authorize
+					},
+					success: function(response){
+						var jsondata = response;
+						var code = jsondata.code;
+						var error_msg = jsondata.error_msg;
+						if(code != 0){
+							alert(error_msg);
+							return;
+						}
+
+						// 画面表示を制御
+						changeMsgAndShowOrHide(sso_for_authorize, jsondata.addon_tenant_status, jsondata.sso_tenant_status);
+
+					}
+				});
+			}
+		});
+
+		var change_sso = function(){
+			var tenant = $('input[name=tenant]').val();
+			var sso_tenant = $('input[name=sso_tenant]').val();
+			var sso_for_authorize = $('select[name=sso_for_authorize]').val();
+			if(sso_tenant == ''){
+				$('img.check_ok_sso_tenant').hide();
+				$('img.check_ng_sso_tenant').hide();
+				$('span.check_ng_sso_tenant').hide();
+			}else{
+				// アドオン＆SSOのドメイン利用チェック
+				$.ajax({
+					url: '/{{oem_company_code}}/{{sp_code}}/contract/xtchecktenant',
+					type: 'POST',
+					dataType:'json',
+					data: {
+						tenant:tenant
+						,sso_tenant:sso_tenant
+						,sso_for_authorize:sso_for_authorize
+					},
+					success: function(response){
+						var jsondata = response;
+						var code = jsondata.code;
+						var error_msg = jsondata.error_msg;
+						if(code != 0){
+							alert(error_msg);
+							return;
+						}
+
+						// 画面表示を制御
+						changeMsgAndShowOrHide(sso_for_authorize, jsondata.addon_tenant_status, jsondata.sso_tenant_status);
+					}
+				});
+			}
+
+		};
+		$('select[name=sso_for_authorize]').on('change', function(){
+			change_sso();
+		});
+		$('input[name=sso_tenant]').on('change', function(){
+			change_sso();
+		});
+
+		// 初期表示
+		changeMsgAndShowOrHide('{{data.sso_for_authorize}}', '{{data.addon_tenant_status}}', '{{data.sso_tenant_status}}');
+
+	{% endif %}
+
+	{# // LINE WORKS直接認証対応 2019.06.13 #}
+	{% if sp_code in ['worksmobile']: %}
+
+		$('input[name=worksmobile_domain]').on('change', function(){
+			var worksmobile_domain = $('input[name=worksmobile_domain]').val();
+			if(worksmobile_domain == ''){
+				$('.area_for_lw2').hide();
+			}else{
+				$('.area_for_lw2').show();
+			}
+			$('input[name=tenant]').trigger('change');
+		});
+		$('input[name=tenant]').on('change', function(){
+			var tenant = $('input[name=tenant]').val();
+			if(tenant == ''){
+				$('img.check_ok_tenant').hide();
+				$('img.check_ng_tenant').hide();
+				$('span.check_ng_tenant').html('').hide();
+				$('.area_for_lw').hide();
+			}else{
+				// アドオンのドメイン利用チェック
+				$.ajax({
+					url: '/{{oem_company_code}}/{{sp_code}}/contract/xtchecktenant',
+					type: 'POST',
+					dataType:'json',
+					data: {
+						tenant:tenant
+						,is_only_addon:'on'
+					},
+					success: function(response){
+						var jsondata = response;
+						var code = jsondata.code;
+						var error_msg = jsondata.error_msg;
+						if(code != 0){
+							alert(error_msg);
+							return;
+						}
+
+						// 画面表示を制御
+						changeMsgAndShowOrHideForLW(jsondata.addon_tenant_status);
+
+					}
+				});
+			}
+		});
+
+		// 初期表示
+		changeMsgAndShowOrHideForLW('{{data.addon_tenant_status}}');
+
+	{% endif %}
+
+	var INPUT_REQUIRED = '{{lang.INPUT_REQUIRED|safe}}';
+	var INVALID_EMAIL = '{{lang.INVALID_EMAIL|safe}}';
+	var INVALID_NUMBER = '{{lang.INVALID_NUMBER|safe}}';
+	var NEED_AGREEMENT_POLICY = '{{lang.NEED_AGREEMENT_POLICY|safe}}';
+
+	{%if sp_code == 'ssite':%}
+		var INPUT_TENANT_NAME_REQUIRED = '{{lang.INPUT_TENANT_NAME_SSITE_REQUIRED|safe}}';
+	{%elif sp_code == 'worksmobile':%}
+		var INPUT_TENANT_NAME_REQUIRED = '{{lang.INPUT_TENANT_NAME_WORKSMOBILE_REQUIRED|safe}}';
+	{%elif sp_code == 'apps':%}
+		var INPUT_TENANT_NAME_REQUIRED = '{{lang.INPUT_TENANT_NAME_GSUITE_REQUIRED|safe}}';
+	{%elif sp_code == 'workplace':%}
+		var INPUT_TENANT_NAME_REQUIRED = '{{lang.INPUT_TENANT_NAME_WORKPLACE_REQUIRED|safe}}';
+	{%endif%}
+
+	var form = $("form");
+	form.validate({
+		errorClass: 'err',
+		errorElement: "div",
+		errorPlacement: function ( error, element ) {
+		// element.parent().find('.att_err').html('');
+		error.appendTo(element.parent().find('.att_err'));
+		},
+		rules: {
+			company_name: "required",
+			tanto_name: "required",
+			contact_mail_address: {
+				required: true,
+				email: true
+			},
+			contact_tel_no_1: {
+				required: true,
+				number: true
+			},
+			contact_tel_no_2: {
+				required: true,
+				number: true
+			},
+			contact_tel_no_3: {
+				required: true,
+				number: true
+			},
+			contact_prospective_account_num: "required",
+			worksmobile_domain: "required",
+			sso_for_authorize: "required",
+			sso_tenant: "required",
+			sso_public_key: "required",
+			tenant: "required",
+			worksmobile_saml_url: "required",
+			worksmobile_saml_issuer: "required",
+			worksmobile_saml_public_key: "required",
+			worksmobile_saml_acs_url: "required",
+			worksmobile_saml_sp_identifier: "required",
+      agreement_policy: "required",
+		},
+		messages: {
+			company_name: '{{lang.INPUT_COMPANY_NAME_REQUIRED|safe}}',
+			tanto_name: '{{lang.INPUT_TANTO_NAME_REQUIRED|safe}}',
+			contact_mail_address: {
+				required: '{{lang.INPUT_CONTACT_MAIL_ADDRESS_REQUIRED|safe}}',
+				email: INVALID_EMAIL
+			},
+			contact_tel_no_1: {
+				required: '{{lang.INPUT_CONTACT_TEL_NO_REQUIRED|safe}}',
+				number: INVALID_NUMBER
+			},
+			contact_tel_no_2: {
+				required: '{{lang.INPUT_CONTACT_TEL_NO_REQUIRED|safe}}',
+				number: INVALID_NUMBER
+			},
+			contact_tel_no_3: {
+				required: '{{lang.INPUT_CONTACT_TEL_NO_REQUIRED|safe}}',
+				number: INVALID_NUMBER
+			},
+			contact_prospective_account_num: '{{lang.INPUT_CONTACT_PROSPECTIVE_ACCOUNT_NUM_REQUIRED|safe}}',
+			worksmobile_domain: '{{lang.INPUT_WORKSMOBILE_DOMAIN_REQUIRED|safe}}',
+			sso_for_authorize: INPUT_REQUIRED,
+			sso_tenant: INPUT_REQUIRED,
+			sso_public_key: INPUT_REQUIRED,
+			tenant: INPUT_TENANT_NAME_REQUIRED,
+			worksmobile_saml_url: INPUT_REQUIRED,
+			worksmobile_saml_issuer: INPUT_REQUIRED,
+			worksmobile_saml_public_key: INPUT_REQUIRED,
+			worksmobile_saml_acs_url: INPUT_REQUIRED,
+			worksmobile_saml_sp_identifier: INPUT_REQUIRED,
+      agreement_policy: NEED_AGREEMENT_POLICY,
+		}
+	});
+
+
+	function setValueToContactTel(){
+		$("#contact_tel_no").val($("#contact_tel_no_1").val() + '-' + $("#contact_tel_no_2").val() + '-' + $("#contact_tel_no_3").val());
+		console.log($("#contact_tel_no").val())
+	}
+
+	$("#contact_tel_no_1").change(function() {
+		setValueToContactTel();
+	});
+
+	$("#contact_tel_no_2").change(function() {
+		setValueToContactTel();
+	});
+
+	$("#contact_tel_no_3").change(function() {
+		setValueToContactTel();
+	});
+
+	$("#button-reset").click(function() {
+		var validator = form.validate();
+		validator.resetForm();
+		form[0].reset();
+	});
+
+	$("#button-back").click(function() {
+		$('#step2').hide();
+		$('#step1').show(500);
+	});
+
+	function showConfirmContent(){
+		$('#step1').hide();
+		$('#step2').show(500);
+
+		var element = form.clone();
+		element.find('.req').remove();
+		element.find('.bigBtn').remove();
+		element.find('.des').remove();
+		element.find( "dl" ).css( "padding-left", "");
+		element.find('dd').each(function(){
+			var dd = $(this);
+			console.log(dd)
+			var value = '';
+			if(dd.find('#contact_tel_no_1').length){
+				value = dd.find('#contact_tel_no').val();
+			}
+			else if(dd.find('textarea[name="worksmobile_saml_public_key"]').length){
+				value = '<textarea style="width:600px;height:80px;" readonly>' + dd.find('textarea').val() + '</textarea>';
+			}
+			else if(dd.find('span#sso_fqdn').length){
+				value = 'https://sso.sateraito.jp/a/'+dd.find(':input').val()+'/';
+			}
+			else{
+				value = dd.find(':input').val();
+			}
+			console.log(value)
+			dd.html(value);
+		});
+		element.find('dl.agreement_policy').remove();
+		$('#step2-content').html(element.html());
+	}
+
+	$("#button-confirm").click(function() {
+		// console.log($('form').valid())
+		$('#other-err').html('');
+		if(form.valid()){
+			showConfirmContent();
+		}
+	});
+
+	$("#button-apply").click(function() {
+		if(form.valid()){
+			form.submit();
+		}
+	});
+
+});
+//-->
+</script>
+{% endblock %}
+
+{% block main_contents %}
+<div id="bggray">
+	<div class="cInner cf">
+		<h2 class="Title">{{lang.SETUP_TITLE|safe}}</h2>
+		<p>
+			{{lang.SETUP_DESC_1|safe}}<br/>
+			{%if sp_code == 'worksmobile':%}
+				<br>
+				{{lang.SETUP_WORKSMOBILE_DESC_1|safe}}<br>
+			{#	{{lang.SETUP_WORKSMOBILE_DESC_2|safe}}<br>#}
+				{{lang.SETUP_WORKSMOBILE_DESC_3|safe}}<br>
+			{%endif%}
+			{# Workplace対応 2017.09.13 #}
+			{%if sp_code == 'workplace':%}
+				<br>
+				{{lang.SETUP_WORKPLACE_DESC_1|safe}}<br>
+			{#	{{lang.SETUP_WORKPLACE_DESC_2|safe}}<br>#}
+				{{lang.SETUP_WORKPLACE_DESC_3|safe}}<br>
+			{%endif%}
+			{%if sp_code == 'ssite':%}
+				<br>
+				{{lang.SETUP_SSITE_DESC_1|safe}}<br>
+				{{lang.SETUP_SSITE_DESC_2|safe}}<br>
+			{%endif%}
+			{#- // G Suite 版申込ページ対応 2017.06.05 -#}
+			{%if sp_code == 'apps':%}
+				<br>
+				{{lang.SETUP_APPS_DESC_1|safe}}<br>
+				{{lang.SETUP_APPS_DESC_2|safe}}<br>
+{#				<br>#}
+{#				{{lang.SETUP_APPS_DESC_3|safe}}<br>#}
+			{%endif%}
+		</p>
+		<div class="btn_clause">
+			{#- // G Suite 版申込ページ対応 2017.06.05 -#}
+			{%if sp_code == 'apps':%}
+			{% if hl == 'ja' or hl == 'ja-JP': %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% else: %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% endif %}
+			{#- // Workplace対応 2017.09.13 -#}
+			{%elif sp_code == 'workplace':%}
+			{% if hl == 'ja' or hl == 'ja-JP': %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% else: %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% endif %}
+			{%else:%}
+			{% if hl == 'ja' or hl == 'ja-JP': %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% else: %}
+			<a href="https://shurl.jp/3lFW" target="_blank" style="text-decoration: none;">{{lang.POLICY|safe}}</a>
+			{% endif %}
+			{% endif %}
+		</div>
+	</div>
+</div>
+<div id="content">
+	<div class="cInner">
+		<div id="step1" class="registerBlock">
+
+			<form action="{{ url_to_post }}" method="post" autocomplete="new-password">
+				<input type="hidden" id="addon_tenant_status" name="addon_tenant_status" value="{{data.addon_tenant_status}}" />
+				<input type="hidden" id="sso_tenant_status" name="sso_tenant_status" value="{{data.sso_tenant_status}}" />
+
+				<dl id="other-err" class="cf">
+					{% if vc_msgs: %}
+						{% for msg in vc_msgs: %}
+							<br><span style="color:red;" >{{msg|safe}}</span>
+						{% endfor %}
+					{% endif %}
+				</dl>
+
+				{# // LINE WORKS直接認証対応 2019.06.13 #}
+				{# // Works Mobile版（SSOGadget） #}
+				{%if sp_code == 'worksmobile':%}
+				<dl class="cf">
+					<dt>
+					{{lang.WORKSMOBILE_DOMAIN|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span>
+					</dt>
+					<dd>
+						<input type="text" name="worksmobile_domain" class="full" value="{{data.worksmobile_domain}}" placeholder="{{lang.EX_WORKSMOBILE_DOMAIN|safe}}">
+						<div class="att_err"></div>
+						<div><span class="att">{{lang.EXP_WORKSMOBILE_DOMAIN|safe}}</span></div>
+					</dd>
+				</dl>
+				{%endif%}
+				{#- // G Suite 版申込ページ対応 2017.06.05 -#}
+				{%if sp_code == 'apps':%}
+				<dl class="cf">
+					<dt>{{lang.GOOGLE_APPS_DOMAIN|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="tenant" value="{{data.tenant}}" class="full" placeholder="{{lang.EX_GOOGLE_APPS_DOMAIN|safe}}">
+						<div class="att_err"></div>
+						<div><span class="att">{{lang.EXP_GOOGLE_APPS_DOMAIN|safe}}</span></div>
+					</dd>
+				</dl>
+				{%else:%}
+					{%if sp_code == 'workplace':%}
+						<dl class="cf">
+					{%elif sp_code == 'worksmobile':%}
+						<dl style="display:none;" class="cf area_for_lw2">
+					{%else:%}
+						<dl class="cf">
+					{%endif%}
+							<dt>{{lang.SATERAITOADDON_TENANT|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+							<dd>
+							{%if sp_code == 'workplace':%}
+								<input type="text" name="tenant" value="{{data.tenant}}" class="full" placeholder="{{lang.EX_WORKPLACE_DOMAIN|safe}}">&nbsp;
+							{%elif sp_code == 'worksmobile':%}
+								<input type="text" name="tenant" value="{{data.tenant}}" class="full" placeholder="{{lang.EX_SATERAITOADDON_TENANT|safe}}">&nbsp;
+							{%else%}
+								<input type="text" name="tenant" value="{{data.tenant}}" class="full" placeholder="{{lang.EX_SATERAITOADDON_TENANT|safe}}">&nbsp;
+							{%endif%}
+								<img src="/images/check_green.jpg" class="check_ok_tenant" style="width:18px;display:none;margin-bottom: 5px" title="{{lang.AVAILABLE_TENANT|safe}}"></img>
+								<img src="/images/cross_red.jpg" class="check_ng_tenant" style="width:18px;display:none;margin-bottom: 5px" title=""></img>
+								<div><span class="check_ng_tenant" style="display:none;color:red;" class="att"></span></div>
+								<div class="att_err"></div>
+							{%if sp_code == 'workplace':%}
+								<div><span class="att">{{lang.EXP_SATERAITOADDON_TENANT_FOR_WORKPLACE|safe}}</span></div>
+							{%elif sp_code == 'worksmobile':%}
+								<div><span class="att">{{lang.EXP_SATERAITOADDON_TENANT_FOR_WORKSMOBILE|safe}}</span></div>
+							{%elif sp_code == 'ssite':%}
+								<div><span class="att">{{lang.EXP_SATERAITOADDON_TENANT_FOR_SSITE|safe}}</span></div>
+							{%endif%}
+							</dd>
+						</dl>
+				{%endif%}
+
+				{# // LINE WORKS直接認証対応 2019.06.13 #}
+				{# // Works Mobile版（SSOGadget）  #}
+				{%if sp_code == 'worksmobile':%}
+				<div style="display: none;" class="area_for_lw des">
+					<hr>
+					<div><span style="color:blue;font-weight:bold;">{{lang.LINEWORKS_SAML_APPS|safe}}</span></div>
+					<div><span style="padding-left:10px;" class="att">{{lang.EXP_LINEWORKS_SAML_APPS|safe}}</span></div>
+				</div>
+				<div style="display: none;" class="area_for_lw des">
+					<div><span style="font-weight:bold;padding-left:15px;">{{lang.LINEWORKS_IDP_INFO|safe}}</span></div>
+					<div><span style="padding-left:20px;" class="att">{{lang.EXP_LINEWORKS_IDP_INFO|safe}}</span></div>
+				</div>
+				<dl style="padding-left:20px;display: none;" class="area_for_lw">
+					<dl class="cf">
+						<dt><span style="font-size: 13px;">{{lang.LINEWORKS_SAML_URL|safe}}</span>:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+						<dd>
+							<input type="text" name="worksmobile_saml_url" value="{{data.worksmobile_saml_url}}" class="full">
+							<div class="att_err"></div>
+						</dd>
+					</dl>
+					<dl class="cf">
+						<dt><span style="font-size: 13px;">{{lang.LINEWORKS_SAML_ISSUER|safe}}</span>:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+						<dd>
+							<input type="text" name="worksmobile_saml_issuer" value="{{data.worksmobile_saml_issuer}}" class="full">
+							<div class="att_err"></div>
+						</dd>
+					</dl>
+					<dl class="cf">
+						<dt><span style="font-size: 13px;">{{lang.LINEWORKS_SAML_CERT|safe}}</span>:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+						<dd>
+							<textarea name="worksmobile_saml_public_key" style="width:600px;height:80px;" >{{data.worksmobile_saml_public_key}}</textarea>
+							<div class="att_err"></div>
+						</dd>
+					</dl>
+					<div class="des"><span class="att">{{lang.EXP_LINEWORKS_SAML_CERT|safe}}</span></div>
+				</dl>
+				<div style="display: none;" class="area_for_lw des">
+					<div><span style="font-weight:bold;padding-left:15px;">{{lang.LINEWORKS_SP_INFO|safe}}</span></div>
+					<div><span style="padding-left:20px;" class="att">{{lang.EXP_LINEWORKS_SP_INFO|safe}}</span></div>
+				</div>
+				<dl style="padding-left:20px;display: none;" class="area_for_lw">
+					<dl class="cf">
+						<dt><span style="font-size: 13px;">{{lang.LINEWORKS_SAML_ACS_URL|safe}}</span>:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+						<dd>
+							<input id="worksmobile_saml_acs_url" type="text" name="worksmobile_saml_acs_url" value="{{data.worksmobile_saml_acs_url}}" readonly onclick="JavaScript:select();" class="full">
+							<a href="JavaScript:copy_text_to_clipboard('worksmobile_saml_acs_url');"><img style="margin-left:2px;width:20px;vertical-align:center;" src="/images/copy-icon.png"></a>
+							<div class="att_err"></div>
+						</dd>
+					</dl>
+					<dl class="cf">
+						<dt><span style="font-size: 13px;">{{lang.LINEWORKS_SAML_SP_IDENTIFIER|safe}}</span>:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+						<dd>
+							<input type="text" id="worksmobile_saml_sp_identifier" name="worksmobile_saml_sp_identifier" value="{{data.sp_entity_id}}" readonly onclick="JavaScript:select();" class="full">
+							<a href="JavaScript:copy_text_to_clipboard('worksmobile_saml_sp_identifier');"><img style="margin-left:2px;width:20px;vertical-align:center;" src="/images/copy-icon.png"></a>
+							<div class="att_err"></div>
+						</dd>
+					</dl>
+				</dl>
+				{%endif%}
+				{# // Workplace対応（SSOGadget）  #}
+				{%if sp_code == 'workplace':%}
+				<dl style="display: none;" class="area_for_lw">
+					<dt>{{lang.WORKPLACE_DOMAIN|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="workplace_domain" value="{{data.workplace_domain}}" placeholder="{{lang.EX_WORKPLACE_DOMAIN|safe}}" class="full">
+						<div class="att_err"></div>
+					</dd>
+				</dl>
+				{# //<dl style="display: none;" class="area_for_sso cf">
+					//<dt>{{lang.EXP_WORKPLACE_DOMAIN|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+				//</dl>
+				#}
+				<dl style="display: none;" class="area_for_sso">
+					<dt>{{lang.SSO_FOR_AUTHORIZE|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<span class="msg_about_use_sso" style="display:none;" ></span>
+						<select name="sso_for_authorize" id="sso_for_authorize" class="full">
+							<option value="WORKPLACE" {%if 'WORKPLACE' == data.sso_for_authorize:%}selected{%endif%} >{{lang.SSO_FOR_AUTHORIZE_WORKPLACE|safe}}</option>
+							<option value="APPS_PAID" {%if 'APPS_PAID' == data.sso_for_authorize:%}selected{%endif%} >{{lang.SSO_FOR_AUTHORIZE_PAID|safe}}</option>
+							<option value="APPS_FREE" {%if 'APPS_FREE' == data.sso_for_authorize:%}selected{%endif%} >{{lang.SSO_FOR_AUTHORIZE_FREE|safe}}</option>
+							<option value="APPS_KDDI" {%if 'APPS_KDDI' == data.sso_for_authorize:%}selected{%endif%} >{{lang.SSO_FOR_AUTHORIZE_KDDI|safe}}</option>
+						</select>
+					</dd>
+				</dl>
+				<dl style="display: none;" class="area_for_sso">
+					<dt>{{lang.SSO_TENANT|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						https://<span id="sso_fqdn" >sso.sateraito.jp</span>/a/&nbsp;<input type="text" name="sso_tenant" value="{{data.sso_tenant}}" >&nbsp;/
+						<img src="/images/check_green.jpg" class="check_ok_sso_tenant" style="width:18px;display:none;" title="{{lang.AVAILABLE_TENANT|safe}}"></img>
+						<img src="/images/cross_red.jpg" class="check_ng_sso_tenant" style="width:18px;display:none;" title=""></img>
+						<div><span class="check_ng_sso_tenant" style="display:none;color:red;" ></span></div>
+						<div class="att_err"></div>
+						<div><span class="att">{{lang.EXP_SSO_TENANT|safe}}</span></div>
+					</dd>
+				</dl>
+				{#
+					// <dl style="display: none;" class="area_for_sso_for_newregist">
+					// 	<dt>{{lang.FLD_SSO_OPERATOR_ID|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					// 	<dd>
+					// 		<input type="text" name="sso_operator_id" value="{{data.sso_operator_id}}" placeholder="{{lang.EX_SSO_OPERATOR_ID_WORKPLACE}}" class="full">
+					// 		<div><span class="att">{{lang.EXP_SSO_OPERATOR_ID_WORKPLACE|safe}}</span></div>
+					// 	</dd>
+					// </dl>
+					// <dl style="display:none;" class="area_for_sso_for_newregist">
+					// 	<dt>{{lang.FLD_SSO_OPERATOR_PWD|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					// 	<dd>
+					// 		<input type="password" name="sso_operator_pwd" value="{{data.sso_operator_pwd}}" autocomplete="new-password" class="full">
+					// 		<div><span class="att">{{lang.EXP_SSO_PUBLIC_KEY|safe}}</span></div>
+					// 		<div><span class="att">{{lang.EXP_SSO_OPERATOR_PWD|safe}}</span></div>
+					// 	</dd>
+					// </dl>
+					// <dl style="display:none;">
+					// 	<dd><div><span class="att">{{lang.EXP_SSO_PUBLIC_KEY|safe}}</span></div></dd>
+					// </dl>
+				#}
+				{%endif%}
+				{# // サテライトポータルサイト版（SSITE）  #}
+				{%if sp_code == 'ssite':%}
+				<dl>
+					<dt>{{lang.SSITE_TENANT|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd><input type="text" name="ssite_tenant" value="{{data.ssite_tenant}}" class="full"></dd>
+				</dl>
+				{%endif%}
+				<hr class="des"/>
+				<dl class="cf">
+					<dt>{{lang.COMPANY_NAME|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="company_name" size="35" value="{{data.company_name}}" class="full" placeholder="{{lang.EX_COMPANY_NAME}}">
+						<div class="att_err"></div>
+					</dd>
+				</dl>
+
+				<dl class="cf">
+					<dt>{{lang.TANTO_NAME|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="tanto_name" size="35" value="{{data.tanto_name}}" class="full" placeholder="{{lang.TANO}}">
+						<div class="att_err"></div>
+					</dd>
+				</dl>
+
+				<dl class="cf">
+					<dt>{{lang.CONTACT_MAIL_ADDRESS|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="contact_mail_address" size="35" value="{{data.contact_mail_address}}" class="full">
+						<div class="att_err"></div>
+						<div class="att">{{lang.EXP_CONTACT_MAIL_ADDRESS|safe}}</div>
+					</dd>
+				</dl>
+
+				<dl class="cf">
+					<dt>{{lang.CONTACT_TEL_NO|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="tel" id="contact_tel_no_1" name="contact_tel_no_1" class="quarter">&nbsp;-&nbsp;
+						<input type="tel" id="contact_tel_no_2" name="contact_tel_no_2" class="quarter">&nbsp;-&nbsp;
+						<input type="tel" id="contact_tel_no_3" name="contact_tel_no_3" class="quarter">
+						<input type="hidden" id="contact_tel_no" name="contact_tel_no" value="{{data.contact_tel_no}}">
+						<div class="att_err"></div>
+						<div class="att">{{lang.EXP_CONTACT_TEL_NO|safe}}</div>
+					</dd>
+				</dl>
+
+				<dl class="cf">
+					<dt>{{lang.CONTACT_PROSPECTIVE_ACCOUNT_NUM|safe}}:<span class="req">{{lang.REQUIRED|safe}}</span></dt>
+					<dd>
+						<input type="text" name="contact_prospective_account_num" size="35" value="{{data.contact_prospective_account_num}}" class="full">
+						<div class="att_err"></div>
+						<div><span class="att">{{lang.EXP_CONTACT_PROSPECTIVE_ACCOUNT_NUM|safe}}</span></div>
+					</dd>
+				</dl>
+
+				<dl class="cf agreement_policy">
+					<dd>
+						<input type="checkbox" name="agreement_policy" value="AGREEMENT" {% if data.agreement_policy == 'AGREEMENT': %}checked {% endif %}>
+						{{lang.AGREEMENT_POLICY}}<br>
+						<div style="margin-left:2.5em;">
+							（ 
+							
+							{# <!-- プライバシーポリシー --> #}
+							<a href="https://www.sateraito.jp/privacy.html" target="_blank">{{lang.PRIVACY_POLICY|safe}}</a>
+							
+							/ 
+							
+							{# <!-- 個人情報の取扱い --> #}
+							<a href="https://www.sateraito.jp/privacy2_setup.pdf" target="_blank">{{lang.HANDLING_PERSONAL_INFORMATION|safe}}</a>
+							
+							/ 
+							
+							{# <!-- 利用規約 --> #}
+							{#- // Google Workspace版 -#}
+							{%if sp_code == 'apps':%}
+								
+								{% if hl == 'ja' or hl == 'ja-JP': %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>
+								{% else: %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>
+								{% endif %}
+							
+							{#- // Workplace版 -#}
+							{%elif sp_code == 'workplace':%}
+								
+								{% if hl == 'ja' or hl == 'ja-JP': %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>
+								{% else: %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>{# <!--TODO 英語版利用規約 --> #}
+								{% endif %}
+							
+							{%else:%}
+							
+								{% if hl == 'ja' or hl == 'ja-JP': %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>
+								{% else: %}
+									<a href="https://shurl.jp/3lFW" target="_blank" >{{lang.POLICY|safe}}</a>{# <!--TODO 英語版利用規約 --> #}
+								{% endif %}
+							
+							{% endif %}
+							)
+						</div>
+						<div class="att_err"></div>
+					</dd>
+				</dl>
+
+				<input type="hidden" name="hl" value="{{ hl }}">
+				<input type="hidden" name="st" value="vc">
+				<div class="bigBtn">
+					<ul class="cf">
+						<li class="reset" ><a href="#" id="button-reset" style="text-decoration: none;">{{lang.GO_RESET|safe}}</a></li>
+						<li class="confirm"><a href="#" id="button-confirm" style="text-decoration: none;">{{lang.GO_CONFIRM_AGAIN|safe}}</a></li>
+					</ul>
+				</div>
+			</form>
+		</div>
+		<div id="step2" class="registerBlock confirm2" style="display:none">
+			<div id="step2-content">
+
+			</div>
+			<div class="bigBtn">
+				<ul class="cf">
+					<li class="reset"><a href="#" id="button-back" style="text-decoration: none;">{{lang.GO_BACK|safe}}</a></li>
+					
+					{%if sp_code == 'apps':%}
+						<li class="confirm" style="margin-top:48px;">
+						  <a href="#" id="button-apply" style="text-decoration:none;background-image:url(/images/google_signin_buttons/web/2x/btn_google_signin_light_normal_web@2x.png);background-size:contain;background-repeat:no-repeat;height:58px;background-color:white;background-position-x:center;"></a>
+						</li>
+					{%else:%}
+						<li class="confirm"><a href="#" id="button-apply" style="text-decoration: none;">{{lang.GO_APPLY|safe}}</a></li>
+					{% endif %}
+					
+				</ul>
+				</div>
+			</div>
+		</div>
+</div>
+{% endblock %}

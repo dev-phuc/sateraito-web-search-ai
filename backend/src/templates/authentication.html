@@ -1,0 +1,70 @@
+<!-- iOS13サードパーティーCookieブロック対策 2019.09.26 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/ext/resources/css/ext-all.css" />
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{ version }}"/>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/ext/adapter/jquery/ext-jquery-adapter.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/ext/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/ext/ext-all.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/ext/src/locale/{{ extjs_locale_file }}" charset="UTF-8"></script>
+<script type="text/javascript" src="{{ my_site_url }}{{vscripturl}}sateraito.js?{{version}}"></script>
+<!-- <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/piklor/jquery.piklor.min.css"/>
+<script type="text/javascript" src="{{ my_site_url }}/static/piklor/jquery.piklor.min.js?{{ version }}"></script> -->
+
+<script type="text/javascript">
+Ext.BLANK_IMAGE_URL='{{ my_site_url }}/static/ext/resources/images/default/s.gif';
+
+var MODE = '{{ mode }}';
+var SATERAITO_MY_SITE_URL = '{{ my_site_url }}';
+var SATERAITO_GOOGLE_APPS_DOMAIN = '{{ google_apps_domain }}';
+var APP_ID = '{{ app_id }}';
+var TENANT_OR_DOMAIN = SATERAITO_GOOGLE_APPS_DOMAIN;
+var MY_SITE_URL = SATERAITO_MY_SITE_URL;
+var IS_FREE_EDITION = {% if is_free_edition %}true{% else %}false{% endif %};
+var SATERAITO_LANG = '{{ hl }}';
+var USER_LANG = '{{ user_lang }}';
+var USER_TOKEN = '';
+var POPUP_URL = '{{ popup }}';
+var URL_TO_GO_AFTER_OIDC_LOGIN = '{{ url_to_go_after_oidc_login }}'; // SameSite対応…標準高速化対応のついでに自動リロード対応を追加 2019.12.30
+</script>
+
+<script type="text/javascript" src="{{ my_site_url }}{{vscripturl}}sateraito_workflow_lang.js?{{version}}"></script>
+<script type="text/javascript" src="{{ my_site_url }}{{vscripturl}}sateraito_common.js?{{version}}"></script>
+
+<script type="text/javascript">
+/**
+ * エントリーポイント
+ */
+Ext.onReady(function(){
+
+	var vHtml = '';
+	vHtml += '<div class="message">';
+	vHtml += MyLang.getMsg('INVALID_AUTH_OPENID_CONNECT_WITH_REAUTH');
+	vHtml += '<br/>';
+	vHtml += '<p>';
+	vHtml += '<a href="javascript:void(0);" onclick="DisplayMgr.openPopup3(\'' + POPUP_URL + '\');">';
+	vHtml += MyLang.getMsg('CLICK_HERE_TO_SIGN_IN');
+	vHtml += '</a>';
+	vHtml += '</p>';
+	
+	vHtml += '</div>';
+
+	Ext.select('#output').update(vHtml);
+
+
+});
+
+
+</script>
+</head>
+<body>
+<div id="mini_message" style="position:absolute; top:0px; left:0px; width:250px; text-align:center; z-index:10000;"></div>
+<div id="output"></div>
+</body>
+</html>

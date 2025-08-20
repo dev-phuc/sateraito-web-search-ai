@@ -1,0 +1,138 @@
+{# サテライトオフィス・ファイル管理 通常ガジェット・管理者用ガジェット共通ベース部分 #}
+<?xml version="1.0" encoding="UTF-8" ?>
+<Module>
+  <ModulePrefs title="__MSG_SATERAITO_OFFICE_COVENANT_STORAGE__" height="600">
+    <Require feature="opensocial-0.8" />
+    <Require feature="minimessage" />
+    <Locale messages="{{ my_site_url }}/lang/{{ lang_file }}"/>
+  </ModulePrefs>
+
+  {% block additional_user_pref %}
+  {% endblock %}
+  <UserPref name="gh" display_name="__MSG_GADGET_HEIGHT__" datatype="string" default_value="{% block gadget_height_default_value %}600{% endblock %}" />
+
+  <Content type="html" view="home,canvas,profile">
+    <![CDATA[
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{ version }}" />
+    <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/jquery-ui.min.css" />
+
+    <script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="{{ my_site_url }}/static/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js"></script>
+    <link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/piklor/jquery.piklor.min.css" />
+    <script type="text/javascript" src="{{ my_site_url }}/static/piklor/jquery.piklor.min.js?{{ version }}"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/5.1.45/css/materialdesignicons.min.css">
+
+    <script type="text/javascript">
+      // @phuc@vn3.sateraito.co.jp
+      var NEW_UI = {% if new_ui %}true{% else %}false{% endif %};
+      var NEW_UI_AFU = {% if new_ui_afu %}true{% else %}false{% endif %};
+
+      var ATTACHED_FILE_VIEWER_TYPE = '{{ attached_file_viewer_type }}';
+      var IS_PREVIEW = {% if is_preview %}true{% else %}false{% endif %};
+
+      var SATERAITO_MY_SITE_URL = '{{ my_site_url }}';
+      var SATERAITO_GOOGLE_APPS_DOMAIN = '{{ google_apps_domain }}';
+      var LIST_GOOGLE_APPS_DOMAIN = '{{ list_google_apps_domain | safe }}';
+      var APP_ID = '{{ app_id }}';
+      var RELATED_SATERAITO_ADDRESS_DOMAIN = '{{ related_sateraito_address_domain }}';
+      var IS_OPENID_MODE = false;
+      var MINI_PR = '{{ mini_pr }}';
+      var SATERAITO_LANG = '{{ lang }}';
+      {% if lang_enabled %}
+      var SATERAITO_LANG_ENABLED = true;
+      {% else %}
+      var SATERAITO_LANG_ENABLED = false;
+      {% endif %}
+    </script>
+
+    {% include 'mixins/microloader.html' ignore missing with context %}
+    <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?v={{ version }}"></script>
+    <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_lang.js?v={{ version }}"></script>
+    <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_common.js?v={{ version }}"></script>
+    <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_request.js?v={{ version }}"></script>
+    <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_common.js?v={{ version }}"></script>
+    {% block main_script %}
+    {% endblock %}
+
+    {% block entry_point %}
+
+    <script type="text/javascript">
+      /**
+       * エントリーポイント
+       */
+      gadgets.util.registerOnLoadHandler(function(){
+
+        // メッセージの位置を再配置
+        var font_size = 14;
+        Sateraito.MiniMessage.initMessageArea(font_size);
+
+        // 読込中メッセージを表示
+        SateraitoUI.showLoadingMessage();
+
+        // ユーザーチェックをし、OKならデータロード、NGなら認証リンクを表示する
+        LoginMgr.checkUser(SATERAITO_MY_SITE_URL, SATERAITO_GOOGLE_APPS_DOMAIN);
+
+        // ガジェットタイムアウト用警告メッセージ処理
+        var timer_id;
+        var timer_id2;
+        var alertGadgetTimeout = function(){
+          try{
+            Sateraito.Util.console('[alert]');
+            Sateraito.Util.console(new Date());
+            clearTimeout(timer_id);
+            Sateraito.MiniMessage.showLoadingMessage(MyLang.getMsg('ALERT_GADGET_TIMEOUT'));
+            timer_id2 = setTimeout(function(){notificationGadgetTimeout()}, 10 * 60 * 1000);		// 10 minuts
+          }catch(e){
+          }
+        };
+        var notificationGadgetTimeout = function(){
+          try{
+            Sateraito.Util.console('[notification]');
+            Sateraito.Util.console(new Date());
+            clearTimeout(timer_id2);
+            Sateraito.MiniMessage.showLoadingMessage(MyLang.getMsg('ERROR_TIMEOUT'));	// タイムアウトメッセージは消さない
+          }catch(e){
+          }
+        };
+
+        // GoogleSitesガジェット認証タイムアウト（1時間）を直前でアラートする機能
+        $(function(){
+          Sateraito.Util.console('[start]');
+          Sateraito.Util.console(new Date());
+          timer_id = setTimeout(function(){alertGadgetTimeout()}, 50 * 60 * 1000);		//  50 minuts
+        });
+
+      });
+    </script>
+
+    {% endblock %}
+
+    </head>
+    <body id="new_ui" lang="{{ lang }}">
+
+      <div id="output"></div>
+
+      <div id="splash">
+        <div class="main-loading">
+          <div class="wrap">
+            <div class="circle-border">
+            </div>
+            <div class="wrap-img">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </body>
+
+    </html>
+    ]]>
+  </Content>
+</Module>

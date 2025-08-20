@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ lang.SATERAITO_OFFICE_WORKFLOW_FOR_SSITE|safe }}</title>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="index,follow">
+
+<meta name="viewport" content="width=device-width">
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/contract/css/styles_sp.css?v={{version}}" media="screen and (max-width:640px)">
+<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/static/contract/css/styles_pc.css?v={{version}}" media="screen and (min-width:641px),print">
+
+<!--<link rel="stylesheet" type="text/css" href="{{ my_site_url }}/css/sateraito.css?v={{version}}" />-->
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.9.1.min.js?v={{version}}" ></script>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery.validate.min.js?v={{version}}" ></script>
+
+<style type="text/css">
+/*div.main {margin:10px;}*/
+/*div.contents {margin-left:10px;margin-right:10px;}*/
+/*h1.title {color: black; font-size:22px; height:25px;}*/
+/*body {font-size: 13px;}*/
+/*p {font-size: 13px; margin:13px; line-height:20px;}*/
+/*input, select {margin-top:5px; border:1px solid #CCC; font-size:16px; font-weight: bold; padding:5px 10px 5px; font-family:"Helvetica Neue",Arial,sans-serif;}*/
+/*textarea {margin-top:5px; border:1px solid #CCC; font-size:16px; font-weight: bold; padding:5px 10px 5px; font-family:"Helvetica Neue",Arial,sans-serif;}*/
+/*form {margin:13px;}*/
+</style>
+
+{% block header_script %}
+{% endblock %}
+
+<style type="text/css">
+  a:link, a:visited {
+    color: blue;
+    text-decoration: underline;
+  }
+
+  input[type="checkbox"] {
+    appearance: auto;
+  }
+</style>
+
+</head>
+
+<body>
+
+<div id="header">
+  <div class="cInner cf">
+    <h1 id="logo"><img src="{{ my_site_url }}/static/contract/img/logo.png?v={{version}}" class="img100" alt="Sateraito Office"></h1>
+  </div>
+</div>
+
+
+{% block main_contents %}
+{% endblock %}
+
+<div id="bggray">
+  <div class="cInner cf">
+    <p>{{ lang.SETUP_FOOTER1|safe }}{{ lang.SETUP_FOOTER2|safe }}</p>
+  </div>
+</div>
+<p id="footer">Copyright &copy; All rights reserved by Sateraito Office, Inc.</p>
+
+</body>
+</html>

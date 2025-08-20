@@ -1,0 +1,52 @@
+{# サテライトオフィス・ファイル管理システム 管理者用ガジェット #}
+
+{% extends "admin_console.xml" %}
+
+{% block entry_point %}
+
+<script type="text/javascript">
+  /**
+   * エントリーポイント
+   */
+  gadgets.util.registerOnLoadHandler(function(){
+
+    // ガジェットの高さを設定
+    //Sateraito.GadgetHeight.setGadgetHeight();
+
+    var prefs = new gadgets.Prefs();
+
+    var appid = prefs.getString('appid');
+    if(typeof(appid) == 'undefined' || appid == null || appid == ''){
+      appid = '';
+    }
+    var thd = prefs.getBool('thd');
+    var origin_parent = prefs.getString('origin_parent');
+
+    // iframe urlを構築
+    var url = SATERAITO_MY_SITE_URL + '/gadget/' + SATERAITO_GOOGLE_APPS_DOMAIN + '/' + encodeURIComponent(appid) + '/admin_console.html';
+    url += '?hl=' + encodeURIComponent(SATERAITO_LANG);
+    url += '&thd=' + Sateraito.Util.boolToStr(thd);
+    url += '&origin_parent=' + encodeURIComponent(origin_parent);
+
+    var vHtml = '<iframe src="' + url + '" style="width:100%;height:100%;margin:0px;padding:0px;border:0px none;"></iframe>';
+    $('html').css('height', '100%');
+    $('body').css('height', '100%');
+    $('body').html(vHtml);
+
+    // Chrome 69 スクロール不具合対策（暫定対応） 2018.09.05
+    var ua = window.navigator.userAgent.toLowerCase();
+    if(ua.indexOf('chrome/69.') >= 0){
+      setInterval(function(){
+        var iframe = document.getElementsByTagName('iframe')[0];
+        iframe.style.height='99.999%';
+        setTimeout(function(){
+          iframe.style.height='100%';
+        }, 100);
+      }, 200);
+    }
+
+  });
+</script>
+
+{% endblock %}
+

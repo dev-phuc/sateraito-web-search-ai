@@ -1,0 +1,216 @@
+<html lang="{{ locale }}">
+<head>
+  <title>{{lang.SATERAITO_OFFICE_COVENANT_STORAGE|safe}}</title>
+  <link rel="stylesheet" type="text/css" href="{{ site_url }}/css/sateraito.css"/>
+  <style type="text/css">
+    {% if is_auto_create_impersonate_email or is_warning_invalid_impersonate_mail: %}
+      #update_impersonate_email{
+          background-color: red;
+          color: white;
+      }
+      div.updateImpersonateEmailButtonArea{
+          margin: 0px;
+          border: 6px solid #ff0000;
+      }
+    {% endif%}
+  </style>
+
+   <script type="text/javascript" src="{{ my_site_url }}/static/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}/static/jquery.timer.js"></script>
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?{{ version }}"></script>
+
+  <script>
+    IS_OPENID_MODE = true;
+    IS_ADMIN = '{{is_admin}}';
+    APP_ID = '{{appid}}';
+    SATERAITO_MY_SITE_URL = '{{ site_url }}';
+    SATERAITO_GOOGLE_APPS_DOMAIN = '{{ google_apps_domain }}';
+    IMPERSONATE_EMAIL = '{{ impersonate_email }}';
+    SATERAITO_LANG = '{{ locale }}';
+  </script>
+
+  {% include 'mixins/microloader.html' ignore missing with context %}
+  <script type="text/javascript" src="{{ site_url }}{{ vscripturl }}sateraito_workflow_lang.js"></script>
+  <script type="text/javascript" src="{{ site_url }}{{ vscripturl }}sateraito.js"></script>
+  <script type="text/javascript" src="{{ site_url }}{{ vscripturl }}sateraito_common.js"></script>
+  <script type="text/javascript" src="{{ site_url }}{{ vscripturl }}sateraito_workflow_common.js"></script>
+  <script type="text/javascript" src="{{ site_url }}{{ vscripturl }}introducing.js"></script>
+</head>
+
+<body>
+
+<main id="introducing_gadget">
+  <header>
+    <table>
+    <tr>
+      <td width="22" valign="top" class="p-0">
+        <img src="/images/header_top.gif" width="62" height="61" border="0">
+      </td>
+      <td background="/images/header_bg.gif">
+        <font size="4" color="#ffffff" face="メイリオ,Meiryo,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,ＭＳ Ｐゴシック">
+          <b>{{lang.INTRODUCING_EXP1|safe}}</b>
+        </font>
+      </td>
+    </tr>
+  </table>
+  </header>
+
+  <div class="contents">
+    <div id="ImpersonateEmailButtonArea">
+      <button id="update_impersonate_email" class="update-impersonate-email-btn"
+            type="button" onclick="OtherSetting.updateImpersonateEmail()">
+        {{ lang.START_OAUTH2|safe }}
+      </button>
+      {% if not is_auto_create_impersonate_email: %}
+        <p style="margin-bottom:5px; margin-top:5px;color:red;">
+          {{ lang.EXP_START_OAUTH3|safe }}&nbsp;{{ impersonate_email }}
+        </p>
+      {% endif %}
+      {% if is_warning_invalid_impersonate_mail: %}
+        <p id="update_impersonate_email_description3" style="margin-bottom:5px; margin-top:5px;color:red;"
+           class="description2">
+          {{ lang.EXP_START_OAUTH_WARNING|safe }}
+        </p>
+      {% endif %}
+      <p id="update_impersonate_email_description"
+         style="display:none; margin-bottom:5px; margin-top:5px; color:black;">
+        {{ lang.EXP_START_OAUTH2|safe }}
+      </p>
+    </div>
+
+    <h1></h1>
+
+    <p style="margin-left:10px;">
+      {{ lang.INTRODUCING_EXP2|safe }}
+      <a target="_blank" href="https://sites.sateraito.jp/sateraitooffice/site/manual/home/electronic-storage">
+        {{ lang.INTRODUCING_EXP_HERE|safe }}
+      </a>
+
+    </p>
+
+{#    <p style="margin-left:10px;">#}
+{#      <span style="color:red;">{{ lang.INTRODUCING_EXP_THIRD_PARTY_COOKIE|safe }}</span>#}
+{#      <span>&nbsp;→&nbsp;</span>#}
+{#      <a href="https://sites.google.com/a/sateraito.jp/sateraito-dounyuu/Home/dokyumento-guan-li#THIRDPARTYCOOKIE"#}
+{#         target="_blank">#}
+{#        {{ lang.READ_MORE_THIRD_PARTY_COOKIE|safe }}#}
+{#      </a>#}
+{#    </p>#}
+
+    <div style="margin-left:10px;">
+      <h2 class="gadget_name">{{ lang.INTRODUCING_EXP3|safe }}</h2>
+      <p>{{ lang.INTRODUCING_EXP4|safe }}</p>
+      <p>{{ lang.INTRODUCING_EXP5|safe }}</p>
+      <br/>
+
+      <section class="section-gadget-name">
+        <h2 class="gadget_name">{{ lang.INTRODUCING_GADGET_ADMIN_CONSOLE|safe }}</h2>
+        <p>{{ lang.INTRODUCING_EXP9|safe|safe }}</p>
+        <p>{{ lang.INTRODUCING_EXP9_IMAGE|safe|safe }}</p>
+        <table style="font-size:13px;margin-left:13px;">
+          <tr>
+            <td>{{ lang.INTRODUCING_GADGET_URL|safe }}:</td>
+            <td>
+              <select class="select_lang_gadget" data-gadget-id="admin_console">
+                {% for gadget in gadget_list.items(): %}
+                  <option value="{{ gadget.0 }}" {% if gadget.0 == locale: %}selected{% endif %}>{{ gadget.1 }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>{{ lang.INTRODUCING_NEWGOOGLESITE }}:</td>
+            <td>
+              <input type="text" size="80" value="" id="gadget_url2_admin_console"
+                     onclick="this.select(0,this.value.length)"/>
+            </td>
+          </tr>
+          <tr>
+            <td>{{ lang.INTRODUCING_OLDGOOGLESITE }}:</td>
+            <td>
+              <input id="gadget_url_admin_console" type="text" value="" onclick="this.select(0,this.value.length)"
+                     size="80"/>
+            </td>
+          </tr>
+        </table>
+
+  {#      <p style="color:red;">#}
+  {#        {{ lang.INTRODUCING_GOOGLE_DRIVE_EXP_1|safe }}#}
+  {#        <br/>#}
+  {#        {{ lang.INTRODUCING_GOOGLE_DRIVE_EXP_2|safe }}#}
+  {#        <a href="http://goo.gl/ne7ZPx" target="_blank">http://goo.gl/ne7ZPx</a>#}
+  {#      </p>#}
+
+{#        <p>{{ lang.INTRODUCING_EXP14|safe }}</p>#}
+      </section>
+
+
+      {# USER CONSOLE #}
+      <section class="section-gadget-name">
+        <h2 class="gadget_name">{{ lang.INTRODUCING_GADGET_USER_CONSOLE|safe }}</h2>
+        <p>{{ lang.INTRODUCING_EXP10|safe|safe }}</p>
+        <p>{{ lang.INTRODUCING_EXP10_IMAGE|safe|safe }}</p>
+        <table style="font-size:13px;margin-left:13px;">
+          <tr>
+            <td>{{ lang.INTRODUCING_GADGET_URL|safe }}:</td>
+            <td>
+              <select class="select_lang_gadget" data-gadget-id="user_console">
+                {% for gadget in gadget_list.items(): %}
+                  <option value="{{ gadget.0 }}" {% if gadget.0 == locale: %}selected{% endif %}>{{ gadget.1 }}</option>
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td>{{ lang.INTRODUCING_NEWGOOGLESITE }}:</td>
+            <td>
+              <input type="text" size="80" value="" id="gadget_url2_user_console"
+                     onclick="this.select(0,this.value.length)"/>
+            </td>
+          </tr>
+          <tr>
+            <td>{{ lang.INTRODUCING_OLDGOOGLESITE }}:</td>
+            <td>
+              <input id="gadget_url_user_console" type="text" value="" onclick="this.select(0,this.value.length)" size="80"/>
+            </td>
+          </tr>
+        </table>
+
+{#        <p style="color:red;">#}
+{#          {{ lang.INTRODUCING_GOOGLE_DRIVE_EXP_1|safe }}#}
+{#          <br/>#}
+{#          {{ lang.INTRODUCING_GOOGLE_DRIVE_EXP_2|safe }}#}
+{#          <a href="http://goo.gl/ne7ZPx" target="_blank">http://goo.gl/ne7ZPx</a>#}
+{#        </p>#}
+
+{#        <p>{{ lang.INTRODUCING_EXP14|safe }}</p>#}
+      </section>
+    </div>
+
+    <h2 class="gadget_name"> {{lang.INTRODUCING_EXP11|safe}}</h2>
+    <p>
+      {{lang.INTRODUCING_EXP12|safe}}<br />
+    </p>
+
+    <div>
+        <hr width="700px" align=left />
+      <p>
+        <span class="spnInstTitle"> {{lang.INTRODUCING_EXP13|safe}} </span> <br/> <br/>
+        <span class="emphasis2"> {{lang.INTRODUCING_EXP15|safe}} </span> <br/>
+        <span style="" class="bold"> {{lang.INTRODUCING_EXP16|safe}} </span><br/><br/>
+        <input type="button" id='btnExtChrome' class="btnInstall" value="{{ lang.TXT_INSTALL_EXTENSION_BTN }}"/><br/>
+        <span class="red">
+          {{lang.INTRODUCING_EXP17|safe}}
+          <img src="/images/webStoreInst.png?v={{ version }}" style="border:none;margin-left: 20px"/>
+        </span>
+      </p>
+    </div>
+  </div>
+</main>
+
+<div id="mini_message"></div>
+
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+{# サテライトオフィス・ファイル管理システム 管理者用ガジェット #}
+
+{% extends "gadget_base.xml" %}
+
+{% block additional_user_pref %}
+  <UserPref name="appid" display_name="__MSG_APPLICATION_ID__" datatype="string" default_value="" />
+  <UserPref name="thd" display_name="__MSG_TITLE_HIDDEN__" datatype="bool" default_value="false" />
+{% endblock %}
+
+{% block main_script %}
+<script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}admin_console.js?{{ version }}"></script>
+{% endblock %}
+

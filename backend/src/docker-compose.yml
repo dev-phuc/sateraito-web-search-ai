@@ -1,0 +1,24 @@
+services:
+  flask-app:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+      - ./service-account-key.json:/app/service-account-key.json:ro
+    environment:
+      - FLASK_APP=main.py
+      - FLASK_ENV=development
+      - OAUTHLIB_INSECURE_TRANSPORT=1
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
+      - GOOGLE_CLOUD_PROJECT=vn-sateraito-apps-timecard2
+      - BUCKET_NAME=your-bucket-name
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  redis:
+    image: "redis:7-alpine"
+    ports:
+      - "6379:6379"
+    restart: unless-stopped

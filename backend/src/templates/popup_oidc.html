@@ -1,0 +1,28 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>{% if lang == 'ja': %}認証{% else %}Authentication{% endif %}</title>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery.js"></script>
+<script type="text/javascript">
+<!--
+
+function onloadfunc()
+{
+	var IS_NEED_SHOW_SIGNIN_LINK = false;
+	var POPUP_URL = '';
+	var VIEWER_EMAIL = '{{ viewer_email }}';
+	var IS_WORKFLOW_ADMIN = {% if is_workflow_admin %}true{% else %}false{% endif %};
+	var SATERAITO_LANG = '{{ lang }}';
+
+	if(window.opener.initVariableFromPopup){
+		window.opener.initVariableFromPopup(IS_NEED_SHOW_SIGNIN_LINK, POPUP_URL, VIEWER_EMAIL, IS_WORKFLOW_ADMIN, SATERAITO_LANG);
+	};
+	window.close();
+}
+//-->
+</script>
+</head>
+<body onLoad="setTimeout(function(){onloadfunc();}, 3000);">
+{% if lang == 'ja': %}認証しています...{% else %}Authenticating...{% endif %}
+</body>
+</html>

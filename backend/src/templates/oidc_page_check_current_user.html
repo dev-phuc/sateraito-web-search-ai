@@ -1,0 +1,48 @@
+{# // SameSite対応の一環…高速化を標準とする対応：ログインステータスチェック対応 2016.12.20 #}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Workflow - Sateraito Office</title>
+<script type="text/javascript" src="{{ my_site_url }}/static/jquery.js"></script>
+<script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito.js?{{ version }}"></script>
+<script type="text/javascript">
+var SATERAITO_MY_SITE_URL = '{{ my_site_url }}';
+var MY_SITE_URL = SATERAITO_MY_SITE_URL;
+var SATERAITO_GOOGLE_APPS_DOMAIN = '{{ tenant_or_domain }}';
+var TENANT_OR_DOMAIN = SATERAITO_GOOGLE_APPS_DOMAIN;
+var MY_SITE_URL = SATERAITO_MY_SITE_URL;
+var SATERAITO_LANG = '{{ hl }}';
+var USER_LANG = '{{ user_lang }}';
+</script>
+<script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}sateraito_workflow_lang.js?{{ version }}"></script>
+<script type="text/javascript">
+var is_check_ok = '{{ is_check_ok|escapejs|safe }}';
+var POPUP_URL = '{{ popup }}';
+
+function onloadfunc()
+{
+	Sateraito.Util.console('is_check_ok=' + is_check_ok);
+	// 前回のログイン（高速化オプション）のユーザーと同じならまたチェック（初回だけOIDCチェックをして２回目以降はchecksessionにてチェック.GAEへの負荷防止＆正しい方法なので）
+	if(is_check_ok == '1'){
+		// Appsにはchecksessionの仕組みはないのでコメントアウト.初回のチェックのみ行う 2016.12.20
+		//window.parent.startCheckOidcSessionState(session_state);
+	// どこかでログアウトしていたら親画面（ガジェット）をログアウト　※O365版のように別ユーザーでの追加ログイン（マルチログイン）はたぶん検知不可。明示的なログアウトのみ検知
+	}else{
+		Sateraito.Util.console('logout somewhere...');
+		window.parent.signOutAndShowOidcReSigninMessage(POPUP_URL);
+	}
+}
+
+if(window.addEventListener ){
+	window.addEventListener('load', onloadfunc, false);
+}
+else if (window.attachEvent){
+	window.attachEvent('onload', onloadfunc);
+}
+
+</script>
+</head>
+<body>
+</body>
+</html>

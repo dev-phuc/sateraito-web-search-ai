@@ -1,0 +1,23 @@
+{# サテライトオフィス・ワークフロー 管理者用ガジェット #}
+<?xml version="1.0" encoding="utf-8"?>
+<Module>
+  <ModulePrefs title="__MSG_GADGET_TITLE_SSITE_ADMIN_CONSOLE__" height="600" width="" >
+    <Require feature="opensocial-0.8" />
+    <Require feature="minimessage" />
+    <Locale messages="{{ my_site_url }}/lang/{{ lang_file }}"/>
+  </ModulePrefs>
+  <Content>
+		<UserPref name="gadget_height" display_name="__MSG_GADGET_HEIGHT__" datatype="string" default_value="600" />
+		<UserPref name="gadget_width" display_name="__MSG_GADGET_WIDTH__" datatype="string" default_value="" />
+
+		<UserPref name="appid" display_name="__MSG_APPLICATION_ID__" datatype="string" default_value="" />
+		<UserPref name="thd" display_name="__MSG_TITLE_HIDDEN__" datatype="bool" default_value="true" />
+    <Root>
+			<BasicInfo>
+				<Title><![CDATA[__MSG_GADGET_TITLE_SSITE_ADMIN_CONSOLE__]]></Title>
+				<Description><![CDATA[]]></Description>
+				<Url>{{ my_site_url }}/ssite/{{ google_apps_domain }}/_appid_/admin_console?hl=_hl_&amp;thd=_thd_</Url>
+			</BasicInfo>
+		</Root>
+  </Content>
+</Module>

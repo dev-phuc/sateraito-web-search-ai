@@ -1,0 +1,51 @@
+xmldsig
+Sign and verify RSA-SHA1 XML Digital Signatures in native Python.
+Version 2
+
+
+CLOSELY RELATED PROJECTS
+------------------------
+"Integration example to cryptographically sign Common Alerting Protocol (CAP) XML documents"
+https://github.com/andrewdyates/cap_rsa_xmldsig
+
+"Handle OpenSSL PEM RSA keys and x509 certificates in native Python."
+https://github.com/andrewdyates/rsa_x509_pem
+
+
+=========================
+
+Copyright © 2011 Andrew D. Yates
+All Rights Reserved
+
+http://github.com/andrewdyates/xmldsig
+git@github.com:andrewdyates/xmldsig.git
+andrewyates.name@gmail.com
+
+xmldsig is cryptographic key implementation agnostic.  xmldsig is not
+a complete implementation of http://www.w3.org/2000/09/xmldsig. See
+module documentation for details.
+
+See "test.py" for unit tests and sample use.
+
+=================================
+
+EXAMPLE
+-------
+  given predefined public / private cryptographic pair: (f_private, f_public)
+
+>>> signed_xml = xmldsig.sign(xml, f_private, key_info_xml, key_size)
+... is_verified = xmldsig.verify(signed_xml, f_public, key_size)
+... assert(is_verified)
+
+RUN UNIT TESTS
+--------------
+$ python test.py
+
+NOTE
+----
+I use the identity function as my cryptographic function pair in the
+unit tests. You will need a real cryptographic implementation, like
+RSA, to use xmldsig in practice. A working example of xmldsig using
+RSA can be found in my github repository at
+http://github.com/andrewdyates
+

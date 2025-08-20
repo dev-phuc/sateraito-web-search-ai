@@ -1,0 +1,9 @@
+{% extends "html_page_base.html" %}
+
+{% block title_page %}
+  {{ sateraito_lang.ADMIN_CONSOLE_COVENANT_STORAGE|safe }}
+{% endblock %}
+
+{% block main_script %}
+  <script type="text/javascript" src="{{ my_site_url }}{{ vscripturl }}admin_console.js?{{ version }}"></script>
+{% endblock %}

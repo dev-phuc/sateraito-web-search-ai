@@ -1,0 +1,39 @@
+{# サテライトオフィス・行先予定/在席確認/伝言メモ/共有TODO セットアップ完了画面 #}
+{% extends "contract_page_base.html" %}
+
+{% block main_contents %}
+
+<div id="bggray">
+  <div class="cInner cf">
+    <h2 class="Title">{{lang.SETUP_TITLE|safe}}</h2>
+  </div>
+</div>
+
+<div id="content">
+  <div class="cInner">
+
+    <p class="thanksTxt">
+      {{ lang.FINISHED_SETUP|safe }}<br>
+      {{lang.FINISHED_SETUP_FOR_GSUITE_DESC_1|safe}}
+    </p>
+
+    <!--<div class="bigBtn2">-->
+      <!--<ul class="cf">-->
+        <!--<li class="confirm"><a href="#">ダッシュボードへ</a></li>-->
+      <!--</ul>-->
+    <!--</div>-->
+
+  </div>
+</div><!-- //#content-->
+
+<!--{#- // G Suite 版申込ページ対応 2017.06.05 -#}-->
+<!--{%if sp_code == 'apps':%}-->
+<!--<p style="font-weight:bold;margin-top:20px;">{{ lang.FINISHED_SETUP_FOR_GSUITE|safe }}</p>-->
+<!--<p>-->
+	<!--<br/>{{lang.FINISHED_SETUP_FOR_GSUITE_DESC_1|safe}}-->
+<!--</p>-->
+<!--{%else:%}-->
+<!--<p style="font-weight:bold;margin-top:20px;">{{ lang.FINISHED_SETUP|safe }}</p>-->
+<!--{%endif%}-->
+
+{% endblock %}

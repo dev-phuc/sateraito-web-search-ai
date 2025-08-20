@@ -1,0 +1,32 @@
+cron:
+
+- description: 1. updating total file size counter
+  url: /batch/cron/startupdatetotalfilesize
+  schedule: every sunday,monday,tuesday,wednesday,thursday,friday,saturday of month 04:05
+  timezone: Asia/Tokyo
+
+- description: 2. updating accessible info
+  url: /batch/cron/startupdateaccessibleinfo
+  schedule: every sunday,monday,tuesday,wednesday,thursday,friday,saturday of month 01:05
+  timezone: Asia/Tokyo
+
+#- description: 2. updating client info
+#  url: /batch/cron/startupdateclient
+#  schedule: every monday of month 05:00
+#  timezone: Asia/Tokyo
+#
+- description: 3. updating workflow doc
+  url: /batch/cron/startupdateworkflowdoc
+  schedule: every monday of month 05:00
+  timezone: Asia/Tokyo
+
+#- description: 4. updating csv import log
+#  url: /batch/cron/startupdatecsvimportlog
+#  schedule: every monday of month 05:00
+#  timezone: Asia/Tokyo
+
+#- description: 5. 2005v3 - start updating categories
+#  target: 2005v3
+#  url: /batch/cron/startupdatecategories
+#  schedule: every monday of month 05:00
+#  timezone: Asia/Tokyo
