@@ -1,5 +1,5 @@
 import { useRef, useEffect, useReducer } from "react";
-import { useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router";
 
 import AuthContext from "@/provider/AuthContext";
 
@@ -8,15 +8,18 @@ const SIGN_OUT = "SIGN_OUT";
 const IS_CHECKING = "IS_CHECKING";
 const IS_ERROR = "IS_ERROR";
 
-import { ADMIN_ROLE, AVATAR_DEFAULT, USER_ROLE, STAFF_ROLE, MANAGER_ROLE } from "@/constant";
+import i18n from "@/locales";
+import { LANGUAGE_SUPPORTED } from "@/constant";
 import { getMe, logout, openPopupLoginWithGoogle } from "@/request/auth";
 
 const initialState = {
   isAuthenticated: false,
   isInitialized: false,
-  user: null,
 
-  isChecking: false,
+  user: null,
+  userInfo: null,
+
+  isChecking: true,
   isError: false,
   errorMessage: '',
 };
@@ -29,15 +32,18 @@ const reducer = (state, action) => {
       const { isAuthenticated, user } = payload;
       return {
         ...state,
+        user,
         isAuthenticated,
         isInitialized: true,
-        user,
+        userInfo: user ? user.user_info : null,
       };
     case SIGN_OUT:
       return {
         ...state,
         isAuthenticated: false,
+        isInitialized: false,
         user: null,
+        userInfo: null,
         isChecking: false,
         isError: false,
         errorMessage: '',
@@ -68,77 +74,56 @@ const reducer = (state, action) => {
 
 function AuthProvider({ children }) {
   const navigate = useNavigate();
+  const { tenant, app_id } = useParams();
 
+  let pageLoginUrl = `/${tenant}/${app_id}/login`;
+  let pageAdminConsoleUrl = `/${tenant}/${app_id}/admin_console`;
+  
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const signOut = async () => {
-    try {
-      // Call API to sign out
-      await logout(); // Assuming this is the sign-out function
-
-      // Dispatch sign-out action
-      dispatch({ type: SIGN_OUT });
-
-      // Reset user state
-      navigate('/dang-nhap'); // Redirect to login page
-    } catch (error) {
-      throw 'TXT_SIGN_OUT_ERROR';
-    }
-  };
 
   const afterCheckLogin = async (user) => {
     // Check if page active is login page
     const path = window.location.pathname;
     const params = new URLSearchParams(window.location.search);
 
-    const isLoginPage = path.includes("/dang-nhap");
-    const isAdminPage = path.includes("/admin");
+    const isLoginPage = path.includes(pageLoginUrl);
+    const isAdminPage = path.includes(pageAdminConsoleUrl);
 
     const redirectTo = params.get("redirectTo") || '';
-    const isRedirectToAdmin = redirectTo.includes("/admin");
+    const isRedirectToAdmin = redirectTo.includes(pageAdminConsoleUrl);
 
     let pageToRedirect;
     
     if (user) {
-      const role = user.role || USER_ROLE;
+      const { disable_user, is_apps_admin, user_email, user_info } = user;
+      const { language } = user_info;
+      const userIsAdmin = is_apps_admin;
 
-      // Additional user data
-      user['isAdmin'] = (role === ADMIN_ROLE);
-      user['isManager'] = (role === MANAGER_ROLE);
-      user['isStaff'] = (role === STAFF_ROLE);
-      user['isUser'] = (role === USER_ROLE);
+      // Set language
+      if (language && LANGUAGE_SUPPORTED.includes(language)) {
+        i18n.changeLanguage(language);
+      }
 
       if (isLoginPage) {
         // Redirect to dashboard if not on login page
-        if (role === ADMIN_ROLE) {
-          pageToRedirect = redirectTo || "/overview";
-        }
-        if (role === MANAGER_ROLE) {
-          pageToRedirect = redirectTo || "/overview"; // Managers also go to overview
-        }
-        if (role === STAFF_ROLE) {
-          pageToRedirect = redirectTo || "/store/default"; // Default staff dashboard
-        }
-        if (role === USER_ROLE) {
+        if (userIsAdmin) {
+          pageToRedirect = redirectTo || pageAdminConsoleUrl;
+        } else {
           pageToRedirect = (!isRedirectToAdmin && redirectTo) ? redirectTo : "/";
         }
       } else {
-        if (role === USER_ROLE && isAdminPage) {
+        if (!userIsAdmin && isAdminPage) {
           pageToRedirect = "/";
-        }
-        if (role === STAFF_ROLE && isAdminPage) {
-          pageToRedirect = "/store/default"; // Redirect staff away from admin pages
         }
       }
     } else {
       if (!isLoginPage) {
-        pageToRedirect = "/dang-nhap?redirectTo=" + encodeURIComponent(path);
+        pageToRedirect = `/${pageLoginUrl}?redirectTo=${encodeURIComponent(path)}`;
       }
     }
 
     // Only log pageToRedirect if it has a value
     if (pageToRedirect) {
-      console.log('Redirecting to:', pageToRedirect);
       navigate(pageToRedirect, { replace: true });
     }
 
@@ -162,13 +147,7 @@ function AuthProvider({ children }) {
 
     let user;
     try {
-      user = await getMe();
-      if (user) {
-        user.isAdmin = (user.role === ADMIN_ROLE);
-        user.isManager = (user.role === MANAGER_ROLE);
-        user.isStaff = (user.role === STAFF_ROLE);
-        user.isUser = (user.role === USER_ROLE);
-      }
+      user = await getMe(tenant, app_id);
     } catch (error) {
       dispatch({
         type: IS_ERROR,
@@ -182,10 +161,27 @@ function AuthProvider({ children }) {
     afterCheckLogin(user);
   };
 
+  const signOut = async (tenant, app_id) => {
+    try {
+      dispatch({ type: IS_CHECKING, payload: { isChecking: true } });
+
+      // Call API to sign out
+      await logout(tenant, app_id); // Assuming this is the sign-out function
+
+      // Dispatch sign-out action
+      dispatch({ type: SIGN_OUT });
+
+      // Reset user state
+      navigate(pageLoginUrl); // Redirect to login page
+    } catch (error) {
+      throw 'TXT_SIGN_OUT_ERROR';
+    }
+  };
+
   const loginWithGoogle = async () => {
     try {
       // Open popup for Google login
-      await openPopupLoginWithGoogle();
+      await openPopupLoginWithGoogle(tenant, app_id);
 
       // After the popup closes, reload the profile
       await loadProfile();
@@ -201,24 +197,24 @@ function AuthProvider({ children }) {
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (state.isInitialized && !state.isAuthenticated) {
+    if (!state.user && !state.isChecking) {
       // If not authenticated, redirect to login page
-      navigate('/dang-nhap');
+      navigate(pageLoginUrl);
     } else {
-      const isPageLogin = window.location.pathname.includes("/dang-nhap");
+      const isPageLogin = window.location.pathname.includes(pageLoginUrl);
       if (state.isInitialized && state.isAuthenticated && isPageLogin) {
-        navigate('/overview');
+        navigate(pageAdminConsoleUrl);
       }
     }
   }, [state.isInitialized, state.isAuthenticated, navigate]);
-
-  const _auth = { ...state.user };
 
   return (
     <AuthContext.Provider
       value={{
         ...state,
-        user: _auth,
+        user: state.user,
+        userInfo: state.userInfo,
+
         isAuthenticated: state.isAuthenticated,
         isInitialized: state.isInitialized,
 

@@ -20,3 +20,8 @@ env/
 __pycache__/
 # Ignored by the build system
 /setup.cfg
+
+# Ignore docker
+.dockerignore
+docker-compose.yml
+Dockerfile

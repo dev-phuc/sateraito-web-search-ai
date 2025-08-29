@@ -5,6 +5,8 @@ import { Outlet } from 'react-router';
 
 import { useTranslation } from "react-i18next";
 
+import { LoadingOutlined } from '@ant-design/icons';
+
 // Hook components
 import useAuth from "@/hooks/useAuth";
 
@@ -15,7 +17,6 @@ const { Content } = Layout;
 import useStoreApp from '@/store/app';
 
 // Request
-import { getMyStoreByCode, validateStoreCode } from '@/request/store';
 
 import SiderApp from './SiderApp';
 import HeaderApp from './HeaderApp';
@@ -25,68 +26,38 @@ const LayoutApp = () => {
   const { t } = useTranslation();
 
   // Use hooks state
-  const { user } = useAuth();
+  const { user, isChecking } = useAuth();
 
   // Params
-  const { storeCode } = useParams();
-
-  // Zustand store
-  const { setStoreActive, clearStoreActive,
-    setStoreActiveIsLoading, setIsFetchingStoreActiveError, setMessageStoreActiveError
-  } = useStoreApp();
 
   // State
-  const [isLoading, setIsLoading] = useState(true);
-
-  const handlerLoadStore = async () => {
-    clearStoreActive();
-    setStoreActiveIsLoading(true);
-    setIsFetchingStoreActiveError(false);
-    setMessageStoreActiveError('');
-
-    try {
-      const store = await getMyStoreByCode(storeCode);
-      setStoreActive(store);
-    } catch (error) {
-      setIsFetchingStoreActiveError(true);
-      let msgError = t(error);
-      if (msgError == error) msgError = t('TXT_STORE_NOT_FOUND');
-      setMessageStoreActiveError(msgError);
-      console.error('Failed to load store:', msgError);
-    } finally {
-      setStoreActiveIsLoading(false);
-      setIsLoading(false);
-    }
-  };
 
   // Effect
   useEffect(() => {
-    if (user && user.id) {
-      setIsLoading(false);
-    }
-  }, [user]);
+  }, []);
 
-  useEffect(() => {
-    handlerLoadStore();
-  }, [storeCode]);
+  if (isChecking) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <LoadingOutlined style={{ fontSize: 40 }} spin />
+      </div>
+    );
+  }
 
   return (
     <Layout className='h-screen'>
 
       {/* Sider */}
-      <SiderApp isLoading={isLoading} />
+      <SiderApp isLoading={isChecking} />
 
       <Layout>
 
         {/* Header */}
-        <HeaderApp isLoading={isLoading} />
+        <HeaderApp isLoading={isChecking} />
 
         {/* Content */}
         <Content className='my-layout-content'>
-
-          {/* This is where the child routes will be rendered */}
-          {!isLoading && <Outlet />}
-
+          < Outlet />
         </Content>
 
       </Layout>

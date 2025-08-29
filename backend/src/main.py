@@ -15,13 +15,14 @@ import datetime
 
 import sateraito_logger as logging  # GAEGEN2対応:独自ロガー
 import sateraito_inc
-from sateraito_inc import developer_mode
+from sateraito_inc import developer_mode, flask_docker
 
 import os
 import json
-from flask import jsonify
+from flask import jsonify, send_from_directory
 
 from flask import Flask, Response, render_template, request, session	# GAEGEN2対応:WebフレームワークとしてFlaskを使用
+
 from google.appengine.api import wrap_wsgi_app												# GAEGEN2対応:AppEngine API SDKを使用する際に必要（yamlの　app_engine_apis: true　指定も必要）
 from werkzeug.routing import BaseConverter														# GAEGEN2対応:routingで正規表現を使うために使う
 from ucf.utils import jinjacustomfilters
@@ -30,7 +31,7 @@ from utilities.gaesession import GaeNdbSessionInterface								# GAEGEN2対応�
 _TIME_START = time.time()
 app = Flask(__name__)
 
-if developer_mode:
+if flask_docker:
     from google.cloud import ndb
     client = ndb.Client()
     def ndb_wsgi_middleware(wsgi_app):
@@ -38,8 +39,36 @@ if developer_mode:
             with client.context():
                 return wsgi_app(environ, start_response)
         return middleware
-		
     app.wsgi_app = ndb_wsgi_middleware(app.wsgi_app)
+    
+    # CORS
+    from sateraito_inc import CORS_LIST
+    from flask_cors import CORS, cross_origin
+    CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
+    
+    import memcache
+    
+    @app.route('/assets/<path:filename>')
+    def custom_assets(filename):
+        return send_from_directory('static/frontend/assets', filename)
+    @app.route('/static/<path:filename>')
+    def custom_static(filename):
+        return send_from_directory('static', filename)
+    @app.route('/images/<path:filename>')
+    def custom_images(filename):
+        return send_from_directory('images', filename)
+    @app.route('/js/<path:filename>')
+    def custom_js(filename):
+        return send_from_directory('js', filename)
+    @app.route('/css/<path:filename>')
+    def custom_css(filename):
+        return send_from_directory('css', filename)
+    
+    @app.route('/clear-memcache', methods=['GET'])
+    def clear_memcache():
+        """Clear all memcache entries."""
+        memcache.clear_all_cache()  # GAEGEN2対応:起動時にキャッシュをクリア（開発モードでのみ実行）
+        return jsonify({'status': 'success', 'message': 'Memcache cleared.'})
 else:
     app.wsgi_app = wrap_wsgi_app(app.wsgi_app)
 
@@ -89,26 +118,6 @@ oidccallback_add_url_rules(app)
 # from oidccallback4ssite import add_url_rules as oidccallback4ssite_add_url_rules
 # oidccallback4ssite_add_url_rules(app)
 
-@app.route('/health')
-def health():
-    """Health check với thông tin chi tiết"""
-    cred_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-    cred_info = "Not set"
-    
-    if cred_path and os.path.exists(cred_path):
-        try:
-            with open(cred_path, 'r') as f:
-                sa_info = json.load(f)
-            cred_info = f"Service Account: {sa_info.get('client_email')}"
-        except:
-            cred_info = f"File exists but can't read: {cred_path}"
-    
-    return jsonify({
-        'status': 'ok',
-        'app_name': 'Sateraito Web Search AI',
-        'credentials_info': cred_info,
-    })
-
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])
 def warmup():
@@ -122,6 +131,19 @@ def start():
 @app.route('/_ah/stop', methods=['GET'])
 def stop():
 	return Response(__name__, status=200)
+
+# tenant/app_id/admin_console/(任意のパス)
+# Example: http://localhost:8080/vn2.sateraito.co.jp/default/admin_console or https://vn2.sateraito.co.jp/default/admin_console/domains
+@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/login', methods=['GET'])
+@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/admin_console', methods=['GET'])
+@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/admin_console/<path:page_name>', methods=['GET'])
+def page(tenant, app_id, page_name=None):
+    # ページのテンプレートをレンダリング
+    try:
+        return render_template(f'reactjs_frontend.html')
+    except Exception as e:
+        logging.exception('Error rendering page: %s', e)
+        return 'Internal Server Error', 500
 
 # GAEGEN2対応：エラーハンドリング処理（各ページで処理できなかったエラーを大本のここでハンドリング可能）
 @app.errorhandler(400)

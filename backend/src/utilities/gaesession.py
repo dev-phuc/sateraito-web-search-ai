@@ -21,7 +21,7 @@ import sateraito_func
 from uuid import uuid4
 from datetime import datetime
 
-from sateraito_inc import developer_mode
+from sateraito_inc import flask_docker
 
 from flask.sessions import SessionInterface as FlaskSessionInterface
 from flask.sessions import SessionMixin
@@ -30,7 +30,7 @@ from itsdangerous import Signer, BadSignature, want_bytes
 from google.appengine.api import memcache
 from google.appengine.api import namespace_manager        # デフォルトNamespace対応（Flaskのセッションモジュールの仕組み上非同期でコールされることに起因しコール元のsessionセット、ゲット前後のset_namespaceが反映されないため） 2023.02.15 By T.ASAO
 
-if developer_mode:
+if flask_docker:
     from google.cloud import ndb
 else:
     from google.appengine.ext import ndb
@@ -197,7 +197,6 @@ class GaeNdbSessionInterface(FlaskSessionInterface):
 
             # Fetch session from datastore
             db_session = SessionModel.get_by_id(session.sid)
-            logging.info(f"Session ID: {session.sid}, Data: {session}")
             if not db_session:
                 # Missing in datastore. Thus, create a new one.
                 db_session = SessionModel(id=session.sid)

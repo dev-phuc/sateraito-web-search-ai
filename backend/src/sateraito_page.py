@@ -462,17 +462,17 @@ class _BasePage():
 		return True
 
 	def checkGadgetRequest(self, tenant_or_domain, is_with_check_csrf_token=False):
-		if sateraito_inc.postman_mode:
-			self.viewer_email = 'admin@vn2.sateraito.co.jp'
-			self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
-			self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
-			return True
+		# if sateraito_inc.developer_mode:
+		# 	self.viewer_email = 'admin@vn2.sateraito.co.jp'
+		# 	self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
+		# 	self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
+		# 	return True
 
 		old_namespace = namespace_manager.get_namespace()
 		sateraito_func.setNamespace(tenant_or_domain, '')
 
 		checker = sateraito_func.RequestChecker()
-		if not checker.checkContainerSign(self.request):
+		if not sateraito_inc.flask_docker and not checker.checkContainerSign(self.request):
 			logging.exception('Illegal access')
 			self.response.set_status(403)
 			namespace_manager.set_namespace(old_namespace)
@@ -535,11 +535,11 @@ class _BasePage():
 		return True
 
 	def checkOidRequest(self, tenant_or_domain, is_without_error_response_status=False, is_without_check_csrf_token=False):
-		if sateraito_inc.postman_mode:
-			self.viewer_email = 'admin@vn2.sateraito.co.jp'
-			self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
-			self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
-			return True
+		# if sateraito_inc.developer_mode:
+		# 	self.viewer_email = 'admin@vn2.sateraito.co.jp'
+		# 	self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
+		# 	self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
+		# 	return True
 
 		mode = self.request.get('mode')
 		logging.info('mode=' + mode)
@@ -597,7 +597,7 @@ class _BasePage():
 	def _checkOIDCRequest(self, tenant_or_domain, skip_domain_compatibility=False, is_without_error_response_status=False, is_without_check_csrf_token=False, check_domain_compatibility_both_side=False):
 
 		# CSRFトークンチェック
-		if not is_without_check_csrf_token and sateraito_func.checkCsrf(self.request) == False:
+		if not sateraito_inc.flask_docker and not is_without_check_csrf_token and sateraito_func.checkCsrf(self.request) == False:
 			logging.error('Invalid token')
 			self.response.set_status(403)
 			return False
@@ -1013,6 +1013,62 @@ class _BasePage():
 		logging.debug('setsession key=%s value=%s' % (key, value))
 
 
+class _BaseAPI(_BasePage):
+	def __init__(self, *args, **kwargs):
+		super(_BaseAPI, self).__init__()
+
+	def responseUnauthorized(self, message=None):
+		if message is None:
+			message = 'Unauthorized'
+
+		self.response.status = 401
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+
+		json_data = {'status': 'error', 'error_code': 'unauthorized', 'message': message}
+		return json_data
+
+	def responseForbidden(self, message=None):
+		if message is None:
+			message = 'Forbidden'
+
+		self.response.status = 403
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+
+		json_data = {'status': 'error', 'error_code': 'forbidden', 'message': message}
+		return json_data
+
+	def responseDataSuccess(self, json_data=None):
+
+		self.response.status = 200
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+
+		if json_data is None:
+			json_data = {}
+
+		return json_data
+
+	def responseBadRequest(self, message=None):
+		if message is None:
+			message = 'Bad Request'
+
+		self.response.status = 400
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+
+		json_data = {'status': 'error', 'error_code': 'bad_request', 'message': message}
+		return json_data
+
+	def responseDataError(self, error_code=None, message=None):
+
+		if error_code is None:
+			error_code = 'error'
+
+		self.response.status = 500
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+
+		json_data = {'status': 'error', 'error_code': error_code, 'message': message}
+		return json_data
+
+
 class BlobFileInfo():
 	def __init__(self, file_storage):
 		self._file_storage = file_storage
@@ -1235,7 +1291,7 @@ class _OidBasePage(_BasePage):
 				return False, ''.join(ret_datas)
 			else:
 				self.redirect(auth_uri)
-				return False, ''
+				return False, auth_uri
 
 		# check domain
 		viewer_email_domain = sateraito_func.getDomainPart(viewer_email)

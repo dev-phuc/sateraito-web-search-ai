@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router';
 // Custom components
 // import { } from '@/components';
 
-const DashboardPage = () => {
+const DomainsManagement = () => {
   // Default hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -23,9 +23,9 @@ const DashboardPage = () => {
   // Return the component
   return (
     <>
-      <h1>{t('TXT_DASHBOARD')}</h1>
+      <h1>{t('TXT_DOMAINS_MANAGEMENT')}</h1>
     </>
   );
 };
 
-export default DashboardPage;
+export default DomainsManagement;

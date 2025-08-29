@@ -10,8 +10,11 @@ import json
 from sateraito_logger import logging
 import datetime
 import random
+import os
+import jinja2
+from ucf.utils import jinjacustomfilters
 
-from google.appengine.api import taskqueue, memcache, namespace_manager, datastore_errors, urlfetch
+from google.appengine.api import namespace_manager, datastore_errors, urlfetch
 from google.appengine.ext import ndb
 from google.appengine.api.urlfetch import DownloadError
 from apiclient.errors import HttpError
@@ -20,6 +23,12 @@ import sateraito_inc
 import sateraito_func
 import sateraito_db
 import sateraito_page
+
+from sateraito_inc import flask_docker
+if flask_docker:
+	import memcache, taskqueue
+else:
+	from google.appengine.api import memcache, taskqueue
 
 '''
 user.py
@@ -33,8 +42,9 @@ GET_USER_LIST_CACHE_MINUTES = 60
 
 class _GetUser(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
 	def fetch_google_data(self, google_apps_domain, viewer_email, return_by_object=False):
-		""" Get user list data from google
-"""
+		""" 
+            Get user list data from google
+        """
 		# OAuth Token(gdata.auth)
 		# if you get email correctry, you can get his calendar data even if he has not log on to this script or other user's request
 
@@ -49,12 +59,13 @@ class _GetUser(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
 		thumbnailPhotoUrl = ''
 		if 'thumbnailPhotoUrl' in user_entry:
 			thumbnailPhotoUrl = user_entry["thumbnailPhotoUrl"]
+        
 		user_info = {
 			'user_email': user_entry["primaryEmail"],
 			'family_name': user_entry["name"]["familyName"],
 			'given_name': user_entry["name"]["givenName"],
 			'photo_url': thumbnailPhotoUrl,
-			}
+        }
 
 		if return_by_object:
 			return user_info
@@ -64,8 +75,6 @@ class _GetUser(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
 		return jsondata
 
 	def process(self, google_apps_domain, app_id):
-		# set header
-		self.setResponseHeader('Content-Type', 'application/json')
 		try:
 			# SSOGadget対応
 			if sateraito_db.GoogleAppsDomainEntry.isSSOGadgetTenant(google_apps_domain, domain_dict=None):
@@ -77,10 +86,10 @@ class _GetUser(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
 		except DownloadError as instance:
 			logging.warn('Gdata request timeout')
 			return
-
-		# export json data
-		if sateraito_inc.debug_mode:
-			logging.info(jsondata)
+			
+		# Set header
+		self.setResponseHeader('Content-Type', 'application/json')
+		# Export json data
 		return jsondata
 
 class GetUser(_GetUser):
@@ -116,6 +125,188 @@ class TokenGetUser(_GetUser):
 		self.process(google_apps_domain, app_id)
 
 		return self.process(google_apps_domain, app_id)
+
+
+class _GetMe(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
+	def fetch_google_data(self, google_apps_domain, viewer_email, return_by_object=False):
+		"""Get user list data from google"""
+		# OAuth Token(gdata.auth)
+		# if you get email correctry, you can get his calendar data even if he has not log on to this script or other user's request
+
+		app_service = sateraito_func.fetch_google_app_service(viewer_email, google_apps_domain)
+		user_entry = app_service.users().get(userKey=viewer_email).execute()
+
+		logging.info('user_entry=' + str(user_entry))
+
+		user_rec = sateraito_db.GoogleAppsUserEntry.getInstance(google_apps_domain, str(viewer_email).lower())
+		if user_rec is not None:
+			user_rec.is_apps_admin = user_entry["isAdmin"]
+			user_rec.put()
+
+		user_info = {
+			'user_email': user_entry["primaryEmail"],
+			'family_name': user_entry["name"]["familyName"],
+			'given_name': user_entry["name"]["givenName"],
+			'photo_url': user_entry["thumbnailPhotoUrl"],
+		}
+
+		return user_info
+
+	def process(self, google_apps_domain, app_id):
+		try:
+			# Set namespace
+			sateraito_func.setNamespace(google_apps_domain, app_id)
+
+			if not self.viewer_email or not sateraito_func.isValidEmail(self.viewer_email):
+				return self.responseUnauthorized('Unauthorized: Invalid email.')
+
+			user_entry_dict = sateraito_db.GoogleAppsUserEntry.getDict(google_apps_domain, self.viewer_email)
+			if not user_entry_dict:
+				return self.responseUnauthorized('Unauthorized: User not found or not authorized.')
+
+			user_info_dict = sateraito_db.UserInfo.getDict(self.viewer_email, auto_create=True)
+			if not user_info_dict:
+				return self.responseUnauthorized('Unauthorized: User info not found.')
+
+			# Check need fetch google data to update user info
+			family_name = user_info_dict.get('family_name', None)
+			given_name = user_info_dict.get('given_name', None)
+			photo_url = user_info_dict.get('photo_url', None)
+			language = user_info_dict.get('language', None)
+
+			if not family_name or not given_name or not photo_url:
+				user_info = self.fetch_google_data(google_apps_domain, self.viewer_email, return_by_object=True)
+				if not user_info:
+					return self.responseUnauthorized('Unauthorized: Failed to fetch user data from Google.')
+
+				# Update user info in the database
+				user_info_row = sateraito_db.UserInfo.getInstance(self.viewer_email)
+				user_info_row.family_name = user_info.get('family_name', '')
+				user_info_row.given_name = user_info.get('given_name', '')
+				user_info_row.photo_url = user_info.get('photo_url', '')
+				user_info_row.put()
+
+				user_info_dict = user_info_row.to_dict()
+
+			data_res = {
+				'user_email': user_entry_dict.get('user_email'),
+				'user_id': user_entry_dict.get('user_id'),
+				'google_apps_domain': user_entry_dict.get('google_apps_domain'),
+				'is_apps_admin': user_entry_dict.get('is_apps_admin'),
+				'disable_user': user_entry_dict.get('disable_user'),
+
+				'user_info': {
+					'family_name': user_info_dict.get('family_name', ''),
+					'given_name': user_info_dict.get('given_name', ''),
+					'photo_url': user_info_dict.get('photo_url', ''),
+					'language': language if (language and language != '') else sateraito_inc.DEFAULT_LANGUAGE
+				}
+      }
+
+			# Response data
+			return self.responseDataSuccess(data_res)
+      
+		except Exception as e:
+			return self.responseDataError(f'Error during logout: {str(e)}')
+
+class GetMe(_GetMe):
+
+	def doAction(self, google_apps_domain, app_id):
+		# set namespace
+		namespace_manager.set_namespace(google_apps_domain)
+		# check openid login
+		if not self.checkGadgetRequest(google_apps_domain):
+			return
+
+		return self.process(google_apps_domain, app_id)
+
+class OidGetMe(_GetMe):
+
+	def doAction(self, google_apps_domain, app_id):
+		# set namespace
+		namespace_manager.set_namespace(google_apps_domain)
+		# check request
+		if not self.checkOidRequest(google_apps_domain):
+			return
+
+		return self.process(google_apps_domain, app_id)
+
+
+class _UserLogout(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
+	def process(self, google_apps_domain, app_id):
+		try:
+			# Set namespace
+			sateraito_func.setNamespace(google_apps_domain, app_id)
+
+			# clear session value
+			self.session['viewer_email'] = ''
+			self.session['opensocial_viewer_id'] = ''
+			self.session['is_oidc_loggedin'] = False
+			self.session['is_oidc_need_show_signin_link'] = False
+
+			# clear openid connect session
+			self.removeCookie(sateraito_page.OPENID_COOKIE_NAME)
+
+			data_res = {
+				'message': 'User logged out successfully.',
+			}
+
+			# Response data
+			return self.responseDataSuccess(data_res)
+
+		except Exception as e:
+			return self.responseDataError(f'Error during logout: {str(e)}')
+
+class UserLogout(_UserLogout):
+
+	def doAction(self, google_apps_domain, app_id):
+		# check openid login
+		if not self.checkGadgetRequest(google_apps_domain):
+			return
+		return self.process(google_apps_domain, app_id)
+
+class OidUserLogout(_UserLogout):
+
+	def doAction(self, google_apps_domain, app_id):
+		# check request
+		if not self.checkOidRequest(google_apps_domain):
+			return
+		return self.process(google_apps_domain, app_id)
+
+
+class UserLogin(sateraito_page.Handler_Basic_Request, sateraito_page._OidBasePage):
+
+	def doAction(self, google_apps_domain, app_id):
+		# Set namespace
+		namespace_manager.set_namespace(google_apps_domain)
+
+		prompt_type = self.request.get('prompt_type')
+
+		logging.debug('============_OIDCAutoLogin==============')
+		is_ok, auth_uri = self._OIDCAutoLogin(google_apps_domain, with_error_page=True, prompt_type=prompt_type,
+																								 url_to_go_after_oidc_login=sateraito_inc.my_site_url + '/user/after-login',
+																								 hl=sateraito_inc.DEFAULT_LANGUAGE)
+		if is_ok:
+			self.redirect(sateraito_inc.my_site_url + '/user/after-login')
+
+class HandlerAfterLogin(sateraito_page.Handler_Basic_Request, sateraito_page._OidBasePage):
+
+	def doAction(self):
+
+		cwd = os.path.dirname(__file__)
+		path = os.path.join(cwd, 'templates')
+		# bcc = jinja2.MemcachedBytecodeCache(client=memcache.Client(), prefix='jinja2/bytecode/', timeout=None)
+		jinja_environment = jinja2.Environment(loader=jinja2.FileSystemLoader(path), auto_reload=False)
+		jinjacustomfilters.registCustomFilters(jinja_environment)
+
+		try:
+			template_filename = 'ext_after_login.html'
+			values = {
+			}
+			template = jinja_environment.get_template(template_filename)
+			return template.render(values)
+		except BaseException as e:
+			return
 
 
 class _GetUserList(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
@@ -415,6 +606,21 @@ def add_url_rules(app):
 									 view_func=OidGetUser.as_view('UserOidGetUser'))
 	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/token/getuser',
 									 view_func=TokenGetUser.as_view('UserTokenGetUser'))
+
+	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/getme',
+									 view_func=GetMe.as_view('GetMe'))
+	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/oid/getme',
+									 view_func=OidGetMe.as_view('OidGetMe'))
+
+	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/logout',
+									 view_func=UserLogout.as_view('UserLogout'))
+	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/oid/logout',
+									 view_func=OidUserLogout.as_view('OidUserLogout'))
+
+	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/login',
+									 view_func=UserLogin.as_view('UserLogin'))
+	app.add_url_rule('/user/after-login',
+									 view_func=HandlerAfterLogin.as_view('UserAfterLogin'))
 
 	app.add_url_rule('/<string:google_apps_domain>/<string:app_id>/user/getuserlist',
 									 view_func=GetUserList.as_view('UserGetUserList'))

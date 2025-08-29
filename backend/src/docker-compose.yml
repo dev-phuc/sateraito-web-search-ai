@@ -9,6 +9,8 @@ services:
     environment:
       - FLASK_APP=main:app
       - FLASK_ENV=development
+      - FLASK_DOCKER=true
+      - FLASK_DEBUG=1
       - OAUTHLIB_INSECURE_TRANSPORT=1
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - GOOGLE_CLOUD_PROJECT=vn-sateraito-apps-timecard2

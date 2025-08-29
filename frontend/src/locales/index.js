@@ -5,6 +5,12 @@ import JAPANESE_TRANSLATIONS from "@/locales/ja";
 import ENGLISH_TRANSLATIONS from "@/locales/en";
 import VIETNAMESE_TRANSLATIONS from "@/locales/vi";
 
+// Get language default from browser
+const userLang = navigator.language || navigator.userLanguage; 
+const lang = userLang.split('-')[0]; // Get first part before '-'
+const defaultLang = ['en', 'ja', 'vi'].includes(lang) ? lang : 'ja';
+
+
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
@@ -17,7 +23,7 @@ i18n
       vi: VIETNAMESE_TRANSLATIONS,
     },
 
-    lng: "vi", // if you're using a language detector, do not define the lng option
+    lng: defaultLang, // if you're using a language detector, do not define the lng option
 
     interpolation: {
       escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape

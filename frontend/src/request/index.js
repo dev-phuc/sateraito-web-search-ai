@@ -1,8 +1,11 @@
 // The request module is used to handle API requests in the application.
 import axios from 'axios';
 
+import { SERVER_URL } from "@/constant";
+console.log(SERVER_URL);
+
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_VERCEL_SERVER_URL,
+  baseURL: SERVER_URL,
   withCredentials: true, // Include credentials for cross-origin requests
   headers: {
     'Content-Type': 'application/json',

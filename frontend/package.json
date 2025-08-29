@@ -1,5 +1,5 @@
 {
-  "name": "plt-retail-store-frontend",
+  "name": "sateraito-web-search-ai",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -8,7 +8,8 @@
     "test": "vitest",
     "test:coverage": "vitest --coverage",
     "test:ui": "vitest --ui",
-    "build": "vite build",
+    "clean": "rimraf dist",
+    "build": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -28,7 +29,7 @@
     "react-hook-form": "^7.60.0",
     "react-i18next": "^15.4.1",
     "react-router": "^7.5.0",
-    "xlsx": "^0.18.5",
+    "cross-env": "^7.0.3",
     "zustand": "^5.0.6"
   },
   "devDependencies": {

@@ -20,11 +20,20 @@ from functools import wraps
 import lxml
 import lxml.html
 
+from sateraito_inc import flask_docker
 import sateraito_logger as logging
 
 from dateutil import zoneinfo, tz, relativedelta
-from google.appengine.api import memcache, namespace_manager, taskqueue, urlfetch, runtime
+from google.appengine.api import namespace_manager, urlfetch, runtime
 from googleapiclient.discovery import build
+
+if flask_docker:
+	import memcache
+	import taskqueue
+else:
+	from google.appengine.api import memcache
+	from google.appengine.api import taskqueue
+    
 # from oauth2client.client import AccessTokenRefreshError
 from google.auth.exceptions import RefreshError
 from googleapiclient.errors import HttpError
@@ -2480,7 +2489,7 @@ def checkTimeLastLogin(google_apps_domain):
 # todo: edited start: phuc@vnd.sateraito.co.jp
 
 def getBackEndsModuleNameDeveloper(module_name):
-	# module_name = 'default'
+	module_name = 'default'
 
 	if sateraito_inc.developer_version:
 		return sateraito_inc.developer_version + '.' + module_name

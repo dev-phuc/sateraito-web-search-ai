@@ -1,29 +1,10 @@
 import { get, post } from "@/request";
 import { SERVER_URL } from "@/constant";
 
-export const logout = async () => {
+export const getMe = async (tenant, app_id) => {
   try {
-    const response = await post('/auth/logout');
-    return response.data;
-  } catch (error) {
-    console.error('Logout failed:', error);
-    throw error;
-  }
-}
-
-export const getAccessToken = async () => {
-  try {
-    const response = await get('/auth/access-token');
-    return response.data;
-  } catch (error) {
-    console.error('Failed to get access token:', error);
-    throw error;
-  }
-}
-
-export const getMe = async () => {
-  try {
-    const response = await get('/auth/me');
+    let url = `/${tenant}/${app_id}/user/oid/getme`;
+    const response = await get(url);
     return response.data;
   } catch (error) {
     console.error('Token verification failed:', error);
@@ -31,14 +12,35 @@ export const getMe = async () => {
   }
 }
 
-export const openPopupLoginWithGoogle = async () => {
-  const loginUrl = `${SERVER_URL}/auth/google`;
+export const getAccessToken = async () => {
+  try {
+    const response = await get('/auth/oid/access-token');
+    return response.data;
+  } catch (error) {
+    console.error('Failed to get access token:', error);
+    throw error;
+  }
+}
+
+export const logout = async (tenant, app_id) => {
+  try {
+    const url = `/${tenant}/${app_id}/user/oid/logout`;
+    const response = await post(url);
+    return response.data;
+  } catch (error) {
+    console.error('Logout failed:', error);
+    throw error;
+  }
+}
+
+export const openPopupLoginWithGoogle = async (tenant, app_id) => {
+  const loginUrl = `${SERVER_URL}/${tenant}/${app_id}/user/login`;
 
   // Popup center display
   const width = 600;
   const height = 700;
-  const left = ((window.innerWidth + 100) - width) / 2;
-  const top = ((window.innerHeight + 250) - height) / 2;
+  const left = ((window.innerWidth + 80) - width) / 2;
+  const top = ((window.innerHeight + 200) - height) / 2;
 
   const popup = window.open(
     loginUrl,
@@ -49,18 +51,30 @@ export const openPopupLoginWithGoogle = async () => {
   if (!popup) {
     throw new Error('Popup blocked or failed to open');
   }
-  
+
+  // Trigger event listener for message from popup or popup closed
   return new Promise((resolve, reject) => {
-    const interval = setInterval(async () => {
+    const interval = setInterval(() => {
       if (popup.closed) {
         clearInterval(interval);
-        resolve();
+        window.removeEventListener('message', messageHandler);
+        reject(new Error('Popup closed by user'));
       }
-    }, 100);
+    }, 500);
 
-    popup.onerror = (error) => {
-      clearInterval(interval);
-      reject(error);
+    const messageHandler = (event) => {
+      if (event.origin !== SERVER_URL) {
+        return;
+      }
+      const { data } = event;
+      if (data === 'login_success') {
+        clearInterval(interval);
+        window.removeEventListener('message', messageHandler);
+        popup.close();
+        resolve(data);
+      }
     };
+
+    window.addEventListener('message', messageHandler);
   });
 }

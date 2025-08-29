@@ -9,8 +9,8 @@ import LayoutAdmin from "@/layout/admin";
 
 // Pages
 import LoginPage from "@/pages/login";
-import LandingPage from "@/pages/landing/LandingPage";
 import DashboardPage from "@/pages/admin/DashboardPage";
+import DomainsManagement from "@/pages/admin/DomainsManagement";
 
 // Higher-Order Component for protected routes
 const ProtectedRoute = ({ element }) => {
@@ -19,11 +19,7 @@ const ProtectedRoute = ({ element }) => {
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <LandingPage />,
-  },
-  {
-    path: "/dang-nhap",
+    path: ":tenant/:app_id/login",
     element: (
       <ProtectedRoute
         element={<LoginPage />}
@@ -33,7 +29,7 @@ const router = createBrowserRouter([
   
   // Admin routes
   {
-    path: "/admin_console",
+    path: ":tenant/:app_id/admin_console",
     element: (
       <ProtectedRoute
         element={<LayoutAdmin />}
@@ -44,6 +40,10 @@ const router = createBrowserRouter([
         index: true,
         element: <DashboardPage />,
       },
+      {
+        path: "domains",
+        element: <DomainsManagement />,
+      }
     ],
   },
 ]);

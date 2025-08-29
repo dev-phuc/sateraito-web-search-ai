@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body>
+</body>
+
+<script>
+  // Function to send a message to the parent window
+  function sendMessageToParentWindow(message) {
+    if (window.opener) {
+      window.opener.postMessage(message, '*');
+    } else {
+      console.error('Parent window is not available.');
+    }
+
+    window.close();
+  }
+  sendMessageToParentWindow('success');
+</script>
+
+</html>

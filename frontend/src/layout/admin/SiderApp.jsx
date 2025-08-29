@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 
 // Ant Design
 import {
-  AuditOutlined, TeamOutlined, HomeOutlined, DashboardFilled, BarChartOutlined,
+  GlobalOutlined, HomeOutlined, DashboardFilled, BarChartOutlined,
   ProductOutlined, ContainerOutlined, ApartmentOutlined, ShopOutlined,
   DatabaseOutlined, ExperimentOutlined, UserOutlined
 } from '@ant-design/icons';
@@ -18,11 +18,15 @@ import {
 import { Layout, Menu } from 'antd';
 const { Sider } = Layout;
 
+import LogoApp from '@/assets/logo_app.png';
+import LogoAppFull from '@/assets/logo_app_full.svg';
+
 const SiderApp = ({ isLoading, collapsed }) => {
   // Router
   const navigate = useNavigate();
   const location = useLocation();
-  const { storeCode } = useParams();
+  const { tenant, app_id } = useParams();
+
   // i18n
   const { t } = useTranslation();
 
@@ -49,157 +53,62 @@ const SiderApp = ({ isLoading, collapsed }) => {
     // Define menu items
     let items = [];
 
-    if (storeCode) {
-      items = [
-        {
-          key: 'admin_dashboard',
-          icon: <HomeOutlined />,
-          pathname: `/store/${storeCode}/admin`,
-          label: t('TXT_DASHBOARD'),
-        },
-        {
-          key: 'admin_product_types_management',
-          icon: <ApartmentOutlined />,
-          pathname: `/store/${storeCode}/admin/loai-san-pham`,
-          label: t('TXT_PRODUCT_TYPES_MANAGEMENT'),
-        },
-        {
-          key: 'admin_employee',
-          icon: <TeamOutlined />,
-          pathname: `/store/${storeCode}/admin/nhan-vien`,
-          label: t('TXT_EMPLOYEE'),
-        },
-        {
-          key: 'admin_supplier_management',
-          pathname: `/store/${storeCode}/admin/nha-cung-cap`,
-          icon: <BarChartOutlined />,
-          label: t('TXT_SUPPLIERS'),
-        },
-        // {
-        //   key: 'admin_cost_analysis',
-        //   pathname: `/store/${storeCode}/admin/phan-tich-chi-phi`,
-        //   icon: <DashboardFilled />,
-        //   label: t('TXT_COST_ANALYSIS'),
-        // },
-        {
-          key: 'admin_product_management',
-          icon: <ProductOutlined />,
-          pathname: `/store/${storeCode}/admin/san-pham`,
-          label: t('TXT_PRODUCT_MANAGEMENT'),
-        },
-        {
-          key: 'admin_composite_product_management',
-          icon: <ProductOutlined />,
-          pathname: `/store/${storeCode}/admin/san-pham-tong-hop`,
-          label: t('TXT_COMPOSITE_PRODUCTS'),
-        },
-        {
-          key: 'admin_ingredient_management',
-          icon: <ProductOutlined />,
-          pathname: `/store/${storeCode}/admin/nguyen-lieu`,
-          label: t('TXT_INGREDIENTS'),
-        },
-        {
-          key: 'admin_recipe_management',
-          icon: <ExperimentOutlined />,
-          pathname: `/store/${storeCode}/admin/cong-thuc`,
-          label: t('TXT_RECIPES'),
-        },
-        {
-          key: 'admin_product_recipe_management',
-          icon: <DatabaseOutlined />,
-          pathname: `/store/${storeCode}/admin/san-pham-cong-thuc`,
-          label: t('TXT_PRODUCT_RECIPE_MANAGEMENT'),
-        },
-        {
-          key: 'admin_warehouse_management',
-          icon: <ContainerOutlined />,
-          label: t('TXT_WAREHOUSE_MANAGEMENT'),
-          children: [
-            {
-              key: 'admin_warehouse_list',
-              pathname: `/store/${storeCode}/admin/kho`,
-              label: t('TXT_WAREHOUSES'),
-            },
-            {
-              key: 'admin_inventory_management',
-              pathname: `/store/${storeCode}/admin/ton-kho`,
-              label: t('TXT_INVENTORY_MANAGEMENT'),
-            },
-            {
-              key: 'admin_ingredient_inventory',
-              pathname: `/store/${storeCode}/admin/nguyen-lieu/ton-kho`,
-              label: t('TXT_INGREDIENT_INVENTORY'),
-            },
-          ],
-        },
-
-        // {
-        //   key: 'admin_employee',
-        //   icon: <TeamOutlined />,
-        //   label: t('TXT_EMPLOYEE'),
-        //   children: [
-        //     {
-        //       key: 'admin_employee_manager',
-        //       pathname: `/store/${storeCode}/admin/nhan-vien`,
-        //       label: t('TXT_MANAGER'),
-        //     },
-        //     {
-        //       key: 'admin_employee_skill_categorization',
-        //       pathname: `/store/${storeCode}/admin/nhan-vien/phan-loai-ky-nang`,
-        //       label: t('TXT_SKILL_CATEGORIZATION'),
-        //     },
-        //     {
-        //       key: 'admin_employee_track_work_hours',
-        //       pathname: `/store/${storeCode}/admin/nhan-vien/theo-doi-gio-lam`,
-        //       label: t('TXT_TRACK_WORK_HOURS'),
-        //     },
-        //   ],
-        // },
-
-        // {
-        //   key: 'admin_shift_optimization',
-        //   icon: <DashboardFilled />,
-        //   label: t('TXT_SHIFT_OPTIMIZATION'),
-        //   children: [
-        //     {
-        //       key: 'admin_shift_scheduling',
-        //       pathname: `/store/${storeCode}/admin/toi-uu-hoa-ca/sap-xep-ca`,
-        //       label: t('TXT_SHIFT_SCHEDULING'),
-        //     },
-        //     {
-        //       key: 'admin_shift_setup',
-        //       pathname: `/store/${storeCode}/admin/toi-uu-hoa-ca/thiet-lap-ca`,
-        //       label: t('TXT_SHIFT_SETUP'),
-        //     },
-        //   ],
-        // },
-        // {
-        //   key: 'admin_revenue_forecast',
-        //   icon: <AuditOutlined />,
-        //   label: t('TXT_REVENUE_FORECAST'),
-        //   children: [
-        //     {
-        //       key: 'admin_revenue_forecast_main',
-        //       pathname: `/store/${storeCode}/admin/du-doan-doanh-thu`,
-        //       label: t('TXT_REVENUE_FORECAST'),
-        //     },
-        //     {
-        //       key: 'admin_historical_analysis',
-        //       pathname: `/store/${storeCode}/admin/phan-tich-lich-su`,
-        //       label: t('TXT_HISTORICAL_ANALYSIS'),
-        //     },
-        //   ],
-        // },
-
-        {
-          key: 'go_to_sale_member_screen',
-          icon: <ShopOutlined />,
-          pathname: `/store/${storeCode}/sale`,
-          label: t('TXT_GO_TO_SALE_MEMBER_SCREEN'),
-        },
-      ];
-    }
+    items = [
+      {
+        key: 'admin_dashboard',
+        icon: <HomeOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console`,
+        label: t('TXT_DASHBOARD'),
+      },
+      {
+        key: 'domains_management',
+        icon: <GlobalOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/domains`,
+        label: t('TXT_DOMAINS_MANAGEMENT'),
+      },
+      // Design search box
+      {
+        key: 'design_search_box',
+        icon: <HomeOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/design-search-box`,
+        label: t('TXT_DESIGN_SEARCH_BOX'),
+      },
+      // Encoder HTML/JavaScript of the search box
+      {
+        key: 'encoder_html_js',
+        icon: <HomeOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/box-search-encoder`,
+        label: t('TXT_ENCODER_HTML_JS'),
+      },
+      // Design banner keywords
+      {
+        key: 'design_banner',
+        icon: <ProductOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/design-banner`,
+        label: t('TXT_DESIGN_BANNER_KEYWORDS'),
+      },
+      // AI Configuration
+      {
+        key: 'ai_configuration',
+        icon: <ExperimentOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/ai-configuration`,
+        label: t('TXT_AI_CONFIGURATION'),
+      },
+      // Operations logs
+      {
+        key: 'operations_logs',
+        icon: <ContainerOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/logs`,
+        label: t('TXT_OPERATIONS_LOGS'),
+      },
+      // Usage statistics
+      {
+        key: 'usage_statistics',
+        icon: <BarChartOutlined />,
+        pathname: `/${tenant}/${app_id}/admin_console/usage`,
+        label: t('TXT_USAGE_STATISTICS'),
+      },
+    ];
 
     // Set menu items
     setMenuItems(items);
@@ -235,7 +144,7 @@ const SiderApp = ({ isLoading, collapsed }) => {
 
   useEffect(() => {
     processSetMenuItems();
-  }, [storeCode, t]);
+  }, []);
 
   useEffect(() => {
     // Get sidebar state from localStorage
@@ -245,24 +154,19 @@ const SiderApp = ({ isLoading, collapsed }) => {
   }, []);
 
   return (
-    <div className='h-full'>
+    <div className='h-full flex flex-col'>
       {/* Logo */}
       <div className={classes.wrapLogo}>
-        <div className='flex items-center cursor-pointer' onClick={() => navigate('/overview')}>
-          <img src="/favicon.ico" className='h-10' alt="Logo" />
-          {!sidebarClosed &&
-            (
-              <span className='app-name text-lg font-bold ml-2'>{t('TXT_COMPANY_NAME')}</span>
-            )
-          }
+        <div className='flex items-center'>
+          <img src={!sidebarClosed ? LogoAppFull : LogoApp} className='h-9' alt="Logo" />
         </div>
       </div>
 
       {/* Sider */}
-      <Sider collapsed={sidebarClosed} className={classes.wrapMenu} width={210} style={{ backgroundColor: '#fff' }}>
-        <div className='overflow-y-auto h-full'>
-          {!isLoading &&
-            <Menu 
+      <div className="h-full bg-white overflow-y-auto overflow-x-hidden">
+        {!isLoading && (
+          <Sider collapsed={sidebarClosed} className={classes.wrapMenu} width={210} style={{ backgroundColor: '#fff' }}>
+            <Menu
               selectedKeys={[activeKey]}
               openKeys={openKeys}
               onOpenChange={handleOpenChange}
@@ -270,9 +174,9 @@ const SiderApp = ({ isLoading, collapsed }) => {
               items={menuItems} 
               onSelect={handlerOnSelectMenuItem}
             />
-          }
-        </div>
-      </Sider>
+          </Sider>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,7 +1,7 @@
 @echo off
 echo Starting Sateraito Web Search AI...
 
-cd /d %~dp0src
+cd /d %~dp0backend/src
 docker-compose down
 docker-compose up --build
 

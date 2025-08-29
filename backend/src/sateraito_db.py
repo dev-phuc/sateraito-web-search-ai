@@ -15,8 +15,8 @@ import datetime, json
 from dateutil import zoneinfo, tz
 from google.appengine.api import namespace_manager
 
-from sateraito_inc import developer_mode
-if developer_mode:
+from sateraito_inc import flask_docker
+if flask_docker:
     from google.cloud import ndb
     import memcache
 else:
@@ -723,6 +723,9 @@ class UserInfo(ndb.Model):
 	email = ndb.StringProperty()
 	family_name = ndb.StringProperty()
 	given_name = ndb.StringProperty()
+	language = ndb.StringProperty(default='ja')
+	photo_url = ndb.StringProperty()
+
 	family_name_kana = ndb.StringProperty()
 	given_name_kana = ndb.StringProperty()
 	employee_id = ndb.StringProperty()
@@ -743,7 +746,7 @@ class UserInfo(ndb.Model):
 	personal_phone_number_1 = ndb.StringProperty()
 	personal_phone_number_2 = ndb.StringProperty()
 	mail_group = ndb.StringProperty(repeated=True)
-	language = ndb.StringProperty(default='ja')
+
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 	updated_date = ndb.DateTimeProperty(auto_now=True)
 
