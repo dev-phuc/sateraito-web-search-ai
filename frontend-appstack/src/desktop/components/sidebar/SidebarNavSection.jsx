@@ -16,7 +16,7 @@ import SidebarNavList from "@/desktop/components/sidebar/SidebarNavList";
 const SidebarNavSection = (props) => {
   // Use default
   const { title, pages, className, ...rest } = props;
-
+  
   // Component return
   return (
     <React.Fragment {...rest}>

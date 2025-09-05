@@ -25,7 +25,7 @@ const NavbarUser = () => {
   const navigate = useNavigate();
 
   // Use hooks state
-  const { user, signOut, isCreator, isAdmin, isLoading } = useAuth();
+  const { user, signOut, isLoading } = useAuth();
 
   // Constant value
 
@@ -37,8 +37,6 @@ const NavbarUser = () => {
     )
   }
 
-  console.log(user);
-  
   if (!user) return <></>;
 
   const { user_info } = user;
@@ -59,16 +57,9 @@ const NavbarUser = () => {
       </span>
 
       <Dropdown.Menu drop="end">
-
-        <Link data-rr-ui-dropdown-item to="/setting" tole="button" className="dropdown-item">
-          <span className="mdi mdi-cog-outline align-middle me-2"></span>
-          {t("TXT_SETTING")}
-        </Link>
-
-        <Dropdown.Divider />
-        <Dropdown.Item href="/auth/logout">
+        <Dropdown.Item onClick={signOut} role="button">
           <span className="mdi mdi mdi-logout align-middle me-2"></span>
-          {t("BTN_SIGN_OUT")}
+          {t("TXT_LOGOUT")}
         </Dropdown.Item>
 
       </Dropdown.Menu>

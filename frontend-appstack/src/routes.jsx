@@ -2,6 +2,7 @@ import React from "react";
 import { lazy } from "@loadable/component";
 
 // Layouts
+import AuthLayout from "@/desktop/layouts/Auth";
 import AdminConsoleLayout from "@/desktop/layouts/AdminConsole";
 
 const Page404 = lazy(() => import("@/desktop/pages/Page404"));
@@ -14,6 +15,18 @@ const DashboardAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsol
 const ClientWebsitesAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/ClientWebsites"));
 
 let routes = [
+  // Auth
+  {
+    path: "/:tenant/:app_id/auth",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "login",
+        element: <SignIn />,
+      },
+    ],
+  },
+
   // "admin_console"
   {
     // Example "/vn2.sateraito.co.jp/default/admin_console"

@@ -1,46 +1,55 @@
 import { useEffect, useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
-
-import axios from "@/utils/axios";
-import { setSession } from "@/utils/jwt";
+import { useParams, useNavigate } from "react-router";
 
 import AuthContext from "@/contexts/JWTContext";
 
-import LoaderInit from "@/desktop/components/Loader";
+import { getMe, logout, openPopupLoginWithGoogle } from '@/request/auth';
 
-import { getMe } from '@/request/auth';
+import i18n from "@/locales";
+import { LANGUAGE_SUPPORTED } from "@/constants";
+import { LANGUAGE_DEFAULT } from '@/constants';
 
-import { KEY_ROLE_CREATOR, LANGUAGE_DEFAULT } from '@/constants';
 
-
+const SET_TENANT_APP_ID = "SET_TENANT_APP_ID";
 const INITIALIZE = "INITIALIZE";
 const SET_LOADING = "SET_LOADING";
 const SIGN_IN = "SIGN_IN";
 const SIGN_OUT = "SIGN_OUT";
-const SIGN_UP = "SIGN_UP";
-const SET_ROLE = "SET_ROLE";
+const IS_CHECKING = "IS_CHECKING";
+const IS_ERROR = "IS_ERROR";
 
 const initialState = {
+  tenant: null,
+  app_id: null,
+
   isAuthenticated: false,
   isInitialized: false,
   user: null,
-  isLoading: true,
+  userInfo: null,
+
+  isChecking: true,
+  isError: false,
+  errorMessage: '',
 };
 
 const JWTReducer = (state, action) => {
-  const stateClone = { ...state };
-
   switch (action.type) {
+    case SET_TENANT_APP_ID:
+      return {  ...state, tenant: action.payload.tenant, app_id: action.payload.app_id };
     case INITIALIZE:
+      const { isAuthenticated, user } = action.payload;
       return {
-        isAuthenticated: action.payload.isAuthenticated,
+        ...state,
+        user,
+        isAuthenticated,
         isInitialized: true,
-        user: action.payload.user,
+        userInfo: user ? user.user_info : null,
       };
     case SET_LOADING:
       return {
         ...state,
-        isLoading: action.payload,
+        isChecking: action.payload,
       };
     case SIGN_IN:
       return {
@@ -52,172 +61,177 @@ const JWTReducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: false,
+        isInitialized: false,
         user: null,
+        userInfo: null,
+        isChecking: false,
+        isError: false,
+        errorMessage: '',
       };
-
-    case SIGN_UP:
+    case IS_CHECKING:
       return {
         ...state,
-        isAuthenticated: true,
-        user: action.payload.user,
+        isChecking: action.payload.isChecking,
       };
-
-    case SET_ROLE:
-      stateClone.user.role = action.payload.role;
-      stateClone.user.is_creator = (action.payload.role == KEY_ROLE_CREATOR);
-
-      return stateClone;
-
+    case IS_ERROR:
+      return {
+        ...state,
+        isError: action.payload.isError,
+        errorMessage: action.payload.errorMessage,
+      };
     default:
-      return state;
+      return {
+        ...state,
+        isInitialized: true,
+        isAuthenticated: false,
+        user: null,
+        isChecking: false,
+        isError: false,
+        errorMessage: '',
+      };
   }
 };
 
 function AuthProvider({ children }) {
   const { i18n, t } = useTranslation();
+  const navigate = useNavigate();
+
   const [state, dispatch] = useReducer(JWTReducer, initialState);
+  let pageLoginUrl = `/${state.tenant}/${state.app_id}/auth/login`;
+  let pageAdminConsoleUrl = `/${state.tenant}/${state.app_id}/admin_console`;
 
-  // const user = {
-  //   "disable_user": null,
-  //   "google_apps_domain": null,
-  //   "is_apps_admin": null,
-  //   "user_email": null,
-  //   "user_id": null,
-  //   "user_info": {
-  //     "family_name": null,
-  //     "given_name": null,
-  //     "language": null,
-  //     "photo_url": null
-  //   }
-  // };
+  const afterCheckLogin = async (user) => {
+    // Check if page active is login page
+    const path = window.location.pathname;
+    const params = new URLSearchParams(window.location.search);
 
-  const initializeAuth = async (tenant, app_id) => {
+    const isLoginPage = path.includes(pageLoginUrl);
+    const isAdminPage = path.includes(pageAdminConsoleUrl);
+
+    const redirectTo = params.get("redirectTo") || '';
+    const isRedirectToAdmin = redirectTo.includes(pageAdminConsoleUrl);
+
+    let pageToRedirect;
+    
+    if (user) {
+      const { disable_user, is_apps_admin, user_email, user_info } = user;
+      const { language } = user_info;
+      const userIsAdmin = is_apps_admin;
+
+      // Set language
+      if (language && LANGUAGE_SUPPORTED.includes(language)) {
+        i18n.changeLanguage(language);
+      }
+
+      if (isLoginPage) {
+        // Redirect to dashboard if not on login page
+        if (userIsAdmin) {
+          pageToRedirect = redirectTo || pageAdminConsoleUrl;
+        } else {
+          pageToRedirect = (!isRedirectToAdmin && redirectTo) ? redirectTo : "/";
+        }
+      } else {
+        if (!userIsAdmin && isAdminPage) {
+          pageToRedirect = "/";
+        }
+      }
+    } else {
+      if (!isLoginPage) {
+        pageToRedirect = `${pageLoginUrl}?redirectTo=${encodeURIComponent(path)}`;
+      }
+    }
+
+    // Only log pageToRedirect if it has a value
+    if (pageToRedirect) {
+      navigate(pageToRedirect, { replace: true });
+    }
+
+    dispatch({
+      type: INITIALIZE,
+      payload: { 
+        isAuthenticated: !!user,
+        user
+      },
+    });
+    dispatch({
+      type: IS_CHECKING,
+      payload: { isChecking: false },
+    });
+  };
+
+  const loadProfile = async () => {
+    // Dispatch checking state
+    dispatch({ type: IS_CHECKING, payload: { isChecking: true } });
+    dispatch({ type: IS_ERROR, payload: { isError: false, errorMessage: '' } });
+
+    let user;
     try {
-      console.log("AuthProvider initializeAuth");
+      user = await getMe(state.tenant, state.app_id);
+    } catch (error) {
       dispatch({
-        type: SET_LOADING,
-        payload: true,
-      });
-
-      const user = await getMe(tenant, app_id)
-      dispatch({
-        type: INITIALIZE,
+        type: IS_ERROR,
         payload: {
-          isAuthenticated: true,
-          user
-        },
-      });
-
-      // i18n.changeLanguage(user.user_info.language || LANGUAGE_DEFAULT);
-      i18n.changeLanguage(LANGUAGE_DEFAULT);
-
-      dispatch({
-        type: SET_LOADING,
-        payload: false,
-      });
-    } catch (err) {
-      console.error(err);
-      dispatch({
-        type: INITIALIZE,
-        payload: {
-          isAuthenticated: false,
-          user: null,
+          isError: true,
+          errorMessage: error.message,
         },
       });
     }
+
+    afterCheckLogin(user);
   };
 
-  const signIn = async (email, password) => {
-    // const response = await axios.post("/api/auth/sign-in", {
-    //   email,
-    //   password,
-    // });
-    // const { accessToken, user } = response.data;
-    const accessToken = 'woe84tyvwo9e854ytbw9atwemorutvoe8tyvno398tvhsyyyyerp';
+  const loginWithGoogle = async () => {
+    try {
+      // Open popup for Google login
+      await openPopupLoginWithGoogle(state.tenant, state.app_id);
 
-    // TEST::
-    window.localStorage.setItem(accessToken, JSON.stringify(user));
+      // After the popup closes, reload the profile
+      await loadProfile();
 
-    setSession(accessToken);
-    dispatch({
-      type: SIGN_IN,
-      payload: {
-        user,
-      },
-    });
+      return true;
+    } catch (error) {
+      console.error('Login with Google failed:', error);
+      return false;
+    }
   };
 
   const signOut = async () => {
-    setSession(null);
-    dispatch({ type: SIGN_OUT });
-  };
+    try {
+      dispatch({ type: IS_CHECKING, payload: { isChecking: true } });
 
-  const signUp = async (email, password, firstName, lastName) => {
-    const response = await axios.post("/api/auth/sign-up", {
-      email,
-      password,
-      firstName,
-      lastName,
-    });
-    const { accessToken, user } = response.data;
+      // Call API to sign out
+      await logout(state.tenant, state.app_id); // Assuming this is the sign-out function
 
-    window.localStorage.setItem("accessToken", accessToken);
-    dispatch({
-      type: SIGN_UP,
-      payload: {
-        user,
-      },
-    });
-  };
+      // Dispatch sign-out action
+      dispatch({ type: SIGN_OUT });
 
-  const sendMailRegister = async (email) => {
-  };
-
-  const registerReq = async (formData) => {
-    await new Promise((resolve) =>
-
-      // DEMO::
-      setTimeout(() => resolve([]), 2000)
-
-    );
-  };
-
-  const setRole = async (role) => {
-    const { status, data } = await setRoleAuthRequest(role);
-
-    if (status == 'ok') {
-      dispatch({
-        type: SET_ROLE,
-        payload: {
-          role,
-        },
-      });
+      // Reset user state
+      navigate(pageLoginUrl); // Redirect to login page
+    } catch (error) {
+      throw 'TXT_SIGN_OUT_ERROR';
     }
-  }
+  };  const setTenantAppId = (tenant, app_id) => {
+    dispatch({ type: SET_TENANT_APP_ID, payload: { tenant, app_id } });
+  };
 
-  const reloadInfoAuth = async () => {
-    const { status, data } = await getMe()
-    dispatch({
-      type: INITIALIZE,
-      payload: {
-        isAuthenticated: true,
-        user: {
-          ...user, ...data,
-          is_creator: (data.role == KEY_ROLE_CREATOR)
-        }
-      },
-    });
-  }
+  useEffect(() => {
+    if (state.tenant && state.app_id) {
+      loadProfile();
+    }
+  }, [state.tenant, state.app_id]);
 
-  const isCreator = () => {
-    return state.user && state.user.is_creator;
-  }
-
-  const isAdmin = () => {
-    return state.user && state.user.is_workflow_admin;
-  }
-
-  const resetPassword = (email) => console.log(email);
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!state.user && !state.isChecking) {
+      // If not authenticated, redirect to login page
+      navigate(pageLoginUrl);
+    } else {
+      const isPageLogin = window.location.pathname.includes(pageLoginUrl);
+      if (state.isInitialized && state.isAuthenticated && isPageLogin) {
+        navigate(pageAdminConsoleUrl);
+      }
+    }
+  }, [state.isInitialized, state.isAuthenticated, navigate, pageLoginUrl, pageAdminConsoleUrl]);
 
   return (
     <AuthContext.Provider
@@ -225,19 +239,20 @@ function AuthProvider({ children }) {
         ...state,
         method: "jwt",
 
-        initializeAuth,
+        user: state.user,
+        userInfo: state.userInfo,
 
-        signIn,
+        isAuthenticated: state.isAuthenticated,
+        isInitialized: state.isInitialized,
+
+        isChecking: state.isChecking,
+        isError: state.isError,
+
+        // Actions
+        setTenantAppId,
         signOut,
-        signUp,
-        setRole,
-        sendMailRegister,
-        registerReq,
-        resetPassword,
-
-        isCreator,
-        isAdmin,
-        reloadInfoAuth,
+        loginWithGoogle,
+        loadProfile,
       }}
     >
       {children}

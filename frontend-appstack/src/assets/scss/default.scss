@@ -127,19 +127,19 @@ ul {
   font-size: 1rem;
 }
 
-.settings-toggle {
-  // height: 120px !important;
-  width: max-content !important;
-  top: unset !important;
-  bottom: 150px !important;
-  box-shadow: none !important;
+// .settings-toggle {
+//   // height: 120px !important;
+//   width: max-content !important;
+//   top: unset !important;
+//   bottom: 150px !important;
+//   box-shadow: none !important;
 
-  .settings-toggle-option {
-    height: 100%;
-    padding: 8px 20px;
-    display: block;
-  }
-}
+//   .settings-toggle-option {
+//     height: 100%;
+//     padding: 8px 20px;
+//     display: block;
+//   }
+// }
 
 .language-setting {
   width: max-content;
@@ -245,24 +245,24 @@ ul {
 }
 
 .setting-page {
-  .settings.js-settings {
-    display: inline;
+  // .settings.js-settings {
+  //   display: inline;
 
-    .settings-toggle {
-      position: unset;
-      height: unset;
-      padding: 0;
+  //   .settings-toggle {
+  //     position: unset;
+  //     height: unset;
+  //     padding: 0;
 
-      .settings-toggle-option {
-        writing-mode: unset;
-      }
-    }
-  }
+  //     .settings-toggle-option {
+  //       writing-mode: unset;
+  //     }
+  //   }
+  // }
 
-  .settings-toggle {
-    top: unset !important;
-    bottom: 50px !important;
-  }
+  // .settings-toggle {
+  //   top: unset !important;
+  //   bottom: 50px !important;
+  // }
 
   .setting-row {
     padding-top: 20px;

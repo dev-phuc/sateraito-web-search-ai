@@ -2,14 +2,13 @@
 
 setlocal
 
-set frontendDir=frontend\dist
+set frontendDir=frontend-appstack\dist
 set backendDir=backend\src\static\frontend
 set backendTemplateDir=backend\src\templates
 
 call rimraf .\backend\src\static\frontend\
 
-cd frontend
-call npm run clean
+cd frontend-appstack
 call npm run build
 call echo D
 cd ..

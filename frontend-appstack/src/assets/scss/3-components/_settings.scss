@@ -13,11 +13,11 @@ $settings-width: 320px;
   background: $white;
   color: $black;
   position: fixed;
-  top: 200px;
+  bottom: 100px;
   z-index: 10;
   right: 0;
   width: 54px;
-  height: 150px;
+  height: 180px;
   padding: $spacer*0.5;
   border-top-left-radius: $border-radius;
   border-bottom-left-radius: $border-radius;
@@ -75,7 +75,7 @@ body[data-theme=dark] {
 }
 
 .settings-toggle-option-text {
-  height: 93px;
+  height: 100%;
 
   svg {
     transform: rotate(-90deg);

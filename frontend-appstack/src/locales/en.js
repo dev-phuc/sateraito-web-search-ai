@@ -62,6 +62,10 @@ const ENGLISH_TRANSLATIONS = {
     // HeaderApp.jsx
     TXT_LOGOUT: "Logout",
 
+    // Login
+    PAGE_TITLE_LOGIN: "Sign In",
+    TXT_LOGIN_FAILED_PLEASE_TRY_AGAIN: "Login failed, please try again.",
+
     // Dashboard
     PAGE_TITLE_DASHBOARD_MANAGER: "Dashboard",
 

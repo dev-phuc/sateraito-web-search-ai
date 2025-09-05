@@ -1,6 +1,7 @@
 // Framework import
 import React from "react";
 import { matchPath } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 // Redux components
 
@@ -18,6 +19,7 @@ import SidebarNavList from "@/desktop/components/sidebar/SidebarNavList";
 // Define the component
 const reduceChildRoutes = (props) => {
   // Use default
+  const { t } = useTranslation();
   const { items, page, depth, currentRoute } = props;
 
   if (page.children) {
@@ -39,7 +41,7 @@ const reduceChildRoutes = (props) => {
         key={page.title}
         badge={page.badge}
         open={!!open}
-        title={page.title}
+        title={t(page.title)}
         href={page.href}
         customCls={page.customCls ? page.customCls : ""}
         groupColor={page.groupColor ? page.groupColor : ""}
@@ -57,7 +59,7 @@ const reduceChildRoutes = (props) => {
         iconcls={page.iconcls}
         key={page.title}
         badge={page.badge}
-        title={page.title}
+        title={t(page.title)}
         customCls={page.customCls ? page.customCls : ""}
         groupColor={page.groupColor ? page.groupColor : ""}
         cls={page.cls}

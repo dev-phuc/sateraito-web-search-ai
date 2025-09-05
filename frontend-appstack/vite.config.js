@@ -27,10 +27,12 @@ const version = timestamp;
 export default ({ mode }) => {
   process.env = Object.assign(process.env, loadEnv(mode, process.cwd(), ""));
 
-  const generateScopedName =
-    mode === "production" ? "[hash:base64:2]" : "[local]___[hash:base64:2]";
-  console.log(process.env);
-  // console.log(import.meta.env.VITE_BASE_URL)
+  const generateScopedName = (mode === "production" ? "[hash:base64:2]" : "[local]___[hash:base64:2]");
+  
+  // console.log(process.env);
+  // console.log(process.env.VITE_BASE_URL)
+  // console.log(process.env.VITE_BASE)
+
   return defineConfig({
     define: {
       "import.meta.env.VITE_VERSION_JS": version.toString(),

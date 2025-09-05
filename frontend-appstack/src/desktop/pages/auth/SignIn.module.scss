@@ -1,0 +1,61 @@
+/* SignInPage custom styles */
+.signin-bg {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.signin-card {
+  background: rgba(255,255,255,0.97);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  border: none;
+  padding: 2rem;
+}
+
+.signin-logo {
+  display: block;
+  margin: 0 auto 2rem auto;
+  // width: 64px;
+  // height: 64px;
+}
+
+.signin-title {
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+
+.signin-desc {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.google-btn {
+  font-weight: 500;
+  font-size: 1.1rem;
+  // border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.2s;
+}
+.google-btn:hover {
+  background: #e9ecef !important;
+  border-color: #b3b3b3 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+@media (max-width: 600px) {
+  .signin-card {
+    padding: 1rem;
+    border-radius: 1rem;
+  }
+  .signin-logo {
+    width: 48px;
+    height: 48px;
+  }
+}
