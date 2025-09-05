@@ -10,7 +10,7 @@ import LoaderInit from "@/desktop/components/Loader";
 
 import { getMe } from '@/request/auth';
 
-import { KEY_ROLE_CREATOR } from '@/constants';
+import { KEY_ROLE_CREATOR, LANGUAGE_DEFAULT } from '@/constants';
 
 
 const INITIALIZE = "INITIALIZE";
@@ -108,7 +108,8 @@ function AuthProvider({ children }) {
         },
       });
 
-      i18n.changeLanguage(user.user_info.language || 'en');
+      // i18n.changeLanguage(user.user_info.language || LANGUAGE_DEFAULT);
+      i18n.changeLanguage(LANGUAGE_DEFAULT);
 
       dispatch({
         type: SET_LOADING,

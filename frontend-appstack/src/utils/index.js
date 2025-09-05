@@ -29,6 +29,11 @@ export const formatDate = (strDate, strFormat = "yyyy/MM/dd HH:MM") => {
   return "";
 };
 
+export const truncateText = (text, maxLength = 50) => {
+  if (!text) return '-';
+  return text.length > maxLength ? `${text.substring(0, maxLength)}...` : text;
+};
+
 export const capitalize = (s) => {
   let firstChar = /\S/;
   return s.replace(firstChar, function (m) {

@@ -5,19 +5,25 @@ const JAPANESE_TRANSLATIONS = {
     TXT_APP_DESCRIPTION: "AIを活用したウェブ検索体験を提供します",
     TXT_LOGIN_WITH_GOOGLE: "Googleでログイン",
 
-    // =================== サーバーからのメッセージ ===================
-    // クライアントウェブサイト
+    // =================== Messages from server ===================
+    // Client websites
     internal_server_error: "内部サーバーエラー",
     id_is_required: "IDは必須です",
     domain_is_required: "ドメインは必須です",
     domain_already_exists: "ドメインは既に存在します",
     page_url_is_required: "ページURLは必須です",
     client_website_not_found: "クライアントウェブサイトが見つかりません",
-    // =================== サーバーからのメッセージ終了 ===================
+    // =================== End messages from server ===================
 
-    // 共通
+    // Common
     TXT_LOADING: "読み込み中",
-    LABEL_STATUS: "ステータス",
+    TXT_REFRESHING: "更新中...",
+    TXT_REFRESH: "更新",
+    TXT_RELOAD: "再読み込み",
+    TXT_TOTAL_SELECTED: "選択済み",
+    TXT_SELECT_ALL: "すべて選択",
+
+    // Buttons
     BTN_CREATE: "作成",
     BTN_UPDATE: "更新",
     BTN_EDIT: "編集",
@@ -25,6 +31,9 @@ const JAPANESE_TRANSLATIONS = {
     BTN_CANCEL: "キャンセル",
     BTN_YES: "はい",
     BTN_NO: "いいえ",
+
+    // Status
+    LABEL_STATUS: "ステータス",
     STATUS_ACTIVE: "有効",
     STATUS_DISABLED: "無効",
     STATUS_OVER_QUOTA: "上限超過",
@@ -41,22 +50,42 @@ const JAPANESE_TRANSLATIONS = {
     TXT_OPERATIONS_LOGS: "操作ログ",
     TXT_USAGE_STATISTICS: "利用統計",
 
+    // SettingsTheme.jsx
+    LAYOUT_BUILDER_LABEL: "レイアウトビルダー",
+    LAYOUT_BUILDER_DES: "検索エンジンの外観をウェブサイトのデザインに合わせてカスタマイズします。",
+    BGCOLOR_SCHEME_LABEL: "背景色スキーム",
+    COLOR_SCHEME_LABEL: "カラースキーム",
+    MENU_POSITION_LABEL: "メニュー位置",
+    MENU_BEHAVIOR_LABEL: "メニュー動作",
+    LAYOUT_LABEL: "レイアウト",
+
     // HeaderApp.jsx
     TXT_LOGOUT: "ログアウト",
 
+    // Dashboard
+    PAGE_TITLE_DASHBOARD_MANAGER: "ダッシュボード",
+
     // ClientWebsites
+    PAGE_TITLE_CLIENT_WEBSITES: "クライアントウェブサイト",
     TITLE_CLIENT_WEBSITES_MANAGEMENT: "クライアントウェブサイト管理",
     BTN_ADD_DOMAIN: "ドメイン追加",
     TITLE_ADD_DOMAIN: "ドメイン追加",
     CONFIRM_DELETE_CLIENT_WEBSITE: "このクライアントウェブサイトを削除してもよろしいですか？",
-    TXT_CREATE_CLIENT_WEBSITES_SUCCESS: "クライアントウェブサイトの作成に成功しました！",
-    TXT_ERROR_CREATE_CLIENT_WEBSITES: "クライアントウェブサイトの作成に失敗しました。再度お試しください。",
-    TXT_UPDATE_CLIENT_WEBSITES_SUCCESS: "クライアントウェブサイトの更新に成功しました！",
-    TXT_ERROR_UPDATE_CLIENT_WEBSITES: "クライアントウェブサイトの更新に失敗しました。再度お試しください。",
-    TXT_FETCH_CLIENT_WEBSITES_ERROR: "クライアントウェブサイトの取得に失敗しました。再度お試しください。",
+    TITLE_CONFIRM_DELETE_CLIENT_WEBSITE: "クライアントウェブサイト削除",
+    TXT_DELETE_CLIENT_WEBSITES_SUCCESS: "クライアントウェブサイトが正常に削除されました！",
+    TXT_ERROR_DELETE_CLIENT_WEBSITES: "クライアントウェブサイトの削除に失敗しました。もう一度お試しください。",
+    TXT_CREATE_CLIENT_WEBSITES_SUCCESS: "クライアントウェブサイトが正常に作成されました！",
+    TXT_ERROR_CREATE_CLIENT_WEBSITES: "クライアントウェブサイトの作成に失敗しました。もう一度お試しください。",
+    TXT_UPDATE_CLIENT_WEBSITES_SUCCESS: "クライアントウェブサイトが正常に更新されました！",
+    TXT_ERROR_UPDATE_CLIENT_WEBSITES: "クライアントウェブサイトの更新に失敗しました。もう一度お試しください。",
+    TXT_FETCH_CLIENT_WEBSITES_ERROR: "クライアントウェブサイトの取得に失敗しました。もう一度お試しください。",
+    TXT_SELECT_AT_LEAST_ONE_ITEM: "少なくとも1つの項目を選択してください。",
+    MSG_PLEASE_ADD_FIRST_CLIENT_WEBSITE: "最初のクライアントウェブサイトを追加してください。",
+    MSG_DATA_CLIENT_WEBSITES_LOADING: "クライアントウェブサイトのデータを読み込み中...",
+    NO_CLIENT_WEBSITES_FOUND: "クライアントウェブサイトが見つかりません。",
+    // Form labels and placeholders
     LABEL_DOMAIN: "ドメイン",
     PLACEHOLDER_CLIENT_WEBSITES_DOMAIN: "ドメインを入力（例：example.com）",
-    MSG_ERROR_DOMAIN_REQUIRED: "ドメインは必須です！",
     LABEL_FAVICON_URL: "ファビコンURL",
     PLACEHOLDER_CLIENT_WEBSITES_FAVICON_URL: "ファビコンURLを入力（例：https://example.com/favicon.ico）",
     LABEL_SITE_NAME: "サイト名",
@@ -64,9 +93,20 @@ const JAPANESE_TRANSLATIONS = {
     LABEL_DESCRIPTION: "説明",
     PLACEHOLDER_CLIENT_WEBSITES_DESCRIPTION: "説明を入力",
     LABEL_AI_ENABLED: "AI有効",
+    // Error and warning messages
+    MSG_ERROR_DOMAIN_REQUIRED: "ドメインは必須です！",
     MSG_ERROR_STATUS_REQUIRED: "ステータスは必須です！",
     MSG_ERROR_DOMAIN_INVALID: "ドメイン形式が無効です（例：example.com）",
-    MSG_WARNING_FETCH_PAGE_INFO: "警告：ページ情報の取得に失敗しました。ドメインにアクセスできない可能性があります。正しいドメインであれば、手動で詳細を入力してください。",
+    MSG_WARNING_FETCH_PAGE_INFO: "警告：ページ情報の取得に失敗しました。ドメインが到達不能の可能性があります。ドメインが正しい場合は、詳細を手動で入力してください。",
+    // Table column names
+    NAME_COL_WEBSITE_NAME: "ウェブサイト名",
+    NAME_COL_WEBSITE_DESCRIPTION: "説明",
+    NAME_COL_WEBSITE_URL: "ウェブサイトURL",
+    NAME_COL_WEBSITE_AI_ENABLED: "AI有効",
+    NAME_COL_STATUS: "ステータス",
+    NAME_COL_CREATED_DATE: "作成日",
+    NAME_COL_UPDATED_DATE: "更新日",
+    NAME_COL_ACTIONS: "操作",
   }
 };
 
