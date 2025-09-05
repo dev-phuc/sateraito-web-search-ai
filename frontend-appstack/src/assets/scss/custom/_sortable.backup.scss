@@ -1,0 +1,224 @@
+.ghostDropAreaStarIcon {
+  position: relative;
+}
+.ghostDropAreaStarIcon::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  background-color: #ebebeb;
+}
+
+.dashboard-widgets {
+  .ghost {
+    background: rgb(36, 67, 243) !important;
+  }
+
+  .shared {
+    padding: 15px;
+    margin: 15px 0;
+    width: 100%;
+    border-radius: 6px;
+    box-sizing: border-box;
+    background-color: white;
+    overflow: hidden;
+  }
+
+  .group {
+    border: 3px solid blue;
+  }
+
+  .item {
+    border: 3px solid orange;
+  }
+
+  .bg {
+    background-color: #f2f2f2;
+  }
+
+  .custom-drag-ghost {
+    /* The original cloned element must not take place up in the page and must not be visible */
+    position: absolute;
+    top: -99999px;
+    left: -99999px;
+    /* Just for appearance */
+    background-color: #edb458;
+    border: 1px solid #e8871e;
+    background-color: #e8871e;
+    opacity: 1;
+  }
+
+  .hidden-drag-ghost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    visibility: hidden;
+    opacity: 0;
+  }
+}
+
+// .grid-panel{
+//   width: auto;
+//   table-layout: fixed;
+//   display: table;
+//   // display: grid;
+//   // overflow: auto;
+//   // grid-template-columns:
+//   //   minmax(50px, 1fr)
+//   //   minmax(50px, 1fr)
+//   //   minmax(50px, 1fr) 
+//   //   minmax(50px, 1fr)
+//   //   minmax(50px, 1fr)
+//   //   minmax(50px, 1fr)
+//   //   minmax(50px, 1fr);
+    
+//   // thead,
+//   // tbody,
+//   // tr {
+//   //   display: contents;
+//   // }
+
+//   th {
+//     position: relative;
+//     // font-size: 18px;
+//   }
+
+//   th,
+//   td {
+//     text-align: left;
+//     // padding: 16px 20px;
+//     min-width: 40px;
+//   }
+
+//   th span,
+//   td span {
+//     white-space: nowrap;
+//     text-overflow: ellipsis;
+//     overflow: hidden;
+//     display: block;
+//   }
+
+//   // tr td {
+//   //   border-top: 1px solid #ccc;
+//   // }
+
+//   .ghostDropAreaGridPanel {
+//     position: relative;
+//   }
+//   .ghostDropAreaGridPanel::before {
+//     content: "";
+//     position: absolute;
+//     z-index: 1;
+//     width: 100%;
+//     height: 100%;
+//     background-color: #ebebeb;
+//   }
+
+  
+//   .table-thead {
+//     th {
+//       position: relative;
+//       // cursor: move;
+//       .dragHandle{
+//         cursor: move;
+//         &:hover {
+//           background: #dddddd !important;
+//         }
+//       }
+
+//       // &:hover {
+//       //   background: #dddddd !important;
+//       // }
+//     }
+
+//     // &:has(.sortable-chosen) {
+//     // 	th {
+//     // 		border: 1px solid red !important;
+//     // 	}
+//     // }
+
+//     th[draggable="true"] {
+//       border: 1px solid red;
+//     }
+//   }
+
+//   .resize-handle {
+//     display: block;
+//     position: absolute;
+//     cursor: col-resize;
+//     width: 7px;
+//     height: 100%;
+//     right: 0;
+//     top: 0;
+//     z-index: 1;
+//     border-right: 2px solid transparent;
+//     border-right: 2px solid red;
+//   }
+
+//   .resize-handle:hover {
+//     border-color: #ccc;
+//   }
+
+//   .resize-handle.active {
+//     border-color: #517ea5;
+//   }
+//   .col-header-tool.dragHandle {
+//     // background: red;
+//     height: 100%;
+//   }
+//   thead.table-thead tr th{
+//     padding: 0!important;
+//   }
+// }
+
+table.table{
+  width: auto;
+  .table-thead {
+      th {
+        position: relative;
+        // cursor: move;
+        .dragHandle{
+          cursor: move;
+          &:hover {
+            background: #dddddd !important;
+          }
+        }
+
+        // &:hover {
+        //   background: #dddddd !important;
+        // }
+      }
+
+      // &:has(.sortable-chosen) {
+      // 	th {
+      // 		border: 1px solid red !important;
+      // 	}
+      // }
+
+      th[draggable="true"] {
+        border: 1px solid red;
+      }
+  }
+  
+  .resize-handle {
+    display: block;
+    position: absolute;
+    cursor: col-resize;
+    width: 7px;
+    height: 100%;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    border-right: 2px solid transparent;
+    border-right: 2px solid red;
+  }
+
+  .resize-handle:hover {
+    border-color: #ccc;
+  }
+
+  .resize-handle.active {
+    border-color: #517ea5;
+  }
+}

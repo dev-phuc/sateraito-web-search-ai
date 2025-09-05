@@ -186,8 +186,10 @@ function AuthProvider({ children }) {
       // After the popup closes, reload the profile
       await loadProfile();
 
+      return true;
     } catch (error) {
       console.error('Login with Google failed:', error);
+      return false;
     }
   };
 

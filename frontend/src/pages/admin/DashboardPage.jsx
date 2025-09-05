@@ -23,7 +23,6 @@ const DashboardPage = () => {
   // Return the component
   return (
     <>
-      <h1>{t('TXT_DASHBOARD')}</h1>
     </>
   );
 };

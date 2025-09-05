@@ -1,0 +1,32 @@
+body[data-layout="fluid"] {
+
+	nav.sidebar~.main .navbar-bg {
+		margin: 0;
+		padding: 5px;
+	}
+
+	.main {
+		border-left: 1px solid #f1f3f4;
+	}
+
+	nav.sidebar {
+		margin: 0;
+		padding: 5px;
+		padding-top: 0;
+	}
+
+	.sidebar-content.sidebar-custom {
+		padding: 0;
+	}
+
+	nav.sidebar {
+		padding: 0;
+	}
+
+	.content {
+		height: calc(100vh - 54px);
+		margin-bottom: 0;
+		margin-left: 0;
+
+	}
+}

@@ -27,7 +27,7 @@ import sateraito_inc
 import sateraito_func
 import sateraito_logger as logging
 
-from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, DEFAULT_MAX_TOTAL_FILE_SIZE
+from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, STATUS_CLIENT_WEBSITES_LIST, STATUS_CLIENT_WEBSITES_ACTIVE
 
 DOWNLOAD_CSV_NAMESPACE = 'sateraito_download_csv'
 LTCACHE_USER_LIST_UPDATING_KEY = 'ltcacheuserlistupdating'
@@ -714,6 +714,97 @@ class GoogleAppsUserEntry(ndb.Model):
 		namespace_manager.set_namespace(old_namespace)
 		return user_entry
 
+class OtherSetting(ndb.Model):
+	use_sateraito_address_popup = ndb.BooleanProperty()
+	sateraito_address_popup_url_param = ndb.StringProperty()
+	additional_admin_user_groups = ndb.StringProperty(repeated=True)
+	limit_access_to_doc_management = ndb.BooleanProperty()
+	access_allowed_user_groups = ndb.StringProperty(repeated=True)
+	csv_file_encoding = ndb.StringProperty()
+	allow_user_or_groups = ndb.StringProperty()
+
+	# get other app_id's UserInfo if below is enabled
+	enable_other_app_id_reference = ndb.BooleanProperty(default=False)
+	reference_app_id = ndb.StringProperty(default='')
+
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	updated_date = ndb.DateTimeProperty(auto_now=True)
+
+	def _post_put_hook(self, future):
+		OtherSetting.clearInstanceCache()
+
+	@classmethod
+	def getMemcacheKey(cls):
+		# TODO:: only_dev
+		return 'v3script=othersetting-getinstance' + '&g=2'
+
+	@classmethod
+	def clearInstanceCache(cls):
+		memcache.delete(cls.getMemcacheKey())
+
+	@classmethod
+	def getDict(cls, auto_create=False):
+		# check memcache
+		memcache_key = cls.getMemcacheKey()
+		cached_dict = memcache.get(memcache_key)
+		if cached_dict is not None:
+			return cached_dict
+		# get data
+		row = cls.getInstance(auto_create)
+		if row is None:
+			return None
+		row_dict = row.to_dict()
+		row_dict['id'] = row.key.id()
+		# set to memcache
+		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
+		return row_dict
+
+	@classmethod
+	def getInstance(cls, auto_create=False):
+		# get data
+		q = cls.query()
+		key = q.get(keys_only=True)
+		row = None
+		if key is not None:
+			row = key.get()
+		if row is None:
+			if auto_create:
+				# normal case autocreate
+				row = cls()
+				row.use_sateraito_address_popup = False
+				row.limit_access_to_doc_management = False
+				row.enable_other_app_id_reference = False
+				row.reference_app_id = ''
+				row.csv_file_encoding = sateraito_inc.CSV_ENCODING_DEFAULT
+				row.put()
+				# other setting is CREATED --> first access to this namespace
+				# create DomainAndAppId
+				namespace_name = namespace_manager.get_namespace()
+				sateraito_func.getDomainAndAppIdFromNamespaceName(namespace_name)
+			# DomainAndAppId.addIfNotRegistered(google_apps_domain, app_id)
+		if row is not None:
+			need_update = False
+			if row.use_sateraito_address_popup is None:
+				row.use_sateraito_address_popup = False
+				need_update = True
+			if row.limit_access_to_doc_management is None:
+				row.limit_access_to_doc_management = False
+				need_update = True
+			if row.enable_other_app_id_reference is None:
+				row.enable_other_app_id_reference = False
+				need_update = True
+			if row.reference_app_id is None:
+				row.reference_app_id = ''
+				need_update = True
+			if row.csv_file_encoding is None:
+				row.csv_file_encoding = sateraito_inc.CSV_ENCODING_DEFAULT
+				need_update = True
+			
+			if need_update:
+				row.put()
+
+		return row
+
 
 class UserInfo(ndb.Model):
 	"""	Datastore class to store user information
@@ -1045,255 +1136,6 @@ class UserInfo(ndb.Model):
 		return cls.getInstance(viewer_email)
 
 
-class LTCacheWorkflowUserList(ndb.Model):
-	data_order = ndb.IntegerProperty()
-	jsondata = ndb.TextProperty()
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-
-	def _post_put_hook(self, future):
-		LTCacheWorkflowUserList.clearInstanceCache()
-
-	@classmethod
-	def clearInstanceCache(cls):
-		memcache.delete(cls.getMemcacheKey())
-
-	@classmethod
-	def getMemcacheKey(cls):
-		return 'script=ltcacheworkflowuserlist.getjsondata?' + '&g=2'
-
-	@classmethod
-	def getJsondata(cls):
-		# check memcache
-		memcache_key = cls.getMemcacheKey()
-		cached_dict = memcache.get(memcache_key)
-		if cached_dict is not None:
-			logging.info('LTCacheWorkflowUserList.getJsondata: found and respond cache')
-			return cached_dict
-		# get data
-		jsondata = ''
-		q = cls.query()
-		q = q.order(cls.data_order)
-		for key in q.iter(keys_only=True):
-			row = key.get(memcache_timeout=NDB_MEMCACHE_TIMEOUT)
-			jsondata += row.jsondata
-		# set to memcache
-		if len(jsondata) < memcache.MAX_VALUE_SIZE:
-			memcache.set(memcache_key, jsondata, time=DICT_MEMCACHE_TIMEOUT)
-
-		return jsondata
-
-class LTCacheUserListUpdating(ndb.Model):
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-	google_apps_domain = ndb.StringProperty()
-	is_updating = ndb.BooleanProperty()
-
-	@classmethod
-	def isUpdating(cls, google_apps_domain):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-
-		ret_val = False
-		row = cls.get_by_id(LTCACHE_USER_LIST_UPDATING_KEY, use_cache=False, use_memcache=False)
-		if row is None:
-			ret_val = False
-		else:
-			expire_date = row.created_date + datetime.timedelta(minutes=60)
-			if sateraito_func.isBiggerDate(datetime.datetime.now(), expire_date):
-				ret_val = False
-			else:
-				ret_val = row.is_updating
-
-		namespace_manager.set_namespace(old_namespace)
-		return ret_val
-
-	@classmethod
-	def setUpdating(cls, google_apps_domain, is_updating):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-
-		row = cls.get_by_id(LTCACHE_USER_LIST_UPDATING_KEY, use_cache=False, use_memcache=False)
-		if row is None:
-			new_row = cls(id=LTCACHE_USER_LIST_UPDATING_KEY)
-			new_row.is_updating = is_updating
-			new_row.google_apps_domain = google_apps_domain
-			new_row.put()
-		else:
-			row.is_updating = is_updating
-			row.put()
-		namespace_manager.set_namespace(old_namespace)
-
-class LTCacheUserList(ndb.Model):
-	""" Datastore class to store info about google apps domain
-		"""
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-	google_apps_domain = ndb.StringProperty()
-	data_order = ndb.IntegerProperty()
-	number_of_entity = ndb.IntegerProperty()
-	random_key = ndb.StringProperty()
-	jsondata = ndb.TextProperty()
-
-	@classmethod
-	def saveJsondata(cls, google_apps_domain, jsondata):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-		# 1. delete all lt cache
-		q = cls.query()
-		for key in q.iter(keys_only=True):
-			key.delete()
-			# 2. devide json data
-		jsondata_length = len(jsondata)
-		jsondatas = []
-		NUM_STRING_PER_ENTITY = 1000 * 800    # 900 KB
-		number_of_entity = (jsondata_length // NUM_STRING_PER_ENTITY) + 1
-		logging.info('number_of_entity=' + str(number_of_entity))
-		for i in range(0, number_of_entity):
-			start_index = i * NUM_STRING_PER_ENTITY
-			end_index = start_index + NUM_STRING_PER_ENTITY
-			jsondatas.append(jsondata[start_index:end_index])
-		random_key = sateraito_func.dateString() + sateraito_func.randomString()
-		# 4. store json data to datastore
-		for i in range(0, number_of_entity):
-			new_data = cls(id='data_order=' + str(i))
-			new_data.google_apps_domain = google_apps_domain
-			new_data.jsondata = jsondatas[i]
-			new_data.data_order = i
-			new_data.number_of_entity = number_of_entity
-			new_data.random_key = random_key
-			new_data.put()
-		namespace_manager.set_namespace(old_namespace)
-
-	@classmethod
-	def getJsondata(cls, google_apps_domain):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-		# get data
-		jsondata = ''
-		created_date = None
-		q = cls.query()
-		q = q.order(cls.data_order)
-		for i, key in enumerate(q.iter(keys_only=True)):
-			logging.info('i=' + str(i))
-			row = key.get()
-			jsondata += row.jsondata
-			created_date = row.created_date
-
-		namespace_manager.set_namespace(old_namespace)
-		return jsondata, created_date
-
-class LTCacheGroupListUpdating(ndb.Model):
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-	google_apps_domain = ndb.StringProperty()
-	is_updating = ndb.BooleanProperty()
-
-	@classmethod
-	def isUpdating(cls, google_apps_domain):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-
-		ret_val = False
-		row = cls.get_by_id(LTCACHE_GROUP_LIST_UPDATING_KEY, use_cache=False, use_memcache=False)
-		if row is None:
-			ret_val = False
-		else:
-			expire_date = row.created_date + datetime.timedelta(minutes=60)
-			if sateraito_func.isBiggerDate(datetime.datetime.now(), expire_date):
-				ret_val = False
-			else:
-				ret_val = row.is_updating
-
-		namespace_manager.set_namespace(old_namespace)
-		return ret_val
-
-	@classmethod
-	def setUpdating(cls, google_apps_domain, is_updating):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-
-		row = cls.get_by_id(LTCACHE_GROUP_LIST_UPDATING_KEY, use_cache=False, use_memcache=False)
-		if row is None:
-			new_row = cls(id=LTCACHE_GROUP_LIST_UPDATING_KEY)
-			new_row.is_updating = is_updating
-			new_row.google_apps_domain = google_apps_domain
-			new_row.put()
-		else:
-			row.is_updating = is_updating
-			row.put()
-		namespace_manager.set_namespace(old_namespace)
-
-class LTCacheGroupList(ndb.Model):
-	""" Datastore class to store info about google apps domain
-		"""
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-	google_apps_domain = ndb.StringProperty()
-	data_order = ndb.IntegerProperty()
-	number_of_entity = ndb.IntegerProperty()
-	random_key = ndb.StringProperty()
-	jsondata = ndb.TextProperty()
-
-	@classmethod
-	def saveJsondata(cls, google_apps_domain, jsondata):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-		# 1. delete all lt cache
-		q = cls.query()
-		for key in q.iter(keys_only=True):
-			key.delete()
-			# 2. devide json data
-		jsondata_length = len(jsondata)
-		jsondatas = []
-		NUM_STRING_PER_ENTITY = 1000 * 800    # 900 KB
-		number_of_entity = (jsondata_length // NUM_STRING_PER_ENTITY) + 1
-		logging.info('number_of_entity=' + str(number_of_entity))
-		for i in range(0, number_of_entity):
-			start_index = i * NUM_STRING_PER_ENTITY
-			end_index = start_index + NUM_STRING_PER_ENTITY
-			jsondatas.append(jsondata[start_index:end_index])
-		random_key = sateraito_func.dateString() + sateraito_func.randomString()
-		# 4. store json data to datastore
-		for i in range(0, number_of_entity):
-			new_data = cls(id='data_order=' + str(i))
-			new_data.google_apps_domain = google_apps_domain
-			new_data.jsondata = jsondatas[i]
-			new_data.data_order = i
-			new_data.number_of_entity = number_of_entity
-			new_data.random_key = random_key
-			new_data.put()
-		namespace_manager.set_namespace(old_namespace)
-
-	@classmethod
-	def getJsondata(cls, google_apps_domain):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace(google_apps_domain)
-		# get data
-		jsondata = ''
-		created_date = None
-		q = cls.query()
-		q = q.order(cls.data_order)
-		for i, key in enumerate(q.iter(keys_only=True)):
-			logging.info('i=' + str(i))
-			row = key.get()
-			jsondata += row.jsondata
-			created_date = row.created_date
-
-		namespace_manager.set_namespace(old_namespace)
-		return jsondata, created_date
-
-
-class MailSendLogEach(ndb.Model):
-	send_id = ndb.StringProperty()
-	sender = ndb.StringProperty()
-	subject = ndb.StringProperty()
-	to = ndb.StringProperty()
-	body = ndb.TextProperty()
-	receiver_name = ndb.StringProperty()
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-
-
 class APIKey(ndb.Model):
 	unique_id = ndb.StringProperty()
 	api_key = ndb.StringProperty()
@@ -1312,10 +1154,10 @@ class APIAccessToken(ndb.Model):
 	num_auth_failed = ndb.IntegerProperty(default=0)
 
 	@classmethod
-	def getInstance(cls, googleapps_domain, access_token):
+	def getInstance(cls, google_apps_domain, access_token):
 
 		old_namespace = namespace_manager.get_namespace()
-		sateraito_func.setNamespace(googleapps_domain, '')
+		sateraito_func.setNamespace(google_apps_domain, '')
 		try:
 			q = cls.query()
 			q = q.filter(cls.access_token == access_token)
@@ -1363,170 +1205,6 @@ class BatchTimeLog(ndb.Model):
 		row.put()
 		namespace_manager.set_namespace(old_namespace)
 
-class BlobPointer(ndb.Model):
-	"""	Datastore class to store user search history
-	"""
-	pointer_namespace = ndb.StringProperty()
-	pointer_table = ndb.StringProperty()
-	blob_creation = ndb.DateTimeProperty()
-	blob_key = ndb.BlobKeyProperty()
-	blob_filename = ndb.StringProperty()
-	checked = ndb.BooleanProperty()
-	checked_message = ndb.TextProperty()
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-
-	@classmethod
-	def registerNew(cls, blob_info, pointer_namespace, pointer_table='FileflowDoc'):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace('')
-		new_row = cls()
-		new_row.blob_creation = blob_info.creation
-		new_row.blob_filename = blob_info.filename
-		new_row.blob_key = blob_info.key()
-		new_row.pointer_namespace = pointer_namespace
-		new_row.pointer_table = pointer_table
-		new_row.checked = False
-		new_row.put()
-		namespace_manager.set_namespace(old_namespace)
-
-	@classmethod
-	def registerNew2(cls, blob_info, pointer_namespace, pointer_table='FileflowDoc'):
-		old_namespace = namespace_manager.get_namespace()
-		namespace_manager.set_namespace('')
-		new_row = cls()
-		new_row.blob_creation = blob_info["creation"]
-		new_row.blob_filename = blob_info["filename"]
-		new_row.blob_key = blob_info["blob_key"]
-		new_row.pointer_namespace = pointer_namespace
-		new_row.pointer_table = pointer_table
-		new_row.checked = False
-		new_row.put()
-		namespace_manager.set_namespace(old_namespace)
-
-class OtherSetting(ndb.Model):
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	updated_date = ndb.DateTimeProperty(auto_now=True)
-	doc_sort_setting = ndb.StringProperty()  # should be 'sort_by_published_date_desc' or 'sort_by_custom_sort_field_desc' or 'sort_by_custom_sort_field_asc'
-	use_sateraito_address_popup = ndb.BooleanProperty()
-	sateraito_address_popup_url_param = ndb.StringProperty()
-	additional_admin_user_groups = ndb.StringProperty(repeated=True)
-	limit_access_to_doc_management = ndb.BooleanProperty()
-	access_allowd_user_groups = ndb.StringProperty(repeated=True)
-	csv_fileencoding = ndb.StringProperty()
-	allow_user_or_groups = ndb.StringProperty()
-	cols_to_show = ndb.TextProperty()
-
-	# get other app_id's UserInfo if below is enabled
-	enable_other_app_id_reference = ndb.BooleanProperty(default=False)
-	reference_app_id = ndb.StringProperty(default='')
-
-	user_can_delete_doc = ndb.BooleanProperty(default=False)
-	users_groups_can_delete_doc = ndb.StringProperty(repeated=True)
-
-	# INTERNAL OPTION: add text data of attached file to Search API Index
-	enable_attach_file_keyword_search_function = ndb.BooleanProperty(default=True)
-
-	# For workflow doc - Send mail option when doc ...
-	enable_send_mail_doc_create = ndb.BooleanProperty(default=False)
-	enable_send_mail_doc_edit = ndb.BooleanProperty(default=False)
-	enable_send_mail_doc_delete = ndb.BooleanProperty(default=False)
-
-	def _post_put_hook(self, future):
-		OtherSetting.clearInstanceCache()
-
-	@classmethod
-	def getMemcacheKey(cls):
-		# TODO:: only_dev
-		return 'v3script=othersetting-getinstance' + '&g=2'
-
-	@classmethod
-	def clearInstanceCache(cls):
-		memcache.delete(cls.getMemcacheKey())
-
-	@classmethod
-	def getDict(cls, auto_create=False):
-		# check memcache
-		memcache_key = cls.getMemcacheKey()
-		cached_dict = memcache.get(memcache_key)
-		if cached_dict is not None:
-			return cached_dict
-		# get data
-		row = cls.getInstance(auto_create)
-		if row is None:
-			return None
-		row_dict = row.to_dict()
-		row_dict['id'] = row.key.id()
-		# set to memcache
-		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
-		return row_dict
-
-	@classmethod
-	def getInstance(cls, auto_create=False):
-		# get data
-		q = cls.query()
-		key = q.get(keys_only=True)
-		row = None
-		if key is not None:
-			row = key.get()
-		if row is None:
-			if auto_create:
-				# normal case autocreate
-				row = cls()
-				row.doc_sort_setting = 'sort_by_published_date_desc'
-				row.use_sateraito_address_popup = False
-				row.limit_access_to_doc_management = False
-				row.enable_other_app_id_reference = False
-				row.reference_app_id = ''
-				row.csv_fileencoding = sateraito_inc.CSV_ENCODING_DEFAULT
-				row.enable_attach_file_keyword_search_function = True
-				row.put()
-				# other setting is CREATED --> first access to this namespace
-				# create DomainAndAppId
-				namespace_name = namespace_manager.get_namespace()
-				sateraito_func.getDomainAndAppIdFromNamespaceName(namespace_name)
-			# DomainAndAppId.addIfNotRegistered(google_apps_domain, app_id)
-		if row is not None:
-			need_update = False
-			if row.use_sateraito_address_popup is None:
-				row.use_sateraito_address_popup = False
-				need_update = True
-			if row.limit_access_to_doc_management is None:
-				row.limit_access_to_doc_management = False
-				need_update = True
-			if row.enable_other_app_id_reference is None:
-				row.enable_other_app_id_reference = False
-				need_update = True
-			if row.reference_app_id is None:
-				row.reference_app_id = ''
-				need_update = True
-			if row.csv_fileencoding is None:
-				row.csv_fileencoding = sateraito_inc.CSV_ENCODING_DEFAULT
-				need_update = True
-			if row.user_can_delete_doc is None:
-				row.user_can_delete_doc = False
-				need_update = True
-			if row.users_groups_can_delete_doc is None:
-				row.users_groups_can_delete_doc = []
-				need_update = True
-			if row.enable_attach_file_keyword_search_function is None:
-				row.enable_attach_file_keyword_search_function = True
-				need_update = True
-			if row.enable_send_mail_doc_create is None:
-				row.enable_send_mail_doc_create = False
-				need_update = True
-			if row.enable_send_mail_doc_edit is None:
-				row.enable_send_mail_doc_edit = False
-				need_update = True
-			if row.enable_send_mail_doc_delete is None:
-				row.enable_send_mail_doc_delete = False
-				need_update = True
-
-			if need_update:
-				row.put()
-
-		return row
-
 class OperationLog(ndb.Model):
 	"""	Datastore class to store user search history
 	"""
@@ -1540,3 +1218,141 @@ class OperationLog(ndb.Model):
 	screen = ndb.StringProperty()
 	type_log = ndb.StringProperty()
 	detail = ndb.TextProperty()
+
+
+# Datastore for WebSearchAI
+
+class ClientWebsites(ndb.Model):
+	ai_enabled = ndb.BooleanProperty(default=True)
+	status = ndb.StringProperty(choices=STATUS_CLIENT_WEBSITES_LIST, default=STATUS_CLIENT_WEBSITES_ACTIVE)
+
+	domain = ndb.StringProperty()
+	favicon_url = ndb.StringProperty()
+	site_name = ndb.StringProperty()
+	description = ndb.TextProperty()
+	
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	created_by = ndb.StringProperty()
+	updated_date = ndb.DateTimeProperty(auto_now=True)
+	updated_by = ndb.StringProperty()
+
+	def _post_put_hook(self, future):
+		self.clearInstanceCache(self.domain)
+
+	@classmethod
+	def _pre_delete_hook(cls, key):
+		ClientWebsites.clearInstanceCache(key.id())
+
+	@classmethod
+	def getMemcacheKey(cls, domain):
+		return 'script=clientwebsites-getinstance&domain=' + str(domain) + '&g=2'
+	
+	@classmethod
+	def clearInstanceCache(cls, domain):
+		memcache.delete(cls.getMemcacheKey(domain))
+
+	@classmethod
+	def getDict(cls, domain):
+		# check memcache
+		memcache_key = cls.getMemcacheKey(domain)
+		cached_dict = memcache.get(memcache_key)
+		if cached_dict is not None:
+			return cached_dict
+		# get data
+		row = cls.getInstance(domain)
+		if row is None:
+			return None
+		row_dict = row.to_dict()
+		row_dict['id'] = row.key.id()
+		# set to memcache
+		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
+		return row_dict
+	
+	@classmethod
+	def getInstance(cls, domain):
+		# get data
+		q = cls.query()
+		q = q.filter(cls.domain == domain)
+		key = q.get(keys_only=True)
+		row = None
+		if key is not None:
+			row = key.get()
+		return row
+	
+	@classmethod
+	def isExists(cls, domain):
+		row = cls.getInstance(domain)
+		return row is not None
+	
+	@classmethod
+	def fetchDictList(cls, ai_enabled=None, status=None):
+		ret_list = []
+		NUM_PER_PAGE = 100
+		MAX_PAGES = 1000
+		q = cls.query()
+		if ai_enabled is not None:
+			q = q.filter(cls.ai_enabled == ai_enabled)
+		if status is not None:
+			q = q.filter(cls.status == status)
+		q = q.order(-cls.updated_date)
+		cursor = None
+		for i in range(MAX_PAGES):
+			logging.info('page ' + str(i))
+			rows, cursor, have_more_rows = q.fetch_page(page_size=NUM_PER_PAGE, start_cursor=cursor)
+			if len(rows) == 0:
+				break
+			for row in rows:
+				row_dict = row.to_dict()
+				row_dict['id'] = row.key.id()
+				ret_list.append(row_dict)
+			if not have_more_rows:
+				break
+		return ret_list
+		
+	# CUD methods
+	@classmethod
+	def createNew(cls, domain, site_name='', description='', favicon_url='', ai_enabled=True, status=STATUS_CLIENT_WEBSITES_ACTIVE):
+		if cls.isExists(domain):
+			return None
+		row = cls()
+		row.domain = domain
+		row.site_name = site_name
+		row.description = description
+		row.favicon_url = favicon_url
+		row.ai_enabled = ai_enabled
+		row.status = status
+		row.put()
+		return row
+	
+	@classmethod
+	def updateRow(cls, domain, site_name=None, description=None, favicon_url=None, ai_enabled=None, status=None):
+		row = cls.getInstance(domain)
+		if row is None:
+			return None
+		need_update = False
+		if site_name is not None and row.site_name != site_name:
+			row.site_name = site_name
+			need_update = True
+		if description is not None and row.description != description:
+			row.description = description
+			need_update = True
+		if favicon_url is not None and row.favicon_url != favicon_url:
+			row.favicon_url = favicon_url
+			need_update = True
+		if ai_enabled is not None and row.ai_enabled != ai_enabled:
+			row.ai_enabled = ai_enabled
+			need_update = True
+		if status is not None and row.status != status:
+			row.status = status
+			need_update = True
+		if need_update:
+			row.put()
+		return row
+	
+	@classmethod
+	def deleteByDomain(cls, domain):
+		row = cls.getInstance(domain)
+		if row is not None:
+			row.key.delete()
+			return True
+		return False

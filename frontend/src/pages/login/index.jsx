@@ -22,9 +22,6 @@ const LoginPage = () => {
   // i18n
   const { t } = useTranslation();
 
-  // Message API for notifications
-  const [messageApi, contextHolder] = message.useMessage();
-
   // State
   const [isLoadingGoogle, setIsLoadingGoogle] = useState(false);
 
@@ -35,15 +32,18 @@ const LoginPage = () => {
     setIsLoadingGoogle(true);
 
     // Call signInWithGoogle function from auth provider
-    loginWithGoogle();
+    const isSuccess = await loginWithGoogle();
+
+    // Load profile after login
+    if (!isSuccess) {
+      setIsLoadingGoogle(false);
+    }
   };
 
   return (
     <div className={`flex flex-col items-center justify-center h-screen bg-cover bg-center`}
       style={{ backgroundImage: `url(${BackgroundLogin})` }}
     >
-      {contextHolder}
-
       {/* Card container login */}
       {!isChecking && !isAuthenticated && (
         <div className="flex flex-col items-center justify-between bg-white shadow-md rounded-lg p-8 w-96">

@@ -169,6 +169,17 @@ class Handler_Basic_Request(MethodView):
 		# 実際の処理
 		return self.doAction(*args, **keywords)
 
+	@convert_result_none_to_empty_str
+	def put(self, *args, **keywords):
+		logging.debug('Handler_Basic_Request:put...')
+		# 実際の処理
+		return self.doAction(*args, **keywords)
+	
+	@convert_result_none_to_empty_str
+	def delete(self, *args, **keywords):
+		logging.debug('Handler_Basic_Request:delete...')
+		# 実際の処理
+		return self.doAction(*args, **keywords)
 
 class _BasePage():
 	viewer_email_raw = None  # 大文字小文字をそのままにしたもの
@@ -249,6 +260,14 @@ class _BasePage():
 	# GAEGEN2対応
 	def _response_set_status(self, status_code):
 		self._response_status_code = status_code
+
+	def json_response(self, obj, status=200):
+		self.setResponseHeader('Content-Type', 'application/json; charset=utf-8')
+		self.setResponseHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
+		self.setResponseHeader('Pragma', 'no-cache')
+		self.setResponseHeader('Expires', '0')
+		self._response_status_code = status
+		return obj
 
 	# GAEGEN2対応
 	def error(self, status_code):
@@ -2018,12 +2037,12 @@ class _TqExportCsv(Handler_Basic_Request, _BasePage):
 		csv_string = sateraito_func.encodeString(csv_string, type_import=False)
 		# csv_string = csv_string.encode('cp932')    #Shift_JIS変換
 
-		csv_fileencoding = 'cp932'
+		csv_file_encoding = 'cp932'
 		row_dict = sateraito_db.OtherSetting.getDict()
-		if 'csv_fileencoding' in row_dict and row_dict['csv_fileencoding'] is not None:
-			csv_fileencoding = row_dict['csv_fileencoding']
+		if 'csv_file_encoding' in row_dict and row_dict['csv_file_encoding'] is not None:
+			csv_file_encoding = row_dict['csv_file_encoding']
 
-		csv_string = csv_string.encode(csv_fileencoding)  # Shift_JIS変換
+		csv_string = csv_string.encode(csv_file_encoding)  # Shift_JIS変換
 
 		# devide csv data
 		# CAUTION: Datastore entity can have only 1MB data per entity
@@ -2070,12 +2089,12 @@ class _TqExportCsv(Handler_Basic_Request, _BasePage):
 		csv_string = sateraito_func.encodeString(csv_string, type_import=False)
 		# csv_string = csv_string.encode('cp932')    #Shift_JIS変換
 
-		csv_fileencoding = 'cp932'
+		csv_file_encoding = 'cp932'
 		row_dict = sateraito_db.OtherSetting.getDict()
-		if 'csv_fileencoding' in row_dict and row_dict['csv_fileencoding'] is not None:
-			csv_fileencoding = row_dict['csv_fileencoding']
+		if 'csv_file_encoding' in row_dict and row_dict['csv_file_encoding'] is not None:
+			csv_file_encoding = row_dict['csv_file_encoding']
 
-		csv_string = csv_string.encode(csv_fileencoding)  # Shift_JIS変換
+		csv_string = csv_string.encode(csv_file_encoding)  # Shift_JIS変換
 
 		# devide csv data
 		# CAUTION: Datastore entity can have only 1MB data per entity

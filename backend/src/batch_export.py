@@ -117,7 +117,7 @@ class TqCreateAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 		admin_email = self.request.get('admin_email')
 
 		other_setting = sateraito_db.OtherSetting.getInstance(auto_create=True)
-		csv_fileencoding = sateraito_func.getFileEncoding(other_setting.csv_fileencoding)
+		csv_file_encoding = sateraito_func.getFileEncoding(other_setting.csv_file_encoding)
 		csv_download_id = createCsvDownloadId()
 
 		logging.info('start creating csv admin_email=' + admin_email)
@@ -169,7 +169,7 @@ class TqCreateAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 				export_line += ','  # language
 				export_line += '\r\n'
 				# export_line = washShiftJISErrorChar(export_line)
-				export_line = sateraito_func.washErrorChar(export_line, csv_fileencoding)
+				export_line = sateraito_func.washErrorChar(export_line, csv_file_encoding)
 			else:
 				export_line = u'IU'
 				export_line += ',' + noneToZeroStr(row.email)
@@ -204,9 +204,9 @@ class TqCreateAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 				export_line += ',' + noneToZeroStr(row.language)
 				export_line += '\r\n'
 				# export_line = washShiftJISErrorChar(export_line)
-				export_line = sateraito_func.washErrorChar(export_line, csv_fileencoding)
+				export_line = sateraito_func.washErrorChar(export_line, csv_file_encoding)
 			# csv_string += export_line.encode('cp932')
-			csv_string += export_line.encode(csv_fileencoding)
+			csv_string += export_line.encode(csv_file_encoding)
 
 		### save csv data to datastore
 
@@ -232,7 +232,7 @@ class TqCreateAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 			new_data.csv_download_id = csv_download_id
 			new_data.expire_date = expire_date
 			new_data.csv_filename = csv_filename
-			new_data.csv_fileencoding = csv_fileencoding
+			new_data.csv_file_encoding = csv_file_encoding
 			new_data.put()
 
 		### send csv download url email to admin
@@ -292,7 +292,7 @@ class DownloadExportData(sateraito_page.Handler_Basic_Request, sateraito_page._O
 			logging.warn('csv download data expired: viewer_email=' + self.viewer_email + ' csv_download_id=' + csv_download_id)
 			return make_response('wrong url to download csv', 200)
 
-		csv_file_encoding = sateraito_func.getFileEncoding(first_row.csv_fileencoding)
+		csv_file_encoding = sateraito_func.getFileEncoding(first_row.csv_file_encoding)
 		csv_filename = first_row.csv_filename
 
 		# data = []
@@ -300,7 +300,7 @@ class DownloadExportData(sateraito_page.Handler_Basic_Request, sateraito_page._O
 		# if len(rows) > 0:
 		# 	# set response headers
 		# 	self.setResponseHeader('Cache-Control', 'public')
-		# 	self.setResponseHeader('Content-Type', 'application/x-csv; charset=' + str(csv_fileencoding))
+		# 	self.setResponseHeader('Content-Type', 'application/x-csv; charset=' + str(csv_file_encoding))
 		# 	self.setResponseHeader('Content-Disposition', 'attachment; filename=' + str(rows[0].csv_filename))
 		# 	for row in rows:
 		# 		data.append(row.csv_data.decode())
@@ -363,7 +363,7 @@ class TqExportAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 		logging.info('request_token=' + str(request_token))
 
 		other_setting = sateraito_db.OtherSetting.getInstance(auto_create=True)
-		csv_fileencoding = sateraito_func.getFileEncoding(other_setting.csv_fileencoding)
+		csv_file_encoding = sateraito_func.getFileEncoding(other_setting.csv_file_encoding)
 		csv_download_id = createCsvDownloadId()
 
 		logging.info('start export csv admin_email=' + admin_email)
@@ -428,7 +428,7 @@ class TqExportAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 				export_line += ','
 				export_line += '\r\n'
 				# export_line = washShiftJISErrorChar(export_line)
-				export_line = sateraito_func.washErrorChar(export_line, sateraito_func.getFileEncoding(csv_fileencoding))
+				export_line = sateraito_func.washErrorChar(export_line, sateraito_func.getFileEncoding(csv_file_encoding))
 			else:
 				export_line = u'IU'
 				export_line += ',' + noneToZeroStr(row.email)
@@ -463,17 +463,17 @@ class TqExportAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 				export_line += ',' + noneToZeroStr(row.language)
 				export_line += '\r\n'
 				# export_line = washShiftJISErrorChar(export_line)
-				export_line = sateraito_func.washErrorChar(export_line, sateraito_func.getFileEncoding(csv_fileencoding))
+				export_line = sateraito_func.washErrorChar(export_line, sateraito_func.getFileEncoding(csv_file_encoding))
 			# csv_string += export_line.encode('cp932')
 			csv_string += export_line
 
 		# save csv data to datastore
 		# csv_string = str(csv_string)
 		# csv_string = sateraito_func.washShiftJISErrorChar(csv_string)
-		csv_string = sateraito_func.encodeString(csv_string, csv_fileencoding=csv_fileencoding, type_import=False)
+		csv_string = sateraito_func.encodeString(csv_string, csv_file_encoding=csv_file_encoding, type_import=False)
 		# csv_string = csv_string.encode('cp932')    #Shift_JIS変換
 
-		csv_string = csv_string.encode(csv_fileencoding)  # Shift_JIS変換
+		csv_string = csv_string.encode(csv_file_encoding)  # Shift_JIS変換
 
 		# devide csv data
 		# CAUTION: Datastore entity can have only 1MB data per entity
@@ -497,7 +497,7 @@ class TqExportAllUsersCsv(sateraito_page.Handler_Basic_Request, sateraito_page._
 			new_data.csv_download_id = csv_download_id
 			new_data.expire_date = expire_date
 			new_data.csv_filename = csv_filename
-			new_data.csv_fileencoding = csv_fileencoding
+			new_data.csv_file_encoding = csv_file_encoding
 			new_data.put()
 
 		download_url = sateraito_func.getMySiteURL(google_apps_domain,

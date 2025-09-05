@@ -2,7 +2,6 @@
 import axios from 'axios';
 
 import { SERVER_URL } from "@/constant";
-console.log(SERVER_URL);
 
 const apiClient = axios.create({
   baseURL: SERVER_URL,
@@ -151,39 +150,39 @@ export const put = (url, data, headers={}) => {
   return apiClient.put(url, data, { headers });
 }
 
-export const deleteRequest = (url, params = {}) => {
+export const deleteReq = (url, params = {}) => {
   return apiClient.delete(url, { params });
 } 
 
-export const getApi = (url, params = {}) => {
-  return apiClient.get(`api${url}`, { params });
-}
+// export const getApi = (url, params = {}) => {
+//   return apiClient.get(`api${url}`, { params });
+// }
 
-export const postApi = (url, data, headers={}) => {
-  if (headers['Content-Type'] === 'multipart/form-data') {
-    return apiFormDataClient.post(`api${url}`, data, { headers });
-  }
+// export const postApi = (url, data, headers={}) => {
+//   if (headers['Content-Type'] === 'multipart/form-data') {
+//     return apiFormDataClient.post(`api${url}`, data, { headers });
+//   }
 
-  return apiClient.post(`api${url}`, data, { headers });
-}
+//   return apiClient.post(`api${url}`, data, { headers });
+// }
 
-export const putApi = (url, data, headers={}) => {
-  if (headers['Content-Type'] === 'multipart/form-data') {
-    return apiFormDataClient.put(`api${url}`, data, { headers });
-  }
-  return apiClient.put(`api${url}`, data, { headers });
-}
+// export const putApi = (url, data, headers={}) => {
+//   if (headers['Content-Type'] === 'multipart/form-data') {
+//     return apiFormDataClient.put(`api${url}`, data, { headers });
+//   }
+//   return apiClient.put(`api${url}`, data, { headers });
+// }
 
-export const patchApi = (url, data, headers={}) => {
-  if (headers['Content-Type'] === 'multipart/form-data') {
-    return apiFormDataClient.patch(`api${url}`, data, { headers });
-  }
-  return apiClient.patch(`api${url}`, data, { headers });
-}
+// export const patchApi = (url, data, headers={}) => {
+//   if (headers['Content-Type'] === 'multipart/form-data') {
+//     return apiFormDataClient.patch(`api${url}`, data, { headers });
+//   }
+//   return apiClient.patch(`api${url}`, data, { headers });
+// }
 
-export const deleteApi = (url, params = {}) => {
-  return apiClient.delete(`api${url}`, { params });
-}
+// export const deleteApi = (url, params = {}) => {
+//   return apiClient.delete(`api${url}`, { params });
+// }
 
 // Export apiClient for direct use in other modules
 export { apiClient, apiFormDataClient };

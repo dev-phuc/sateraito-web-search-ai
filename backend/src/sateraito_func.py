@@ -986,7 +986,7 @@ def isOkToAccessAppId(user_email, google_apps_domain, app_id):
 	if not other_setting.limit_access_to_doc_management:
 		return True
 	# check.2 is user is member of allowed group member
-	set1 = set(other_setting.access_allowd_user_groups)
+	set1 = set(other_setting.access_allowed_user_groups)
 	user_dict = sateraito_db.GoogleAppsUserEntry.getDict(google_apps_domain, user_email)
 	set2 = set(user_dict['google_apps_groups'])
 	set2.add(user_email)
@@ -3787,24 +3787,24 @@ def washErrorChar(unicode_string, fileencoding):
 	else:
 		return washShiftJISErrorChar(unicode_string)
 
-def encodeString(string, csv_fileencoding=None, type_import=True):
+def encodeString(string, csv_file_encoding=None, type_import=True):
 	# logging.info('string:' + str(string))
-	if csv_fileencoding is None:
-		csv_fileencoding = 'cp932'
+	if csv_file_encoding is None:
+		csv_file_encoding = 'cp932'
 		row_dict = sateraito_db.OtherSetting.getDict()
-		if 'csv_fileencoding' in row_dict and row_dict['csv_fileencoding'] is not None:
-			csv_fileencoding = row_dict['csv_fileencoding']
+		if 'csv_file_encoding' in row_dict and row_dict['csv_file_encoding'] is not None:
+			csv_file_encoding = row_dict['csv_file_encoding']
 
 	try:
 		if type_import == True:
-			# encode_string = unicode(string, csv_fileencoding).strip().strip('"')  # g2対応
-			encode_string = str(string, csv_fileencoding).strip().strip('"')
+			# encode_string = unicode(string, csv_file_encoding).strip().strip('"')  # g2対応
+			encode_string = str(string, csv_file_encoding).strip().strip('"')
 		else:
-			if csv_fileencoding == 'cp932':
+			if csv_file_encoding == 'cp932':
 				encode_string = washShiftJISErrorChar(string)
 			else:
-				# encode_string = unicode(string, csv_fileencoding).strip().strip('"')  # g2対応
-				encode_string = str(string, csv_fileencoding).strip().strip('"')
+				# encode_string = unicode(string, csv_file_encoding).strip().strip('"')  # g2対応
+				encode_string = str(string, csv_file_encoding).strip().strip('"')
 	except BaseException as e:
 		logging.warning('e:' + str(e))
 		encode_string = string.strip().strip('"')
@@ -4486,6 +4486,22 @@ def isUserCanDeleteWorkflowDoc(tenant_or_domain, app_id, user_email, doc_id, fol
 	logging.info('deletable_by_folder_setting=' + str(deletable_by_folder_setting))
 
 	return deletable_by_other_setting and deletable_by_folder_setting
+
+def complete_full_url(url):
+	'''
+	Complete full URL by adding "http://" and "www" if scheme is missing.
+	Example:
+	- sateraito.jp -> http://www.sateraito.jp
+	'''
+	if url is None or url == '':
+		return url
+
+	if not (url.startswith('http://') or url.startswith('https://')):
+		url = 'http://' + url
+		if not url.startswith('http://www.') and not url.startswith('https://www.'):
+			url = url.replace('http://', 'http://www.', 1)
+			url = url.replace('https://', 'https://www.', 1)
+	return url
 
 class MyLang:
 

@@ -232,14 +232,14 @@ class ExportOperationLogListCsvAdmin(_GetOperationLogListAdmin):
 		my_lang = sateraito_func.MyLang(lang)
 
 		othersetting_dict = sateraito_db.OtherSetting.getDict(auto_create=True)
-		csv_fileencoding = othersetting_dict['csv_fileencoding']
+		csv_file_encoding = othersetting_dict['csv_file_encoding']
 
-		csv_file_encoding = sateraito_func.getFileEncoding(csv_fileencoding)
-		csv_fileencoding = csv_fileencoding.encode(csv_file_encoding)  # Shift_JIS変換
+		csv_file_encoding = sateraito_func.getFileEncoding(csv_file_encoding)
+		csv_file_encoding = csv_file_encoding.encode(csv_file_encoding)  # Shift_JIS変換
 
 		# set response header
 		self.setResponseHeader('Cache-Control', 'public')
-		self.setResponseHeader('Content-Type', 'application/x-csv; charset=' + str(csv_fileencoding))
+		self.setResponseHeader('Content-Type', 'application/x-csv; charset=' + str(csv_file_encoding))
 		self.setResponseHeader('Content-Disposition', 'attachment; filename=operation_log.csv')
 
 		# get data

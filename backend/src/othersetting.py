@@ -31,12 +31,12 @@ class _GetOtherSetting(sateraito_page.Handler_Basic_Request, sateraito_page._Bas
       'sateraito_address_popup_url_param': row_dict['sateraito_address_popup_url_param'],
       'additional_admin_user_groups': ' '.join(row_dict['additional_admin_user_groups']),
       'limit_access_to_doc_management': row_dict['limit_access_to_doc_management'],
-      'access_allowd_user_groups': ' '.join(row_dict['access_allowd_user_groups']),
+      'access_allowed_user_groups': ' '.join(row_dict['access_allowed_user_groups']),
       'user_can_delete_doc': row_dict['user_can_delete_doc'],
       'users_groups_can_delete_doc': ' '.join(row_dict['users_groups_can_delete_doc']),
       'enable_other_app_id_reference': row_dict['enable_other_app_id_reference'],
       'reference_app_id': row_dict['reference_app_id'],
-      'csv_fileencoding': sateraito_func.none2ZeroStr(row_dict['csv_fileencoding']),
+      'csv_file_encoding': sateraito_func.none2ZeroStr(row_dict['csv_file_encoding']),
       'cols_to_show': row_dict['cols_to_show'],
       'is_ok_to_delete_doc': sateraito_func.isOkToDeleteWorkflowDoc(self.viewer_email, google_apps_domain, app_id, other_setting=row_dict),
       'enable_attach_file_keyword_search_function': sateraito_func.noneToFalse(row_dict.get('enable_attach_file_keyword_search_function', False)),
@@ -103,8 +103,8 @@ class _UpdateOtherSettingAdmin(sateraito_page.Handler_Basic_Request, sateraito_p
     limit_access_to_doc_management = False
     if str(limit_access_to_doc_management_raw).lower() == 'true':
       limit_access_to_doc_management = True
-    access_allowd_user_groups_raw = str(self.request.get('access_allowd_user_groups')).lower()
-    access_allowd_user_groups = access_allowd_user_groups_raw.split(' ')
+    access_allowed_user_groups_raw = str(self.request.get('access_allowed_user_groups')).lower()
+    access_allowed_user_groups = access_allowed_user_groups_raw.split(' ')
 
     user_can_delete_doc_raw = self.request.get('user_can_delete_doc', 'false')
     user_can_delete_doc = sateraito_func.strToBool(user_can_delete_doc_raw)
@@ -118,7 +118,7 @@ class _UpdateOtherSettingAdmin(sateraito_page.Handler_Basic_Request, sateraito_p
     enable_send_mail_doc_edit = sateraito_func.strToBool(self.request.get('enable_send_mail_doc_edit', 'false'))
     enable_send_mail_doc_delete = sateraito_func.strToBool(self.request.get('enable_send_mail_doc_delete', 'false'))
 
-    csv_fileencoding = self.request.get('csv_fileencoding', 'cp932')
+    csv_file_encoding = self.request.get('csv_file_encoding', 'cp932')
     cols_to_show = self.request.get('cols_to_show', '')
 
     # set response header
@@ -130,10 +130,10 @@ class _UpdateOtherSettingAdmin(sateraito_page.Handler_Basic_Request, sateraito_p
     row.sateraito_address_popup_url_param = sateraito_address_popup_url_param
     row.additional_admin_user_groups = additional_admin_user_groups
     row.limit_access_to_doc_management = limit_access_to_doc_management
-    row.access_allowd_user_groups = access_allowd_user_groups
+    row.access_allowed_user_groups = access_allowed_user_groups
     row.user_can_delete_doc = user_can_delete_doc
     row.users_groups_can_delete_doc = users_groups_can_delete_doc
-    row.csv_fileencoding = csv_fileencoding
+    row.csv_file_encoding = csv_file_encoding
     row.cols_to_show = cols_to_show
     row.enable_attach_file_keyword_search_function = enable_attach_file_keyword_search_function
     row.enable_send_mail_doc_create = enable_send_mail_doc_create

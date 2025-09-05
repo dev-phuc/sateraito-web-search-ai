@@ -2,7 +2,6 @@ import { create } from 'zustand';
 
 const useStoreApp = create((set) => ({
   sidebarClosed: false,
-
   toggleSidebar: () => {
     set((state) => {
       const newState = !state.sidebarClosed;
@@ -16,6 +15,10 @@ const useStoreApp = create((set) => ({
     // Save to storage
     localStorage.setItem('sidebarClosed', closed);
   },
+
+  // Message Notify
+  messageNotify: null,
+  setMessageNotify: (config) => set({ messageNotify: config }),
 }));
 
 export default useStoreApp;

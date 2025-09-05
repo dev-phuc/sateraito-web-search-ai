@@ -1,0 +1,2 @@
+export const DEFAULT_SETTING_TEXT_COLOR = "#ffffff";
+export const DEFAULT_SETTING_BACKGROUND_COLOR = "#2196f3";

@@ -33,7 +33,7 @@ app = Flask(__name__)
 
 if flask_docker:
     from google.cloud import ndb
-    client = ndb.Client()
+    client = ndb.Client(namespace="vn2.sateraito.co.jp")
     def ndb_wsgi_middleware(wsgi_app):
         def middleware(environ, start_response):
             with client.context():
@@ -44,6 +44,7 @@ if flask_docker:
     # CORS
     from sateraito_inc import CORS_LIST
     from flask_cors import CORS, cross_origin
+    logging.info('CORS_LIST: %s', CORS_LIST)
     CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
     
     import memcache
@@ -117,6 +118,13 @@ oidccallback_add_url_rules(app)
 
 # from oidccallback4ssite import add_url_rules as oidccallback4ssite_add_url_rules
 # oidccallback4ssite_add_url_rules(app)
+
+# 
+from sateraito_utils import add_url_rules as sateraito_utils_add_url_rules
+sateraito_utils_add_url_rules(app)
+
+from client_websites import add_url_rules as client_websites_add_url_rules
+client_websites_add_url_rules(app)
 
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])

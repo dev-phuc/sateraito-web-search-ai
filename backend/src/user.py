@@ -134,7 +134,7 @@ class _GetMe(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
 		# if you get email correctry, you can get his calendar data even if he has not log on to this script or other user's request
 
 		app_service = sateraito_func.fetch_google_app_service(viewer_email, google_apps_domain)
-		user_entry = app_service.users().get(userKey=viewer_email).execute()
+		user_entry = app_service.users().get(userKey=viewer_email, fields="primaryEmail,isAdmin,name,thumbnailPhotoUrl").execute()
 
 		logging.info('user_entry=' + str(user_entry))
 
@@ -172,7 +172,10 @@ class _GetMe(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
 			family_name = user_info_dict.get('family_name', None)
 			given_name = user_info_dict.get('given_name', None)
 			photo_url = user_info_dict.get('photo_url', None)
-			language = user_info_dict.get('language', None)
+			language = user_info_dict.get('language')
+
+			if not language or language == '':
+				language = sateraito_inc.DEFAULT_LANGUAGE
 
 			if not family_name or not given_name or not photo_url:
 				user_info = self.fetch_google_data(google_apps_domain, self.viewer_email, return_by_object=True)
@@ -199,7 +202,7 @@ class _GetMe(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
 					'family_name': user_info_dict.get('family_name', ''),
 					'given_name': user_info_dict.get('given_name', ''),
 					'photo_url': user_info_dict.get('photo_url', ''),
-					'language': language if (language and language != '') else sateraito_inc.DEFAULT_LANGUAGE
+					'language': language
 				}
       }
 

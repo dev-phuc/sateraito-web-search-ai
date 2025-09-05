@@ -43,7 +43,7 @@ const SiderApp = ({ isLoading, collapsed }) => {
 
   // Classes - clsx
   const classes = {
-    wrapLogo: 'flex items-center justify-center h-16 bg-white shadow-sm',
+    wrapLogo: 'flex items-center justify-center h-[69px] bg-white shadow-sm',
     logo: 'h-10',
     wrapMenu: 'h-full',
   };

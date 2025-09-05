@@ -6,8 +6,8 @@ import { useTranslation } from 'react-i18next';
 import useAuth from "@/hooks/useAuth";
 
 // Ant Design
-import { LoadingOutlined, BellOutlined, ArrowLeftOutlined, LeftOutlined, RightOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
-import { Layout, Button, Dropdown, Badge, message, Avatar } from 'antd';
+import { LoadingOutlined, BellOutlined, LeftOutlined, RightOutlined, UserOutlined, LogoutOutlined } from '@ant-design/icons';
+import { Layout, Button, Dropdown, Badge, Avatar } from 'antd';
 const { Header } = Layout;
 
 // Zustand store
@@ -21,9 +21,6 @@ const HeaderApp = ({ }) => {
   const params = useParams();
 
   const { tenant, app_id } = params;
-
-  // Ant Design message
-  const [messageApi, contextHolder] = message.useMessage();
 
   // Use i18n
   const { t } = useTranslation();
@@ -42,15 +39,7 @@ const HeaderApp = ({ }) => {
     toggleSidebar();
   };
   const handlerOnSelectMenuItem = async () => {
-    try {
-      await signOut(tenant, app_id);
-    } catch (error) {
-      let msgError = t(error);
-      if (msgError == error) {
-        msgError = t('TXT_SIGN_OUT_ERROR');
-      }
-      messageApi.error(msgError);
-    }
+    await signOut(tenant, app_id);
   };
 
   // Constants
@@ -107,7 +96,6 @@ const HeaderApp = ({ }) => {
   return (
     <>
       <Header className='shadow' style={{ backgroundColor: '#fff', paddingLeft: 10, paddingRight: 20 }}>
-        {contextHolder}
         <div className='flex items-center justify-between h-full'>
 
           <div className='flex items-center justify-end gap-3'>

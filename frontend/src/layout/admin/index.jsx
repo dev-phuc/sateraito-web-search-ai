@@ -6,6 +6,7 @@ import { Outlet } from 'react-router';
 import { useTranslation } from "react-i18next";
 
 import { LoadingOutlined } from '@ant-design/icons';
+import { message } from 'antd';
 
 // Hook components
 import useAuth from "@/hooks/useAuth";
@@ -25,8 +26,14 @@ const LayoutApp = () => {
   // I18n
   const { t } = useTranslation();
 
+  // Ant
+  const [messageApi, contextHolder] = message.useMessage();
+
   // Use hooks state
   const { user, isChecking } = useAuth();
+
+  // Zustand store
+  const { messageNotify, setMessageNotify } = useStoreApp();
 
   // Params
 
@@ -35,6 +42,30 @@ const LayoutApp = () => {
   // Effect
   useEffect(() => {
   }, []);
+
+  useEffect(() => {
+    if (messageNotify) {
+      const { type, text } = messageNotify;
+      
+      switch (type) {
+        case 'success':
+          messageApi.success(t(text));
+          break;
+        case 'warning':
+          messageApi.warning(t(text));
+          break;
+        case 'info':
+          messageApi.info(t(text));
+          break;
+        case 'error':
+        default:
+          messageApi.error(t(text));
+          break;
+      }
+
+      setMessageNotify(null);
+    }
+  }, [messageNotify]);
 
   if (isChecking) {
     return (
@@ -46,6 +77,7 @@ const LayoutApp = () => {
 
   return (
     <Layout className='h-screen'>
+      {contextHolder}
 
       {/* Sider */}
       <SiderApp isLoading={isChecking} />

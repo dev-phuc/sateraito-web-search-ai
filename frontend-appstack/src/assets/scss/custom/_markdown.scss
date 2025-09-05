@@ -1,0 +1,72 @@
+.react-markdown-style 
+{
+  
+  table {
+    background-color: var(--reverse-color);
+    @extend .table;
+     width: auto;
+    thead,
+    tbody,
+    tfoot,
+    tr,
+    td,
+    th {
+      border-width: 1px;
+    }
+
+    color: #000;
+    tr:nth-child(2n) {
+      background-color: rgb(248, 248, 248);
+      border-top: 1px solid rgb(204, 204, 204);
+  }
+  
+  }
+	.table > :not(caption) > * > *{
+		padding: 10px!important;
+	}
+  blockquote {
+    border-left: 5px solid #ccc;
+    margin: 1.5em 10px;
+    padding: 0.5em 10px;
+  }
+  pre {
+    font-size: 1em;
+
+    &:has(.wrap-code) {
+      position: relative;
+
+      &:hover {
+        .wrap-code {
+          opacity: 1;
+        }
+      }
+    }
+
+
+  }
+  &:hover {
+    .wrap-code {
+      opacity: 1;
+    }
+  }
+  .linenumber {
+    border-right: 1px solid #bfbfbf;
+    margin-right: 10px;
+    color: #bfbfbf;
+  }
+  .SyntaxHighlighter-dark-mode   .linenumber {
+    color: #4b525f;
+    border-color:#4b525f ;
+  }
+   code {
+    font-size: inherit;
+    color: inherit;
+    word-break: normal;
+}
+strong {
+  font-weight: 600;
+}
+h1,h2,h3,h4,h5,h6{
+  font-weight: 600;
+}
+}
