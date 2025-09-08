@@ -44,7 +44,6 @@ if flask_docker:
     # CORS
     from sateraito_inc import CORS_LIST
     from flask_cors import CORS, cross_origin
-    logging.info('CORS_LIST: %s', CORS_LIST)
     CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
     
     import memcache
@@ -125,6 +124,9 @@ sateraito_utils_add_url_rules(app)
 
 from client_websites import add_url_rules as client_websites_add_url_rules
 client_websites_add_url_rules(app)
+
+from box_search import add_url_rules as box_search_add_url_rules
+box_search_add_url_rules(app)
 
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])

@@ -13,6 +13,7 @@ const SignIn = lazy(() => import("@/desktop/pages/auth/SignIn"));
 // Admin console
 const DashboardAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/Dashboard"));
 const ClientWebsitesAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/ClientWebsites"));
+const BoxSearchConfigAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/BoxSearchConfig"));
 
 let routes = [
   // Auth
@@ -42,6 +43,10 @@ let routes = [
         path: "domains",
         element: <ClientWebsitesAdminConsolePage />,
       },
+      {
+        path: "box-search-config",
+        element: <BoxSearchConfigAdminConsolePage />,
+      }
       // {
       //   path: "userinfo",
       //   element: <UserInfoAdminConsolePage />,

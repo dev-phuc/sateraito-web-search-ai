@@ -92,7 +92,7 @@ class _CreateClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page
 
 	def validate_params(self):
 		# Get params
-		domain = self.request.json.get('domain', '').strip().lower()
+		domain = self.request.json.get('domain', '').strip()
 		favicon_url = self.request.json.get('favicon_url', '').strip()
 		site_name = self.request.json.get('site_name', '').strip()
 		description = self.request.json.get('description', '')
@@ -232,17 +232,8 @@ class _EditClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._
 
 			logging.info('Editing ClientWebsites id: %s, tenant: %s', cw.key.id(), namespace_manager.get_namespace())
 
-			if favicon_url != '':
-				cw.favicon_url = favicon_url
-			if site_name != '':
-				cw.site_name = site_name
-			if description is not None:
-				cw.description = description
-			cw.ai_enabled = ai_enabled
-			cw.status = status
-			cw.updated_by = self.viewer_email
-
-			cw.put()
+			# update ClientWebsites entity
+			ClientWebsites.updateRow(cw.domain, site_name, description, favicon_url, ai_enabled, status, self.viewer_email)
 
 			return self.json_response({
 				'id': str(cw.key.id()),

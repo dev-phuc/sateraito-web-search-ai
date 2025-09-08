@@ -14,7 +14,6 @@ import useTheme from '@/hooks/useTheme'
 import { getPageInfoByUrl } from '@/request/sateraitoUtils';
 
 // Zustand
-import useStoreApp from '@/store/app';
 import useStoreClientWebsites from '@/store/client_websites';
 
 // Constants

@@ -92,7 +92,7 @@ const ClientWebsitesTable = ({
             />
           ) : null}
           <div
-            className="d-flex justify-content-center align-items-center bg-light rounded"
+            className="justify-content-center align-items-center bg-light rounded"
             style={{
               width: '32px',
               height: '32px',

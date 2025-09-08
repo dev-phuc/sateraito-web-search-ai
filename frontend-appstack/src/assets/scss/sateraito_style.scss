@@ -1,413 +1,219 @@
 @import './default.scss';
 
-main#sign_in_page,
-main#sign_up_page {
-  .card-body {
-    display: flex;
+.preview-container {
+  min-height: 450px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: relative;
 
-    .sec-l {
-      img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-
-    .sec-r {
-      width: 70vw;
-
-      .wrap-form {
-
-        .divider {
-          opacity: 1;
-          margin: 0px;
-          padding: 0;
-          overflow: visible;
-          border: none;
-          border-top: 1px solid #e0e0e0;
-          color: #6e6d7a;
-          text-align: center;
-
-          .txt-or {
-            display: inline-block;
-            position: relative;
-            top: -11px;
-            padding: 0 16px;
-            background: var(--bs-card-bg);
-          }
-        }
-
-        .sign-by-other {
-          button {
-            font-size: 1.1rem;
-
-            .text-white {
-              color: #fff !important;
-            }
-
-            &.btn-twitter,
-            &.btn-facebook,
-            &.btn-line {
-              .wrap-logo {
-                height: 42px;
-                width: 46px;
-                background-color: white;
-                margin: 2px 0 2px 3px;
-                border-radius: 2px;
-                font-size: 1.5rem;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: var(--bs-btn-bg);
-              }
-            }
-
-            &.btn-line {
-              background-color: #06c755;
-
-              .wrap-logo {
-                color: #06c755 !important;
-              }
-
-              &:hover {
-                background-color: #05bb51;
-              }
-            }
-          }
-        }
-      }
-    }
+  &.show-background {
+    background-image: url('../img/bg-preview-box-search.png');
   }
 
-  .email-register-sended {
-    height: 100%;
+  // Marker black
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .fa-paper-plane {
-      margin-top: 2rem;
-      margin-bottom: 3rem;
-      font-size: 3rem;
-      color: var(--base-color);
-    }
-  }
-}
-
-main#sign_up_page {
-  .sec-r {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-}
-
-main#my-profile-panel,
-main#user-profile-panel {
-  .header {
-    .card {
-      height: 380px;
-
-      .wrap-bg-header {
-        height: 100%;
-        background-image: url('../img/photos/bg-header.jpg');
-        background-repeat: no-repeat, repeat;
-        background-size: cover;
-        background-position: top;
-        background-origin: content-box;
-      }
-
-      .card-body {
-        .wrap-info {
-          transform: translateY(-20px);
-
-          .wrap-avatar {
-            position: relative;
-
-            img {
-              height: 150px;
-              width: 150px;
-              padding: 0.5rem;
-              border-radius: 50%;
-              background-color: #fff;
-              object-fit: cover;
-            }
-
-            .btn-action {
-              position: absolute;
-              bottom: 0;
-              right: 10px;
-              background-color: #fff;
-              // padding-top: 5px;
-              // padding-bottom: 5px;
-            }
-
-            .spinner-uploading-avatar {
-              position: absolute;
-              left: 0;
-              top: 0;
-              width: 100%;
-              height: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              transform: scale(5);
-
-              .spinner-border {
-                --bs-spinner-border-width: 0.1em !important;
-              }
-            }
-
-            lottie-player {
-              width: 220px;
-              position: absolute;
-              top: -35px;
-              z-index: -1;
-              height: 220px;
-              left: -34px;
-            }
-          }
-        }
-
-        .form-become-creator {
-          .form-switch {
-            .form-check-input {
-              height: 20px;
-              width: 45px;
-              margin-top: 1px;
-              margin-right: 5px;
-            }
-          }
-        }
-      }
-    }
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.313);
+    opacity: 0;
+    z-index: -1;
+    transition: 0.25s all;
   }
 
-  .info-panel {
-    position: relative;
-
-    .btn-action {
-      position: absolute;
-      right: 0;
-      top: 0;
-      // font-size: 1rem;
-      // padding-top: 2px;
-      // padding-bottom: 2px;
-
-      // &.btn-cancel {
-      //   padding: 3px 9px;
-      // }
-    }
+  &.box.mark-show::before {
+    z-index: 1;
+    opacity: 1;
   }
 
-  .my-book {
-    .card-book {
-      .book-cover {
-        height: 150px;
-      }
-
-      .card-body {
-        padding-bottom: 5px;
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-    }
-  }
-}
-
-#create-book-page,
-#edit-book-page {
-  .carousel-list-image {
-    position: relative;
+  .icon-search-box {
+    margin-left: 5px;
+    margin-right: 5px;
 
     img {
-      height: 400px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .wrap-input-search {
+    width: 100%;
+
+    .input-search-box {
+      width: calc(100% - 80px);
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color 0.3s;
+      margin-right: 5px;
+      position: relative;
+
+      font-size: var(--font-size-box-search, 16px);
+      color: var(--color-text-box-search, #000000);
+
+      &:focus {
+        border-color: var(--color-text-box-search, #007bff);
+      }
     }
 
-    .wrap-loading {
+    // After icon search
+    &::after {
+      content: "\F0349";
+      position: relative;
+      font: normal normal normal 24px / 1 "Material Design Icons";
+      font-size: inherit;
+      text-rendering: auto;
+      line-height: inherit;
+      -webkit-font-smoothing: antialiased;
+      right: 35px;
+      top: 3px;
+      font-size: 17px;
+    }
+  }
+
+  .button-search-box {
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    z-index: 999;
+
+    position: absolute;
+    right: calc(20px + var(--padding-box-search, 0px));
+    top: calc(20px + var(--padding-box-search, 0px));
+
+    color: var(--color-text-search-box-search, #007bff);
+    background-color: var(--color-background-text-search-box-search, transparent);
+    border-radius: var(--color-radius-button-search-box-search, 10px);
+
+    &::before {
+      content: '';
+      width: 100%;
+      height: 100%;
       position: absolute;
+      top: 0;
+      left: 0;
+      background-color: #fff;
+      opacity: 0;
+      border-radius: inherit;
+      z-index: -1;
+      transition: 0.25s all;
+    }
+
+    &:hover {
+      &::before {
+        opacity: 0.5;
+        z-index: 2;
+      }
+    }
+  }
+
+  .panel-box-search {
+    position: absolute;
+    margin: 0 auto;
+    opacity: 1;
+    z-index: 10;
+    overflow: hidden;
+    transition: all 0.15s;
+
+    top: 20px;
+    right: 20px;
+
+    height: 420px;
+    width: 100%;
+    max-width: 350px;
+
+    background-color: var(--background-color-box-search, #ffffff);
+    border-radius: var(--border-radius-box-search, 10px);
+    padding: var(--padding-box-search, 15px);
+    box-shadow: var(--box-shadow-box-search, 0 2px 8px rgba(0, 0, 0, 0.15));
+    border: var(--border-border-size-box-search) solid rgba(0, 0, 0, 0.1);
+    font-family: var(--font-family-box-search, Arial, sans-serif);
+    font-size: var(--font-size-box-search, 16px);
+
+    &.hide {
+      opacity: 0;
+      height: 0px;
+      pointer-events: none;
+    }
+
+    &.fullscreen {
+      padding: 10px 100px;
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      top: 0;
+      right: 0;
+    }
+
+    &.fullscreen_blur {
+      padding: 10px 100px;
+      position: absolute;
+      max-width: none;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: #ffffff8e;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+      backdrop-filter: blur(20px);
+      background-color: rgba(255, 255, 255, 25%);
 
-    .wrap-icon-upload {
-      height: 408px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      .result-search-container {
+        padding: 0 10px;
 
-      .icon {
-        font-size: 5rem;
-        transition: 0.25s all;
+        .result-search-summary {
+          background-color: #fff;
+          border-radius: 10px;
+          padding: 20px;
+          margin-bottom: 10px;
+        }
+
+        .result-search-item {
+          background-color: #ffffffe6;
+          border-radius: 10px;
+          margin-bottom: 10px;
+          padding: 10px;
+        }
       }
+    }
+  }
+
+  .result-search-container {
+    overflow: auto;
+    height: calc(100% - 60px);
+    margin-top: 10px;
+
+    .result-search-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      transition: all 0.3s;
 
       &:hover {
-        .icon {
-          transform: scale(1.2);
-          color: var(--base-color);
-        }
-      }
-    }
-  }
-
-  .list-book-cover {
-    min-height: 122px;
-  }
-
-  .wrap-list-image {
-    .image-item {
-      position: relative;
-      width: 70px;
-      height: 100px;
-      margin: 0 5px;
-      cursor: pointer;
-
-      .wrap-loading {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #ffffffd5;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        background-color: #fff;
       }
 
-      .mask-active {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #ddd;
-        opacity: 0.6;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      .result-search-title {
+        font-size: calc(var(--font-size-box-search, 16px) + 2px);
+        font-weight: bold;
+        color: var(--color-text-box-search, #000000);
+        margin-bottom: 5px;
+        margin-left: 5px;
       }
 
-      .btn-remove {
-        position: absolute;
-        top: 3px;
-        right: 3px;
-        z-index: 1;
+      .result-search-url {
+        font-size: 14px;
+        color: var(--color-url-box-search, #007bff);
       }
-
-      img {
-        width: 100%;
-        height: 100%;
-      }
-
-      &.active {
-        cursor: default;
-      }
-    }
-
-    .btn-upload {
-      width: 70px;
-
-      font-size: 1.5rem;
-    }
-  }
-
-  .wrap-list-book-cover-default {
-    &.disabled {
-      position: relative;
-
-      &::after {
-        content: '';
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        background-color: #ddd;
-        opacity: 0.5;
-      }
-    }
-
-    .wrap-image {
-      position: relative;
-      cursor: pointer;
-      transition: 0.25s all;
-
-      img {
-        width: 100%;
-        height: 100px;
-      }
-
-      .icon {
-        display: none;
-      }
-
-      &.disabled {
-        position: relative;
-        z-index: 2;
-        // transform: scale(1) translateY(-10px);
-
-        .icon {
-          display: inline-block;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          font-size: 1.5rem;
-          color: #4BBF73;
-          z-index: 3;
-        }
-
-        img {
-          box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-        }
-
-        &::after {
-          content: '';
-          position: absolute;
-          width: 100%;
-          height: 100%;
-          top: 0;
-          left: 0;
-          background-color: #ddd;
-          opacity: 0.5;
-        }
-      }
-    }
-
-  }
-
-  .wrap-characters {
-    .wrap-avatar {
-      width: 170px;
-      height: 170px;
     }
   }
 }
-
-.detail-info-book-panel {
-  .wrap-book-cover {
-    img {
-      // max-height: 450px;
-      transition: 0.25s all;
-      object-fit: cover;
-    }
-  }
-}
-
-.home.carousel {
-  a[role="button"] {
-    //background: #818181;
-    width: 5%;
-  }
-}
-
-// @import './sateraito_response.scss';

@@ -1,0 +1,177 @@
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+
+// Library UI imports
+import { Card, Form } from 'react-bootstrap';
+
+// Hook components
+import useTheme from '@/hooks/useTheme'
+
+// Zustand
+import useStoreBoxSearchConfig from '@/store/box_search_config';
+
+// Constants
+import { BOX_SEARCH_DESIGN_DEFAULT } from '@/constants';
+
+import logoApp from '@/assets/img/sateraito_icon.png';
+
+const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
+  // Default hooks
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+  const { showNotice } = useTheme();
+
+  const buttonSearchBoxRef = useRef(null);
+
+  // Zustand stores
+  const { boxSearchConfigPreview } = useStoreBoxSearchConfig();
+
+  // Use preview data or default values
+  const config = boxSearchConfigPreview || BOX_SEARCH_DESIGN_DEFAULT;
+
+  const resultSearchDemo = [
+    { title: "Example Result 1", url: "https://example.com/1", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 1 showing how the result will look like in the search results." },
+    { title: "Example Result 2", url: "https://example.com/2", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 2 showing how the result will look like in the search results." },
+    { title: "Example Result 3", url: "https://example.com/3", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 3 showing how the result will look like in the search results." },
+    { title: "Example Result 4", url: "https://example.com/4", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 4 showing how the result will look like in the search results." },
+    { title: "Example Result 5", url: "https://example.com/5", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 5 showing how the result will look like in the search results." },
+    { title: "Example Result 6", url: "https://example.com/6", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 6 showing how the result will look like in the search results." },
+    { title: "Example Result 7", url: "https://example.com/7", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 7 showing how the result will look like in the search results." },
+    { title: "Example Result 8", url: "https://example.com/8", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 8 showing how the result will look like in the search results." },
+    { title: "Example Result 9", url: "https://example.com/9", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 9 showing how the result will look like in the search results." },
+    { title: "Example Result 10", url: "https://example.com/10", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 10 showing how the result will look like in the search results." },
+  ];
+  const summaryResultDemo = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`;
+
+  // Use state
+  const [isShowBackground, setIsShowBackground] = useState(true);
+  const [isShowBox, setIsShowBox] = useState(false);
+
+  // Render search icon based on config
+  const renderSearchIcon = () => {
+    const { search_button } = config;
+
+    if (isShowBox) {
+      return <i className="mdi mdi-close" style={{ fontSize: '20px' }}></i>;
+    }
+
+    // Check if is mdi icon
+    if (search_button.icon && search_button.icon.startsWith('mdi-')) {
+      const iconClass = search_button.icon.replace('mdi-', 'mdi mdi-');
+      return <i className={iconClass} style={{ fontSize: '20px' }}></i>;
+    }
+    // Check if url icon
+    if (search_button.icon && (search_button.icon.startsWith('http://') || search_button.icon.startsWith('https://'))) {
+      return <img src={search_button.icon} alt="Search" style={{ width: '20px', height: '20px' }} />;
+    }
+
+    return search_button.icon;
+  };
+
+  // Handler
+  const onClickButtonSearchBox = () => {
+    setIsShowBox(!isShowBox);
+  };
+
+  // set root color style for preview
+  useEffect(() => {
+    const { search_box, search_button, theme } = config;
+
+    // search_box
+    document.documentElement.style.setProperty('--background-color-box-search', search_box.options.background_color);
+    document.documentElement.style.setProperty('--border-radius-box-search', `${search_box.options.border_radius}px`);
+    document.documentElement.style.setProperty('--border-border-size-box-search', search_box.options.shadow ? `0px` : '1px');
+    document.documentElement.style.setProperty('--padding-box-search', `${search_box.options.padding}px`);
+    document.documentElement.style.setProperty('--box-shadow-box-search', search_box.options.shadow ? '0 2px 8px rgba(0,0,0,0.15)' : 'none');
+    document.documentElement.style.setProperty('--font-size-box-search', `${search_box.options['font-size'] || 16}px`);
+
+    // theme
+    document.documentElement.style.setProperty('--color-text-box-search', theme.color);
+    document.documentElement.style.setProperty('--color-background-box-search', theme.background_color);
+    document.documentElement.style.setProperty('--font-family-box-search', theme.font);
+
+    // search_button
+    document.documentElement.style.setProperty('--color-text-search-box-search', search_button.color);
+    document.documentElement.style.setProperty('--color-background-text-search-box-search', search_button.background_color);
+    document.documentElement.style.setProperty('--color-radius-button-search-box-search', `${search_button.border_radius}px`);
+  }, [config]);
+
+  // Return the component
+  return (
+    <Card className="shadow-sm h-100">
+      <Card.Header className="bg-light">
+        <div className="d-flex justify-content-between align-items-center">
+          {/* Right */}
+          <div>
+            <h5 className="mb-0 text-primary"><i className="fas fa-eye me-2"></i>{t('LABEL_PREVIEW')}</h5>
+            <small className="text-muted">{t('TXT_PREVIEW_DESC')}</small>
+          </div>
+          
+          {/* Left */}
+          <div>
+            <Form.Switch 
+              id="switch-show-box-search" 
+              label={t('LABEL_SHOW_BOX_SEARCH')}
+              checked={isShowBox} 
+              onChange={() => setIsShowBox(!isShowBox)} 
+            />
+            <Form.Switch 
+              id="switch-show-background"
+              label={t('LABEL_SHOW_BACKGROUND')}
+              checked={isShowBackground} 
+              onChange={() => setIsShowBackground(!isShowBackground)}
+            />
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Body className="p-4">
+        <div className={`preview-container ${config.search_box.type} ${isShowBox ? 'mark-show' : ''} ${isShowBackground ? 'show-background' : 'hide-background'}`}>
+
+          {/* Button right */}
+          <div className='d-flex justify-content-end'>
+            <button className='button-search-box' type="button" onClick={onClickButtonSearchBox} ref={buttonSearchBoxRef}>
+              {renderSearchIcon()}
+            </button>
+          </div>
+
+          <div className={`panel-box-search ${config.search_box.type} ${isShowBox ? 'show' : 'hide'}`}>
+            <div className="wrap-input-search">
+              <span className="icon-search-box">
+                <img src={logoApp} alt="" />
+              </span>
+              <input type="text" className='input-search-box' placeholder={t('PLACEHOLDER_SEARCH')} />
+            </div>
+
+            {/* Result search */}
+            {isShowBox && (
+              <div className="result-search-container">
+                {/* Summary results */}
+                <div className="result-search-summary">
+                  {summaryResultDemo}
+                </div>
+
+                {/* List results */}
+                {resultSearchDemo.map((item, index) => (
+                  <div key={index} className="result-search-item">
+                    <div className="result-search-item-header">
+                      {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
+                    </div>
+                    <div className="result-search-item-description">
+                      {item.description}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+
+        </div>
+      </Card.Body>
+    </Card>
+  );
+};
+
+export default BoxSearchConfigPreviewPanel;

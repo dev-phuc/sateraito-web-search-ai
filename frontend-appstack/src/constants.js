@@ -170,3 +170,26 @@ export const STATUS_CLIENT_WEBSITES_ACTIVE = 'active'
 export const STATUS_CLIENT_WEBSITES_DISABLED = 'disabled'
 export const STATUS_CLIENT_WEBSITES_OVER_QUOTA = 'over_quota'
 export const STATUS_CLIENT_WEBSITES_LIST = [STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED, STATUS_CLIENT_WEBSITES_OVER_QUOTA]
+
+export const BOX_SEARCH_DESIGN_DEFAULT = {
+	"search_box": {
+		"type": "box", // box, fullscreen and fullscreen_blur
+		"options": {
+			"background_color": "#ffffff",
+			"shadow": true,
+			"border_radius": 8,
+			"font-size": 14,
+			"padding": 16,
+		}
+	},
+	"search_button": {
+		"icon": "mdi-magnify",
+		"color": "#1976d2",
+		"background_color": "#e3f2fd",
+		"border_radius": 8,
+	},
+	"theme": {
+		"color": "#1976d2",
+		"font": "Arial, sans-serif"
+	}
+}

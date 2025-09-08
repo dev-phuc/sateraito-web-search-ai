@@ -98,7 +98,7 @@ function AuthProvider({ children }) {
 
   const [state, dispatch] = useReducer(JWTReducer, initialState);
   let pageLoginUrl = `/${state.tenant}/${state.app_id}/auth/login`;
-  let pageAdminConsoleUrl = `/${state.tenant}/${state.app_id}/admin_console`;
+  let pageAdminConsoleUrl = `/${state.tenant}/${state.app_id}/admin_console/domains`;
 
   const afterCheckLogin = async (user) => {
     // Check if page active is login page
@@ -120,7 +120,7 @@ function AuthProvider({ children }) {
 
       // Set language
       if (language && LANGUAGE_SUPPORTED.includes(language)) {
-        i18n.changeLanguage(language);
+        // i18n.changeLanguage(language);
       }
 
       if (isLoginPage) {

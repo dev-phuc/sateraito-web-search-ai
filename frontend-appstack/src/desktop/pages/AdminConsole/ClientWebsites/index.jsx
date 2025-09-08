@@ -27,7 +27,7 @@ import ClientWebsitesForm from "@/desktop/components/form/ClientWebsites";
 import ClientWebsitesConfirmDelete from "@/desktop/components/confirm/ClientWebsites";
 
 // Define the component
-const DashboardAdminConsolePage = () => {
+const ClientWebsitesAdminConsolePage = () => {
   // Default hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -188,4 +188,4 @@ const DashboardAdminConsolePage = () => {
   );
 };
 
-export default DashboardAdminConsolePage;
+export default ClientWebsitesAdminConsolePage;

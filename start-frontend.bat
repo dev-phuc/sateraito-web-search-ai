@@ -1,6 +1,6 @@
 @echo off
-cd frontend
+cd frontend-appstack
 
 call code .
 
-call npm run dev
+call npm start

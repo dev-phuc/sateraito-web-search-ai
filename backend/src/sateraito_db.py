@@ -28,6 +28,7 @@ import sateraito_func
 import sateraito_logger as logging
 
 from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, STATUS_CLIENT_WEBSITES_LIST, STATUS_CLIENT_WEBSITES_ACTIVE
+from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT
 
 DOWNLOAD_CSV_NAMESPACE = 'sateraito_download_csv'
 LTCACHE_USER_LIST_UPDATING_KEY = 'ltcacheuserlistupdating'
@@ -1325,7 +1326,7 @@ class ClientWebsites(ndb.Model):
 		return row
 	
 	@classmethod
-	def updateRow(cls, domain, site_name=None, description=None, favicon_url=None, ai_enabled=None, status=None):
+	def updateRow(cls, domain, site_name=None, description=None, favicon_url=None, ai_enabled=None, status=None, updated_by=None):
 		row = cls.getInstance(domain)
 		if row is None:
 			return None
@@ -1345,6 +1346,10 @@ class ClientWebsites(ndb.Model):
 		if status is not None and row.status != status:
 			row.status = status
 			need_update = True
+		if updated_by is not None and row.updated_by != updated_by:
+			row.updated_by = updated_by
+			need_update = True
+		
 		if need_update:
 			row.put()
 		return row
@@ -1356,3 +1361,65 @@ class ClientWebsites(ndb.Model):
 			row.key.delete()
 			return True
 		return False
+
+class BoxSearchConfig(ndb.Model):
+	design = ndb.TextProperty()  # JSON text
+	
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	updated_date = ndb.DateTimeProperty(auto_now=True)
+
+	
+	def _post_put_hook(self, future):
+		self.clearInstanceCache()
+
+	@classmethod
+	def getMemcacheKey(cls):
+		return 'script=boxsearchconfig-getinstance&g=2'
+
+	@classmethod
+	def clearInstanceCache(cls):
+		memcache.delete(cls.getMemcacheKey())
+
+	@classmethod
+	def getDict(cls, auto_create=False):
+		memcache_key = cls.getMemcacheKey()
+		cached_dict = memcache.get(memcache_key)
+		if cached_dict is not None:
+			return cached_dict
+		row = cls.getInstance(auto_create=auto_create)
+		if row is None:
+			return None
+		row_dict = row.to_dict()
+		row_dict['id'] = row.key.id()
+		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
+		return row_dict
+
+	@classmethod
+	def getInstance(cls, auto_create=False):
+		q = cls.query()
+		key = q.get(keys_only=True)
+		row = None
+		if key is not None:
+			row = key.get()
+		if row is None and auto_create:
+			row = cls()
+			# Encode json text
+			row.design = json.dumps(BOX_SEARCH_DESIGN_DEFAULT)
+			row.put()
+		return row
+
+	@classmethod
+	def updateDesign(cls, design):
+		row = cls.getInstance(auto_create=True)
+		if row is None:
+			return None
+
+		# Update design
+		row.design = design
+		row.put()
+
+		# Get and return updated row
+		row = cls.getInstance(auto_create=False)
+		logging.info('Updated BoxSearchConfig: %s', row)
+
+		return row

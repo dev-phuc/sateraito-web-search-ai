@@ -51,7 +51,7 @@ const AdminConsoleLayout = ({ children }) => {
           icon: 'mdi mdi-earth me-2',
         },
         {
-          href: `/${tenant}/${app_id}/admin_console/design-search-box`,
+          href: `/${tenant}/${app_id}/admin_console/box-search-config`,
           title: 'TXT_DESIGN_SEARCH_BOX',
           icon: 'mdi mdi-magnify me-2',
         },
