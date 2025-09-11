@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // Request box search config
-import { getBoxSearchConfig, editBoxSearchConfig } from '@/request/boxSearchConfig';
+import { getBoxSearchConfig, getBoxSearchConfigForClient, editBoxSearchConfig } from '@/request/boxSearchConfig';
 
 const useStoreBoxSearchConfig = create((set) => ({
   // Flag
@@ -13,12 +13,6 @@ const useStoreBoxSearchConfig = create((set) => ({
   setBoxSearchConfig: (boxSearchConfig) => {
     set({ boxSearchConfig });
   },
-  boxSearchConfigPreview: null,
-  setBoxSearchConfigPreview: (boxSearchConfigPreview) => {
-    set({ boxSearchConfigPreview });
-  },
-
-  // Actions
   getBoxSearchConfig: async (tenant, app_id) => {
     set({ isLoading: true });
 
@@ -34,6 +28,30 @@ const useStoreBoxSearchConfig = create((set) => ({
     }
   },
 
+  boxSearchConfigPreview: null,
+  setBoxSearchConfigPreview: (boxSearchConfigPreview) => {
+    set({ boxSearchConfigPreview });
+  },
+
+  boxSearchConfigForClient: null,
+  setBoxSearchConfigForClient: (boxSearchConfigForClient) => {
+    set({ boxSearchConfigForClient });
+  },
+  getBoxSearchConfigForClient: async (tenant, app_id, clientWebsite) => {
+    set({ isLoading: true });
+    try {
+      const boxSearchConfigForClient = await getBoxSearchConfigForClient(tenant, app_id, clientWebsite);
+      set({ boxSearchConfigForClient });
+    }
+    catch (error) {
+      console.error('Error fetching box search config for client:', error);
+    }
+    finally {
+      set({ isLoading: false });
+    }
+  },
+
+  // Actions
   editBoxSearchConfig: async (tenant, app_id, config) => {
     try {
       const updated = await editBoxSearchConfig(tenant, app_id, { config: config });

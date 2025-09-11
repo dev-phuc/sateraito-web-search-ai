@@ -1,7 +1,20 @@
 @import './default.scss';
 
+.form-check {
+
+  &.form-switch,
+  &.form-check-inline {
+    display: flex;
+    align-items: center;
+
+    input {
+      margin-right: 5px;
+    }
+  }
+}
+
 .preview-container {
-  min-height: 450px;
+  min-height: 500px;
   background-repeat: no-repeat;
   background-size: contain;
   position: relative;
@@ -29,97 +42,7 @@
     opacity: 1;
   }
 
-  .icon-search-box {
-    margin-left: 5px;
-    margin-right: 5px;
-
-    img {
-      width: 24px;
-      height: 24px;
-    }
-  }
-
-  .wrap-input-search {
-    width: 100%;
-
-    .input-search-box {
-      width: calc(100% - 80px);
-      height: 40px;
-      padding: 0 12px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      outline: none;
-      transition: border-color 0.3s;
-      margin-right: 5px;
-      position: relative;
-
-      font-size: var(--font-size-box-search, 16px);
-      color: var(--color-text-box-search, #000000);
-
-      &:focus {
-        border-color: var(--color-text-box-search, #007bff);
-      }
-    }
-
-    // After icon search
-    &::after {
-      content: "\F0349";
-      position: relative;
-      font: normal normal normal 24px / 1 "Material Design Icons";
-      font-size: inherit;
-      text-rendering: auto;
-      line-height: inherit;
-      -webkit-font-smoothing: antialiased;
-      right: 35px;
-      top: 3px;
-      font-size: 17px;
-    }
-  }
-
-  .button-search-box {
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    z-index: 999;
-
-    position: absolute;
-    right: calc(20px + var(--padding-box-search, 0px));
-    top: calc(20px + var(--padding-box-search, 0px));
-
-    color: var(--color-text-search-box-search, #007bff);
-    background-color: var(--color-background-text-search-box-search, transparent);
-    border-radius: var(--color-radius-button-search-box-search, 10px);
-
-    &::before {
-      content: '';
-      width: 100%;
-      height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
-      background-color: #fff;
-      opacity: 0;
-      border-radius: inherit;
-      z-index: -1;
-      transition: 0.25s all;
-    }
-
-    &:hover {
-      &::before {
-        opacity: 0.5;
-        z-index: 2;
-      }
-    }
-  }
-
-  .panel-box-search {
+  .wrap-panel-box-search {
     position: absolute;
     margin: 0 auto;
     opacity: 1;
@@ -127,63 +50,256 @@
     overflow: hidden;
     transition: all 0.15s;
 
-    top: 20px;
-    right: 20px;
+    top: 45px;
+    right: 45px;
+    height: 0px;
+    width: 350px;
 
-    height: 420px;
-    width: 100%;
-    max-width: 350px;
-
-    background-color: var(--background-color-box-search, #ffffff);
-    border-radius: var(--border-radius-box-search, 10px);
-    padding: var(--padding-box-search, 15px);
-    box-shadow: var(--box-shadow-box-search, 0 2px 8px rgba(0, 0, 0, 0.15));
-    border: var(--border-border-size-box-search) solid rgba(0, 0, 0, 0.1);
-    font-family: var(--font-family-box-search, Arial, sans-serif);
-    font-size: var(--font-size-box-search, 16px);
-
-    &.hide {
-      opacity: 0;
-      height: 0px;
-      pointer-events: none;
-    }
-
+    &.fullscreen_blur,
     &.fullscreen {
-      padding: 10px 100px;
-      width: 100%;
       height: 100%;
-      max-width: none;
+      width: 100%;
       top: 0;
       right: 0;
+      opacity: 0;
+      z-index: -1;
+      pointer-events: none;
+      border-radius: 0px;
     }
 
-    &.fullscreen_blur {
-      padding: 10px 100px;
-      position: absolute;
-      max-width: none;
-      top: 0;
-      left: 0;
+    &.show {
+      height: 420px;
+
+      &.fullscreen_blur,
+      &.fullscreen {
+        height: 100%;
+        width: 100%;
+        opacity: 1;
+        z-index: 10;
+        pointer-events: auto;
+      }
+    }
+  }
+}
+
+.button-search-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 999;
+  border: none;
+  transition: 0.25s all;
+
+  position: absolute;
+  right: calc(20px + var(--search-box-padding, 0px));
+  top: calc(20px + var(--search-box-padding, 0px));
+
+  color: var(--search-button-color-text, #007bff);
+  background-color: var(--search-button-bg-color, transparent);
+  border-radius: var(--search-button-border-radius, 10px);
+
+  &::before {
+    content: '';
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff;
+    opacity: 0;
+    border-radius: inherit;
+    z-index: -1;
+    transition: 0.25s all;
+  }
+
+  &:hover {
+    &::before {
+      opacity: 0.5;
+      z-index: 2;
+    }
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .icon-open,
+  .icon-close {
+    transition: 0.25s all;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .icon-open {
+    opacity: 1;
+  }
+
+  .icon-close {
+    opacity: 0;
+  }
+
+  &.show-icon-close {
+    $rotation-angle: -180deg;
+    transform: rotate($rotation-angle);
+
+    .icon-open {
+      opacity: 0;
+    }
+
+    .icon-close {
+      opacity: 1;
+    }
+  }
+}
+
+.panel-box-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: var(--search-box-bg-color, #ffffff);
+  border-radius: var(--search-box-border-radius, 10px);
+  padding: var(--search-box-padding, 15px);
+  box-shadow: var(--search-box-box-shadow, 0 2px 8px rgba(0, 0, 0, 0.15));
+  border: var(--search-box-border-size) solid rgba(0, 0, 0, 0.1);
+  font-family: var(--theme-font-family-box-search, Arial, sans-serif);
+  font-size: var(--search-box-font-size, 16px);
+
+  &.hide {
+    opacity: 0;
+    height: 0px;
+    pointer-events: none;
+  }
+
+  &.fullscreen,
+  &.fullscreen_blur {
+    padding: 10px 100px;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    top: 0;
+    right: 0;
+    border-radius: 0px;
+
+    .result-search-container {
+      padding: 0 10px;
+    }
+  }
+
+  &.fullscreen {}
+
+  &.fullscreen_blur {
+    backdrop-filter: blur(20px);
+    background-color: rgba(255, 255, 255, 25%);
+  }
+
+  &.has-result {
+    display: block;
+
+    .wrap-header {
       width: 100%;
-      height: 100%;
-      backdrop-filter: blur(20px);
-      background-color: rgba(255, 255, 255, 25%);
+      display: flex;
+      align-items: center;
 
-      .result-search-container {
-        padding: 0 10px;
+      .logo-app {
+        display: block;
+      }
 
-        .result-search-summary {
-          background-color: #fff;
-          border-radius: 10px;
-          padding: 20px;
-          margin-bottom: 10px;
+      .logo-app-full {
+        display: none;
+      }
+
+      .wrap-input-search {
+        .input-search-box {
+          width: calc(100% - 15px);
         }
 
-        .result-search-item {
-          background-color: #ffffffe6;
-          border-radius: 10px;
-          margin-bottom: 10px;
-          padding: 10px;
+        &::after {
+          right: 20px;
         }
+      }
+    }
+  }
+
+  .wrap-header {
+    width: calc(100% - 10rem);
+    min-width: 300px;
+    max-width: 800px;
+
+    .logo-app {
+      display: none;
+      margin-right: 5px;
+
+      img {
+        width: 30px;
+        height: 30px;
+      }
+    }
+
+    .logo-app-full {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 30px;
+      pointer-events: none;
+      user-select: none;
+
+      img {
+        width: 250px;
+      }
+    }
+
+    .wrap-input-search {
+      width: 100%;
+      position: relative;
+
+      .input-search-box {
+        // width: calc(100% - 80px);
+        // width: calc(100% - 50px);
+        height: 40px;
+        width: 100%;
+        padding: 0 12px;
+        border: none;
+        border-radius: 10px;
+        outline: none;
+        margin-right: 5px;
+        transition: border-color 0.3s;
+        box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        transition: 0.15s all;
+
+        font-size: var(--search-box-font-size, 16px);
+        color: var(--theme-color-text-box-search, #000000);
+
+        &:focus {
+          box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+        }
+      }
+
+      // After icon search
+      &::after {
+        content: "\F0349";
+        position: absolute;
+        font: normal normal normal 24px / 1 "Material Design Icons";
+        font-size: inherit;
+        text-rendering: auto;
+        line-height: inherit;
+        -webkit-font-smoothing: antialiased;
+        right: 10px;
+        top: 7px;
+        font-size: 17px;
       }
     }
   }
@@ -192,20 +308,32 @@
     overflow: auto;
     height: calc(100% - 60px);
     margin-top: 10px;
+    padding-right: 5px;
+
+    .result-search-summary {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 5px;
+      margin-bottom: 10px;
+    }
 
     .result-search-item {
       padding: 10px;
       border-bottom: 1px solid #eee;
       transition: all 0.3s;
+      background-color: #ffffffe6;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
 
       &:hover {
         background-color: #fff;
       }
 
       .result-search-title {
-        font-size: calc(var(--font-size-box-search, 16px) + 2px);
+        font-size: calc(var(--search-box-font-size, 16px) + 2px);
         font-weight: bold;
-        color: var(--color-text-box-search, #000000);
+        color: var(--theme-color-text-box-search, #000000);
         margin-bottom: 5px;
         margin-left: 5px;
       }

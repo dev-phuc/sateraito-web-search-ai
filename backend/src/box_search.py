@@ -90,6 +90,22 @@ class OidGetBoxSearchConfig(_GetBoxSearchConfig):
 
 		return self.process(tenant, app_id)
 
+class ClientGetBoxSearchConfig(_GetBoxSearchConfig):
+
+	def doAction(self, tenant, app_id):
+		# set namespace
+		namespace_manager.set_namespace(tenant)
+
+		is_check_ok = self.verifyBearerToken(tenant)
+		if not is_check_ok:
+			return self.json_response({'message': 'forbidden'}, status=403)
+		
+		is_check_ok = self.verifyClientWebsite(tenant)
+		if not is_check_ok:
+			return self.json_response({'message': 'forbidden'}, status=403)
+		
+		return self.process(tenant, app_id)
+
 # Edit method
 class _EditBoxSearchConfig(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
 
@@ -164,6 +180,8 @@ def add_url_rules(app):
 									view_func=GetBoxSearchConfig.as_view('BoxSearchConfig'))
 	app.add_url_rule('/<string:tenant>/<string:app_id>/oid/box_search_config', methods=['GET'],
 									view_func=OidGetBoxSearchConfig.as_view('OidBoxSearchConfig'))
+	app.add_url_rule('/<string:tenant>/<string:app_id>/client/box_search_config', methods=['GET'],
+									view_func=ClientGetBoxSearchConfig.as_view('ClientGetBoxSearchConfig'))
 
 	app.add_url_rule('/<string:tenant>/<string:app_id>/box_search_config', methods=['PUT'],
 									view_func=EditBoxSearchConfig.as_view('EditBoxSearchConfig'))

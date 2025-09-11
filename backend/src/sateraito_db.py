@@ -27,8 +27,9 @@ import sateraito_inc
 import sateraito_func
 import sateraito_logger as logging
 
+from sateraito_inc import LLM_MODEL_NAME_DEFAULT, LLM_SYSTEM_PROMPT_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS
 from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, STATUS_CLIENT_WEBSITES_LIST, STATUS_CLIENT_WEBSITES_ACTIVE
-from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT
+from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_LIST
 
 DOWNLOAD_CSV_NAMESPACE = 'sateraito_download_csv'
 LTCACHE_USER_LIST_UPDATING_KEY = 'ltcacheuserlistupdating'
@@ -1362,13 +1363,29 @@ class ClientWebsites(ndb.Model):
 			return True
 		return False
 
+	@classmethod
+	def getDictByOriginOrHref(cls, cw_origin, cw_href):
+		if cw_origin is None or cw_origin.strip() == '':
+			return None
+		if cw_href is None or cw_href.strip() == '':
+			return None
+
+		entry_dict = cls.getDict(cw_origin)
+		if entry_dict:
+			return entry_dict
+		
+		entry_dict = cls.getDict(cw_href)
+		if entry_dict:
+			return entry_dict
+		
+		return None
+
 class BoxSearchConfig(ndb.Model):
 	design = ndb.TextProperty()  # JSON text
 	
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 	updated_date = ndb.DateTimeProperty(auto_now=True)
 
-	
 	def _post_put_hook(self, future):
 		self.clearInstanceCache()
 
@@ -1421,5 +1438,90 @@ class BoxSearchConfig(ndb.Model):
 		# Get and return updated row
 		row = cls.getInstance(auto_create=False)
 		logging.info('Updated BoxSearchConfig: %s', row)
+
+		return row
+
+class LLMConfiguration(ndb.Model):
+	model_name = ndb.StringProperty()
+	system_prompt = ndb.TextProperty()
+
+	response_length_level = ndb.StringProperty(choices=LLM_RESPONSE_LENGTH_LEVEL_LIST, default=LLM_RESPONSE_LENGTH_LEVEL_DEFAULT)
+	max_characters = ndb.IntegerProperty()
+
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	updated_date = ndb.DateTimeProperty(auto_now=True)
+
+	def _post_put_hook(self, future):
+		self.clearInstanceCache()
+
+	@classmethod
+	def getMemcacheKey(cls):
+		return 'script=llmconfig-getinstance&g=2'
+
+	@classmethod
+	def clearInstanceCache(cls):
+		memcache.delete(cls.getMemcacheKey())
+
+	@classmethod
+	def getDict(cls, auto_create=False):
+		memcache_key = cls.getMemcacheKey()
+		cached_dict = memcache.get(memcache_key)
+		if cached_dict is not None:
+			return cached_dict
+		row = cls.getInstance(auto_create=auto_create)
+		if row is None:
+			return None
+		row_dict = row.to_dict()
+		row_dict['id'] = row.key.id()
+		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
+		return row_dict
+
+	@classmethod
+	def getInstance(cls, auto_create=False):
+		q = cls.query()
+		key = q.get(keys_only=True)
+		row = None
+		if key is not None:
+			row = key.get()
+		if row is None and auto_create:
+			row = cls()
+			row.model_name = LLM_MODEL_NAME_DEFAULT
+			row.system_prompt = LLM_SYSTEM_PROMPT_DEFAULT
+			row.response_length_level = LLM_RESPONSE_LENGTH_LEVEL_DEFAULT
+			row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[LLM_RESPONSE_LENGTH_LEVEL_DEFAULT]
+			row.put()
+		return row
+
+	@classmethod
+	def updateConfig(cls, model_name=None, system_prompt=None, response_length_level=None, max_characters=None):
+		row = cls.getInstance(auto_create=True)
+		if row is None:
+			return None
+
+		need_update = False
+		if model_name is not None and row.model_name != model_name:
+			row.model_name = model_name
+			need_update = True
+		if system_prompt is not None and row.system_prompt != system_prompt:
+			row.system_prompt = system_prompt
+			need_update = True
+		if response_length_level is not None and row.response_length_level != response_length_level:
+			row.response_length_level = response_length_level
+			# Update max_characters according to response_length_level
+			if response_length_level in LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS:
+				row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[response_length_level]
+			else:
+				row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[LLM_RESPONSE_LENGTH_LEVEL_DEFAULT]
+			need_update = True
+		if max_characters is not None and row.max_characters != max_characters:
+			row.max_characters = max_characters
+			need_update = True
+
+		if need_update:
+			row.put()
+
+		# Get and return updated row
+		row = cls.getInstance(auto_create=False)
+		logging.info('Updated LLMConfiguration: %s', row)
 
 		return row

@@ -56,11 +56,6 @@ const AdminConsoleLayout = ({ children }) => {
           icon: 'mdi mdi-magnify me-2',
         },
         {
-          href: `/${tenant}/${app_id}/admin_console/box-search-encoder`,
-          title: 'TXT_ENCODER_HTML_JS',
-          icon: 'mdi mdi-code-tags me-2',
-        },
-        {
           href: `/${tenant}/${app_id}/admin_console/design-banner`,
           title: 'TXT_DESIGN_BANNER_KEYWORDS',
           icon: 'mdi mdi-image-area me-2',

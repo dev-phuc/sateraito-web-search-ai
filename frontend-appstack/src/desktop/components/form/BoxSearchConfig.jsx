@@ -117,7 +117,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
 
               <Form.Group className="mb-3">
                 <Form.Label>{t('LABEL_TYPE')}</Form.Label>
-                <div>
+                <div className="d-flex flex-wrap">
                   <Form.Check
                     type="radio"
                     id="search_box_type_box"

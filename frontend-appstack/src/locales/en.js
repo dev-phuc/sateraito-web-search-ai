@@ -140,7 +140,6 @@ const ENGLISH_TRANSLATIONS = {
     BTN_CANCEL: "Cancel",
     BTN_RESET: "Reset",
     BTN_RESET_TO_DEFAULTS: "Reset to defaults",
-    TXT_LOADING: "Loading...",
     TXT_CHOOSE_SEARCH_UI: "Choose how the search UI should appear to users.",
     TXT_PICK_BACKGROUND_COLOR: "Pick a background color for the search box.",
     TXT_ENABLE_SHADOW: "Enable a subtle shadow to lift the box visually.",
@@ -158,6 +157,26 @@ const ENGLISH_TRANSLATIONS = {
     PLACEHOLDER_SEARCH: "Search anything...",
     LABEL_SHOW_BOX_SEARCH: "Show search box",
     LABEL_SHOW_BACKGROUND: "Show background",
+    LABEL_SHOW_HTML: "Show HTML/JS",
+    TXT_SHOW_HTML_DESC: "View the generated HTML/JS code snippet to embed the search box on your website.",
+
+    // LLM Configuration
+    PAGE_TITLE_LLM_CONFIGURATION: "LLM Configuration",
+    LABEL_LLM_CONFIGURATION: "LLM Configuration",
+    LABEL_MODEL_NAME: "Model Name",
+    TXT_MODEL_NAME_PLACEHOLDER: "The model name is read-only and cannot be changed.",
+    LABEL_RESPONSE_LENGTH_LEVEL: "Response Length Level",
+    LABEL_RESPONSE_SHORT: "Short",
+    LABEL_RESPONSE_MEDIUM: "Medium",
+    LABEL_RESPONSE_LONG: "Long",
+    LABEL_SYSTEM_PROMPT: "System Prompt",
+    TXT_SYSTEM_PROMPT_PLACEHOLDER: "Enter system prompt",
+    TXT_FETCH_LLM_CONFIGURATION_ERROR: "Failed to fetch LLM configuration. Please try again.",
+    TXT_UPDATE_LLM_CONFIGURATION_SUCCESS: "LLM configuration updated successfully!",
+    TXT_ERROR_UPDATE_LLM_CONFIGURATION: "Failed to update LLM configuration. Please try again.",
+    // Validation messages
+    MSG_ERROR_MODEL_NAME_REQUIRED: "Model name is required!",
+    MSG_ERROR_RESPONSE_LENGTH_LEVEL_REQUIRED: "Response length level is required!",
 
     // Other translations can be added here
   }

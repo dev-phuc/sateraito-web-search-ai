@@ -14,6 +14,10 @@ const SignIn = lazy(() => import("@/desktop/pages/auth/SignIn"));
 const DashboardAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/Dashboard"));
 const ClientWebsitesAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/ClientWebsites"));
 const BoxSearchConfigAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/BoxSearchConfig"));
+const LLMConfigurationAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMConfiguration"));
+
+// Box search
+const BoxSearchPage = lazy(() => import("@/desktop/pages/BoxSearch"));
 
 let routes = [
   // Auth
@@ -46,7 +50,11 @@ let routes = [
       {
         path: "box-search-config",
         element: <BoxSearchConfigAdminConsolePage />,
-      }
+      },
+      {
+        path: "ai-configuration",
+        element: <LLMConfigurationAdminConsolePage />,
+      },
       // {
       //   path: "userinfo",
       //   element: <UserInfoAdminConsolePage />,
@@ -72,6 +80,12 @@ let routes = [
       //   element: <SettingAdminConsolePage />,
       // },
     ],
+  },
+
+  // "box_search"
+  {
+    path: "/:tenant/:app_id/box_search",
+    element: <BoxSearchPage />,
   },
 
   // "*"

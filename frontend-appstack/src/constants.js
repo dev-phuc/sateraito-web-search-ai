@@ -9,6 +9,7 @@ import cnFlag from "@/assets/img/flags/cn.png";
 import thFlag from "@/assets/img/flags/th.png";
 
 export const SERVER_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
+export const SECRET_KEY_CRYPTO_JS = import.meta.env.VITE_SECRET_KEY_CRYPTO_JS;
 
 export const SIDEBAR_POSITION = {
   LEFT: "left",
@@ -179,7 +180,7 @@ export const BOX_SEARCH_DESIGN_DEFAULT = {
 			"shadow": true,
 			"border_radius": 8,
 			"font-size": 14,
-			"padding": 16,
+			"padding": 5,
 		}
 	},
 	"search_button": {
@@ -193,3 +194,25 @@ export const BOX_SEARCH_DESIGN_DEFAULT = {
 		"font": "Arial, sans-serif"
 	}
 }
+
+export const LLM_CONFIGURATION_DEFAULT = {
+	"model_name": 'sonar',
+	"system_prompt": null,
+	"response_length_level": 'medium', // short, medium, long
+}
+
+export const BOX_SEARCH_TO_HTML_TEMPLATE = `<link rel="stylesheet" href="SERVER_URL/static/@mdi/font/css/materialdesignicons.min.css">
+<link rel="stylesheet" href="SERVER_URL/static/box-search-ai/style.css">
+
+<div id="sateraito-ai-root"></div>
+
+<script>
+  window.SateraitoAIAsyncInit = function () {
+    SateraitoAI.init({
+      tenant: 'TENANT',
+      appId: 'APP_ID',
+    });
+  };
+</script>
+<script async defer src="SERVER_URL/static/sdk.js"></script>
+`

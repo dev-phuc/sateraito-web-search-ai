@@ -45,6 +45,7 @@ if flask_docker:
     from sateraito_inc import CORS_LIST
     from flask_cors import CORS, cross_origin
     CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
+    CORS(app, resources={r"/static/*": {"origins": '*'}}, supports_credentials=True)
     
     import memcache
     
@@ -128,6 +129,9 @@ client_websites_add_url_rules(app)
 from box_search import add_url_rules as box_search_add_url_rules
 box_search_add_url_rules(app)
 
+from llm_configuration import add_url_rules as llm_configuration_add_url_rules
+llm_configuration_add_url_rules(app)
+
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])
 def warmup():
@@ -144,9 +148,10 @@ def stop():
 
 # tenant/app_id/admin_console/(任意のパス)
 # Example: http://localhost:8080/vn2.sateraito.co.jp/default/admin_console or https://vn2.sateraito.co.jp/default/admin_console/domains
-@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/login', methods=['GET'])
-@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/admin_console', methods=['GET'])
-@app.route('/<regex("[-a-zA-Z0-9_.]+"):tenant>/<regex("[-a-zA-Z0-9_]+"):app_id>/admin_console/<path:page_name>', methods=['GET'])
+@app.route('/<string:tenant>/<string:app_id>/login', methods=['GET'])
+@app.route('/<string:tenant>/<string:app_id>/box_search', methods=['GET'])
+@app.route('/<string:tenant>/<string:app_id>/admin_console', methods=['GET'])
+@app.route('/<string:tenant>/<string:app_id>/admin_console/<path:page_name>', methods=['GET'])
 def page(tenant, app_id, page_name=None):
     # ページのテンプレートをレンダリング
     try:

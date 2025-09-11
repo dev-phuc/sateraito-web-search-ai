@@ -31,7 +31,7 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
   const validationSchema = Yup.object().shape({
     domain: Yup.string()
       .matches(
-        /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-./?%&=]*)?$/,
+        /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(:[0-9]{1,5})?(\/.*)?$/,
         t('MSG_ERROR_DOMAIN_INVALID')
       )
       .required(t('MSG_ERROR_DOMAIN_REQUIRED')),

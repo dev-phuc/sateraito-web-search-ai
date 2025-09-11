@@ -34,6 +34,8 @@ from http import cookies
 from ucf.utils.ucfutil import UcfUtil
 from ucf.utils.ssofunc import *  # GAEGEN2対応：SAML、SSO連携対応
 from Crypto.Cipher import AES
+from base64 import b64decode
+from Crypto.Util.Padding import unpad
 
 # GAEGEN2対応:独自ロガー
 import sateraito_logger as logging
@@ -46,6 +48,7 @@ from google.appengine.api import urlfetch, memcache, namespace_manager, users, t
 import sateraito_db
 import sateraito_inc
 import sateraito_func
+from sateraito_inc import SECRET_KEY_CRYPTO_JS
 
 urlfetch.set_default_fetch_deadline(sateraito_inc.URLFETCH_TIMEOUT_SECOND)
 
@@ -1031,6 +1034,59 @@ class _BasePage():
 		session[key] = value
 		logging.debug('setsession key=%s value=%s' % (key, value))
 
+	def verifyBearerToken(self, tenant):
+		is_check_ok = False
+
+		bearer_token = self.request.headers.get('Authorization', None)
+
+		if bearer_token:
+			try:
+
+				if bearer_token.startswith('Bearer '):
+					bearer_token = bearer_token[7:]
+				else:
+					logging.warning('Invalid bearer token')
+					return False
+
+				cipher = AES.new(SECRET_KEY_CRYPTO_JS, AES.MODE_ECB)
+				decrypted = cipher.decrypt(b64decode(bearer_token))
+
+				plaintext = unpad(decrypted, 16).decode('utf-8')
+
+				# Parse JSON
+				payload = json.loads(plaintext)
+				tenant_check = payload['tenant']
+				timestamp_check = payload['timestamp']
+				
+				now = int(time.time() * 1000) # milliseconds
+
+				if (tenant_check == tenant) and (abs(now - timestamp_check) < 60000): # 1 minute
+					is_check_ok = True
+
+			except Exception as e:
+				logging.warning(e)
+		
+		return  is_check_ok
+
+	def verifyClientWebsite(self, tenant):
+		is_check_ok = False
+
+		# Get params from query string
+		client_website_origin = self.request.args.get('cw_o', None)
+		client_website_href = self.request.args.get('cw_h', None)
+
+		if client_website_origin and client_website_href:
+			try:
+				
+				client_website_dict = sateraito_db.ClientWebsites.getDictByOriginOrHref(client_website_origin, client_website_href)
+
+				if client_website_dict and client_website_dict.get('status') == sateraito_inc.STATUS_CLIENT_WEBSITES_ACTIVE:
+					is_check_ok = True
+
+			except Exception as e:
+				logging.warning(e)
+
+		return is_check_ok
 
 class _BaseAPI(_BasePage):
 	def __init__(self, *args, **kwargs):

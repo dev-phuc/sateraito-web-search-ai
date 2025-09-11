@@ -1,4 +1,7 @@
 import { format } from "date-fns";
+import CryptoJS from "crypto-js";
+
+import { SECRET_KEY_CRYPTO_JS } from "@/constants";
 
 export const dateStringToTimestamp = (strDate) => {
   const dt = Date.parse(strDate);
@@ -10,13 +13,6 @@ export const stringDateToISOString = (strDate) => {
     d = new Date(strDate);
   }
   return d.toISOString();
-};
-export const copyTextToClipboard = async (text) => {
-  if ("clipboard" in navigator) {
-    return await navigator.clipboard.writeText(text);
-  } else {
-    return document.execCommand("copy", true, text);
-  }
 };
 export const formatDate = (strDate, strFormat = "yyyy/MM/dd HH:MM") => {
   if (strDate) {
@@ -112,6 +108,14 @@ export const domForHtml = (html) => {
   return dom;
 };
 
+export const copyTextToClipboard = async (text) => {
+  if ("clipboard" in navigator) {
+    return await navigator.clipboard.writeText(text);
+  } else {
+    return document.execCommand("copy", true, text);
+  }
+};
+
 export const getMobileDetect = () => {
   const userAgent =
     typeof navigator === "undefined" ? "SSR" : navigator.userAgent;
@@ -153,4 +157,26 @@ export const goBackHistory = (navigate) => {
     // go home:
     navigate("/");
   }
+};
+
+/**
+ * Generate token by tenant using AES encryption
+ * 
+ * @param {string} tenant 
+ * @returns {string}
+ */
+export const generateTokenByTenant = (tenant) => {
+  const key = CryptoJS.enc.Utf8.parse(SECRET_KEY_CRYPTO_JS);
+
+  const payload = JSON.stringify({
+    tenant: tenant,
+    timestamp: Date.now()
+  });
+
+  const encrypted = CryptoJS.AES.encrypt(payload, key, {
+    mode: CryptoJS.mode.ECB,
+    padding: CryptoJS.pad.Pkcs7
+  }).toString();
+  
+  return encrypted;
 };

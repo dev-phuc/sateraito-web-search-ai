@@ -131,8 +131,8 @@ apiClient.interceptors.response.use(
   }
 );
 
-export const get = (url, params = {}) => {
-  return apiClient.get(url, { params });
+export const get = (url, params = {}, headers={}) => {
+  return apiClient.get(url, { params, headers });
 }
 
 export const post = (url, data, headers={}) => {
