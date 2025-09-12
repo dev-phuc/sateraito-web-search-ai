@@ -4503,6 +4503,40 @@ def complete_full_url(url):
 			url = url.replace('https://', 'https://www.', 1)
 	return url
 
+def format_date(date, format_str='%Y/%m/%d'):
+	if date is None:
+		return ''
+	try:
+		return date.strftime(format_str)
+	except Exception as e:
+		logging.warning('e:' + str(e))
+		return ''
+
+def is_valid_unique_id(unique_id):
+	# unique_id must
+	#  contain only alphabet, numeric and _ and - and . character
+	logging.info('is_valid_unique_id unique_id=' + str(unique_id))
+	regexp = re.compile('^[0-9A-Za-z_\-\.]+$')
+	if regexp.search(unique_id) is None:
+		# unique_id have prohibited character
+		logging.info('not matched')
+		return False
+	return True
+
+def is_valid_stream_path(stream_path):
+	# stream_path must
+	#  contain only alphabet, numeric and _ and - and . and / character
+	logging.info('is_valid_stream_path stream_path=' + str(stream_path))
+	regexp = re.compile('^[0-9A-Za-z_\-\.\/]+$')
+	if regexp.search(stream_path) is None:
+		# stream_path have prohibited character
+		logging.info('not matched')
+		return False
+	return True
+
+def get_current_timestamp_ms():
+	return int(datetime.datetime.now().timestamp() * 1000)
+
 class MyLang:
 
 	root_node = None

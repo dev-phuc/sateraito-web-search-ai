@@ -30,7 +30,7 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
   const validationSchema = Yup.object().shape({
     model_name: Yup.string().required(t('MSG_ERROR_MODEL_NAME_REQUIRED')),
     system_prompt: Yup.string().nullable(),
-    response_length_level: Yup.string().oneOf(['short', 'medium', 'long']).required(t('MSG_ERROR_RESPONSE_LENGTH_LEVEL_REQUIRED'))
+    response_length_level: Yup.string().oneOf(['low', 'medium', 'high']).required(t('MSG_ERROR_RESPONSE_LENGTH_LEVEL_REQUIRED'))
   });
 
   // Constant value (use provided data if available)
@@ -110,9 +110,9 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                       onChange={handleChange}
                       isInvalid={touched.response_length_level && !!errors.response_length_level}
                     >
-                      <option value="short">{t('LABEL_RESPONSE_SHORT')}</option>
+                      <option value="low">{t('LABEL_RESPONSE_SHORT')}</option>
                       <option value="medium">{t('LABEL_RESPONSE_MEDIUM')}</option>
-                      <option value="long">{t('LABEL_RESPONSE_LONG')}</option>
+                      <option value="high">{t('LABEL_RESPONSE_LONG')}</option>
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">{touched.response_length_level && errors.response_length_level}</Form.Control.Feedback>
                   </Form.Group>

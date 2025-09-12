@@ -12,11 +12,18 @@ import useTheme from "@/hooks/useTheme";
 // Library imports
 
 // Library IU imports
-import { Container } from "react-bootstrap";
+import { Formik } from "formik";
+import { Container, Form } from "react-bootstrap";
+import Markdown from 'react-markdown'
 
 // Zustand
+import useStoreClientWebsites from '@/store/client_websites';
 import useStoreLLMConfiguration from '@/store/llm_configuration';
 import useStoreBoxSearchConfig from '@/store/box_search_config';
+
+// Firebase
+import { getAuth, signInWithCustomToken } from "firebase/auth";
+import firebaseApp, { auth } from '@/firebase';
 
 // Constant value
 
@@ -24,6 +31,10 @@ import useStoreBoxSearchConfig from '@/store/box_search_config';
 import './index.scss';
 import logoAppFull from '@/assets/img/logo_rgb.png';
 import logoApp from '@/assets/img/sateraito_icon.png';
+import SearchResultItem from './SearchResultItem';
+
+// API
+import { searchWebActionLLMClient } from "@/request/LLMActions";
 
 // Define the component
 const BoxSearchPage = () => {
@@ -32,6 +43,9 @@ const BoxSearchPage = () => {
   const { tenant, app_id } = useParams();
 
   // Zustand stores
+  const storeClientWebsites = useStoreClientWebsites();
+  const { firebaseToken, getFirebaseToken } = storeClientWebsites;
+
   const storeLLMConfiguration = useStoreLLMConfiguration();
   const { llmConfigurationForClient, getLLMConfigurationForClient } = storeLLMConfiguration;
   const isLoadingLLMConfiguration = storeLLMConfiguration.isLoading;
@@ -43,6 +57,11 @@ const BoxSearchPage = () => {
   // Use hooks state
 
   // state
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [summaryResult, setSummaryResult] = useState('');
+  const [searchResult, setSearchResult] = useState([]);
+
   const [clientWebSite, setClientWebSite] = useState(null);
 
   const sendBoxSearchConfigToIFrameParent = (config) => {
@@ -69,12 +88,70 @@ const BoxSearchPage = () => {
     if (event.data && event.data.type === 'response_client_web_site') {
       setClientWebSite(event.data.data);
     }
+    if (event.data && event.data.type === 'toggle_panel') {
+      if (!event.data.show) {
+        // Clear data
+        setIsSearching(false);
+        setIsLoading(false);
+        setSummaryResult('');
+        setSearchResult([]);
+      }
+    }
+  };
+
+  const handlerOnSubmitSearch = async (values) => {
+    const { query } = values;
+
+    setIsLoading(true);
+    setIsSearching(true);
+
+    setSummaryResult('');
+    setSearchResult([]);
+
+    await processSearchWebActionLLM(query);
+  };
+
+  const processSearchWebActionLLM = async (query) => {
+    let content = '';
+
+    searchWebActionLLMClient(tenant, app_id, clientWebSite, query, (typeEvent, dataEvent) => {
+      setIsLoading(false);
+
+      const { id, event, data } = dataEvent;
+      if (!data) return;
+
+      if (typeEvent == 'metadata') {
+        const { search_results } = data;
+        setSearchResult(search_results);
+
+        // ReplaceAll "[1]" to link markdown format and target _blank
+        let summary = content;
+        search_results.forEach((item, index) => {
+          const linkMarkdown = `[[${index + 1}]](${item.url})`;
+          summary = summary.replaceAll(`[${index + 1}]`, linkMarkdown);
+        });
+        setSummaryResult(summary);
+
+      } else {
+        content = data;
+        setSummaryResult(data);
+      }
+    });
   };
 
   useEffect(() => {
     if (clientWebSite && tenant && app_id) {
-      getLLMConfigurationForClient(tenant, app_id, clientWebSite);
-      getBoxSearchConfigForClient(tenant, app_id, clientWebSite);
+      if (!llmConfigurationForClient) {
+        getLLMConfigurationForClient(tenant, app_id, clientWebSite);
+      }
+
+      if (!boxSearchConfigForClient) {
+        getBoxSearchConfigForClient(tenant, app_id, clientWebSite);
+      }
+
+      if (!firebaseToken) {
+        getFirebaseToken(tenant, app_id, clientWebSite);
+      }
     }
   }, [clientWebSite]);
 
@@ -118,8 +195,25 @@ const BoxSearchPage = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (firebaseToken) {
+      signInWithCustomToken(auth, firebaseToken).then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+      }).catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.error('Firebase sign-in error:', errorCode, errorMessage);
+      });
+    }
+  }, [firebaseToken]);
+
   if (!clientWebSite || !boxSearchConfigForClient || isLoadingLLMConfiguration || isLoadingBoxSearchConfig) {
-    return <div>Loading...</div>;
+    return <div className="loading-overlay h-100 w-100 d-flex justify-content-center align-items-center">
+      <div className="spinner-border text-primary" role="status">
+        <span className="visually-hidden">Loading...</span>
+      </div>
+    </div>;
   }
 
   const { search_box, search_button, theme } = boxSearchConfigForClient;
@@ -127,22 +221,47 @@ const BoxSearchPage = () => {
   // Return component
   return (
     <>
-      <div className="h-100">
-        <div className={`panel-box-search ${search_box.type}`}>
+      <div className={`panel-box-search h-100 ${search_box.type} ${isSearching ? 'has-result' : ''}`}>
 
-          <div className="wrap-header">
-            <span className="logo-app">
-              <img src={logoApp} alt="" />
-            </span>
-            <span className="logo-app-full">
-              <img src={logoAppFull} alt="" />
-            </span>
-            <div className="wrap-input-search">
-              <input type="text" className='input-search-box' placeholder={t('PLACEHOLDER_SEARCH')} />
-            </div>
+        <div className="wrap-header">
+          <span className="logo-app">
+            <img src={logoApp} alt="" />
+          </span>
+          <span className="logo-app-full">
+            <img src={logoAppFull} alt="" />
+          </span>
+          <div className="wrap-input-search">
+            <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
+              {({ handleSubmit, handleChange, values }) => (
+                <Form onSubmit={handleSubmit}>
+                  <input type="text" name="query" className='input-search-box pe-4' placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                </Form>
+              )}
+            </Formik>
           </div>
-
         </div>
+
+        {/* Result search */}
+        <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+          {isLoading && (
+            <div className="loading-overlay">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+            </div>
+          )}
+          <div className="result-search-summary">
+            <Markdown>
+              {summaryResult}
+            </Markdown>
+          </div>
+          {searchResult.map((item, index) => (
+            <div key={index}>
+              <SearchResultItem data={item} />
+            </div>
+          ))}
+        </div>
+
       </div>
     </>
   );

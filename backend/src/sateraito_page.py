@@ -1061,32 +1061,23 @@ class _BasePage():
 				now = int(time.time() * 1000) # milliseconds
 
 				if (tenant_check == tenant) and (abs(now - timestamp_check) < 60000): # 1 minute
-					is_check_ok = True
+					client_website_origin = payload['client_website_origin']
+					client_website_href = payload['client_website_href']
+
+					client_website_dict = sateraito_db.ClientWebsites.getDictByOriginOrHref(client_website_origin, client_website_href)
+					if client_website_dict and client_website_dict.get('status') == sateraito_inc.STATUS_CLIENT_WEBSITES_ACTIVE:
+						
+						self.client_website_uid = client_website_dict.get('id')
+						self.client_website_domain = client_website_dict.get('domain')
+
+						is_check_ok = True
+					else:
+						logging.warning('Client website not found or inactive')
 
 			except Exception as e:
 				logging.warning(e)
 		
 		return  is_check_ok
-
-	def verifyClientWebsite(self, tenant):
-		is_check_ok = False
-
-		# Get params from query string
-		client_website_origin = self.request.args.get('cw_o', None)
-		client_website_href = self.request.args.get('cw_h', None)
-
-		if client_website_origin and client_website_href:
-			try:
-				
-				client_website_dict = sateraito_db.ClientWebsites.getDictByOriginOrHref(client_website_origin, client_website_href)
-
-				if client_website_dict and client_website_dict.get('status') == sateraito_inc.STATUS_CLIENT_WEBSITES_ACTIVE:
-					is_check_ok = True
-
-			except Exception as e:
-				logging.warning(e)
-
-		return is_check_ok
 
 class _BaseAPI(_BasePage):
 	def __init__(self, *args, **kwargs):

@@ -53,7 +53,7 @@ class _GetLLMConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page.
 						'model_name': entity_dict.get('model_name', LLM_CONFIGURATION_DEFAULT['model_name']),
 						'system_prompt': entity_dict.get('system_prompt', LLM_CONFIGURATION_DEFAULT['system_prompt']),
 						'response_length_level': entity_dict.get('response_length_level', LLM_CONFIGURATION_DEFAULT['response_length_level']),
-						'max_characters': entity_dict.get('max_characters', LLM_CONFIGURATION_DEFAULT['max_characters']),
+						'max_characters': entity_dict.get('max_characters'),
 					}
 				except Exception as e:
 					logging.exception('Error parsing LLMConfiguration design JSON: %s', str(e))
@@ -95,9 +95,6 @@ class ClientGetLLMConfiguration(_GetLLMConfiguration):
 		namespace_manager.set_namespace(tenant)
 
 		if not self.verifyBearerToken(tenant):
-			return self.json_response({'message': 'forbidden'}, status=403)
-		
-		if not self.verifyClientWebsite(tenant):
 			return self.json_response({'message': 'forbidden'}, status=403)
 		
 		return self.process(tenant, app_id)

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
 // Library UI imports
+import { Formik } from 'formik';
 import { Card, Form } from 'react-bootstrap';
 
 // Hook components
@@ -32,20 +33,25 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
   const config = boxSearchConfigPreview || BOX_SEARCH_DESIGN_DEFAULT;
 
   const resultSearchDemo = [
-    // { title: "Example Result 1", url: "https://example.com/1", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 1 showing how the result will look like in the search results." },
-    // { title: "Example Result 2", url: "https://example.com/2", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 2 showing how the result will look like in the search results." },
-    // { title: "Example Result 3", url: "https://example.com/3", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 3 showing how the result will look like in the search results." },
-    // { title: "Example Result 4", url: "https://example.com/4", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 4 showing how the result will look like in the search results." },
-    // { title: "Example Result 5", url: "https://example.com/5", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 5 showing how the result will look like in the search results." },
-    // { title: "Example Result 6", url: "https://example.com/6", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 6 showing how the result will look like in the search results." },
-    // { title: "Example Result 7", url: "https://example.com/7", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 7 showing how the result will look like in the search results." },
-    // { title: "Example Result 8", url: "https://example.com/8", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 8 showing how the result will look like in the search results." },
-    // { title: "Example Result 9", url: "https://example.com/9", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 9 showing how the result will look like in the search results." },
-    // { title: "Example Result 10", url: "https://example.com/10", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 10 showing how the result will look like in the search results." },
+    { title: "Example Result 1", url: "https://example.com/1", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 1 showing how the result will look like in the search results." },
+    { title: "Example Result 2", url: "https://example.com/2", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 2 showing how the result will look like in the search results." },
+    { title: "Example Result 3", url: "https://example.com/3", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 3 showing how the result will look like in the search results." },
+    { title: "Example Result 4", url: "https://example.com/4", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 4 showing how the result will look like in the search results." },
+    { title: "Example Result 5", url: "https://example.com/5", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 5 showing how the result will look like in the search results." },
+    { title: "Example Result 6", url: "https://example.com/6", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 6 showing how the result will look like in the search results." },
+    { title: "Example Result 7", url: "https://example.com/7", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 7 showing how the result will look like in the search results." },
+    { title: "Example Result 8", url: "https://example.com/8", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 8 showing how the result will look like in the search results." },
+    { title: "Example Result 9", url: "https://example.com/9", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 9 showing how the result will look like in the search results." },
+    { title: "Example Result 10", url: "https://example.com/10", favicon: "https://www.google.com/s2/favicons?domain=example.com", description: "This is a description for example result 10 showing how the result will look like in the search results." },
   ];
   const summaryResultDemo = `Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.`;
 
   // Use state
+  const [summaryResult, setSummaryResult] = useState('');
+  const [resultTemp, setResultTemp] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [isShowBackground, setIsShowBackground] = useState(true);
   const [isShowHtml, setIsShowHtml] = useState(false);
   const [isShowBox, setIsShowBox] = useState(false);
@@ -75,6 +81,20 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
   const onClickButtonSearchBox = () => {
     setIsShowBox(!isShowBox);
   };
+
+  const handlerOnSubmitSearch = (values) => {
+    const { query } = values;
+
+    setIsLoading(true);
+    setIsSearching(true);
+
+    setTimeout(() => {
+      setSummaryResult(summaryResultDemo);
+      setResultTemp(resultSearchDemo);
+
+      setIsLoading(false);
+    }, 3000);
+  }
 
   // set root color style for preview
   useEffect(() => {
@@ -161,7 +181,7 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
 
             <div className={`wrap-panel-box-search ${config.search_box.type} ${isShowBox ? 'show' : 'hide'}`}>
 
-              <div className={`panel-box-search ${config.search_box.type} ${resultSearchDemo.length > 0 ? 'has-result' : ''}`}>
+              <div className={`panel-box-search ${config.search_box.type} ${isSearching ? 'has-result' : ''}`}>
                 <div className={`wrap-header`}>
                   <span className="logo-app">
                     <img src={logoApp} alt="" />
@@ -170,17 +190,29 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                     <img src={logoAppFull} alt="" />
                   </span>
                   <div className="wrap-input-search">
-                    <input type="text" className='input-search-box' placeholder={t('PLACEHOLDER_SEARCH')} />
+                    <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
+                      {({ handleSubmit, handleChange, values }) => (
+                        <Form onSubmit={handleSubmit}>
+                          <input type="text" name="query" className='input-search-box' placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                        </Form>
+                      )}
+                    </Formik>
                   </div>
                 </div>
 
                 {/* Result search */}
-                {/* <div className="result-search-container">
+                <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+                  {isLoading && (
+                    <div className="loading-overlay">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="result-search-summary">
-                    {summaryResultDemo}
+                    {summaryResult}
                   </div>
-
-                  {resultSearchDemo.map((item, index) => (
+                  {resultTemp.map((item, index) => (
                     <div key={index} className="result-search-item">
                       <div className="result-search-item-header">
                         {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
@@ -191,9 +223,9 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                       </div>
                     </div>
                   ))}
-                </div> */}
+                </div>
               </div>
-              
+
             </div>
 
           </div>
@@ -209,6 +241,16 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
           </Card>
         }
       </Card.Body>
+
+      <button onClick={() => {
+        setSummaryResult('');
+        setResultTemp([]);
+        setIsSearching(false);
+        setIsLoading(false);
+      }} className="btn btn-sm btn-secondary position-absolute" style={{ bottom: '15px', right: '15px' }}>
+        clear
+      </button>
+
     </Card>
   );
 };

@@ -100,10 +100,6 @@ class ClientGetBoxSearchConfig(_GetBoxSearchConfig):
 		if not is_check_ok:
 			return self.json_response({'message': 'forbidden'}, status=403)
 		
-		is_check_ok = self.verifyClientWebsite(tenant)
-		if not is_check_ok:
-			return self.json_response({'message': 'forbidden'}, status=403)
-		
 		return self.process(tenant, app_id)
 
 # Edit method

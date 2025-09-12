@@ -1488,7 +1488,7 @@ class LLMConfiguration(ndb.Model):
 			row.model_name = LLM_MODEL_NAME_DEFAULT
 			row.system_prompt = LLM_SYSTEM_PROMPT_DEFAULT
 			row.response_length_level = LLM_RESPONSE_LENGTH_LEVEL_DEFAULT
-			row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[LLM_RESPONSE_LENGTH_LEVEL_DEFAULT]
+			row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS.get(LLM_RESPONSE_LENGTH_LEVEL_DEFAULT)
 			row.put()
 		return row
 
@@ -1508,20 +1508,19 @@ class LLMConfiguration(ndb.Model):
 		if response_length_level is not None and row.response_length_level != response_length_level:
 			row.response_length_level = response_length_level
 			# Update max_characters according to response_length_level
-			if response_length_level in LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS:
-				row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[response_length_level]
-			else:
-				row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS[LLM_RESPONSE_LENGTH_LEVEL_DEFAULT]
+			logging.info(LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS.get(response_length_level))
+			row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS.get(response_length_level)
 			need_update = True
-		if max_characters is not None and row.max_characters != max_characters:
-			row.max_characters = max_characters
-			need_update = True
+
+		# if max_characters is not None and row.max_characters != max_characters:
+		# 	row.max_characters = max_characters
+		# 	need_update = True
 
 		if need_update:
 			row.put()
 
 		# Get and return updated row
-		row = cls.getInstance(auto_create=False)
+		row = cls.getInstance()
 		logging.info('Updated LLMConfiguration: %s', row)
 
 		return row

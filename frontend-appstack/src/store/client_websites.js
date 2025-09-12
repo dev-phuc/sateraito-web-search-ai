@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // Request client websites list
-import { fetchClientWebsitesList, createClientWebsites, editClientWebsites, deleteClientWebsites } from '@/request/clientWebsites';
+import { fetchClientWebsitesList, createClientWebsites, editClientWebsites, deleteClientWebsites, getFirebaseTokenForClient } from '@/request/clientWebsites';
 
 const useStoreClientWebsites = create((set) => ({
   // Flag
@@ -12,6 +12,27 @@ const useStoreClientWebsites = create((set) => ({
   clientWebsites: [],
   setClientWebsites: (websites) => {
     set({ clientWebsites: websites });
+  },
+
+  firebaseToken: null,
+  setFirebaseToken: (token) => {
+    set({ firebaseToken: token });
+  },
+  getFirebaseToken: async (tenant, app_id, clientWebsite) => {
+    try {
+      const data = await getFirebaseTokenForClient(tenant, app_id, clientWebsite);
+      const token = data.token;
+
+      set({ firebaseToken: token });
+      return {success: true, data: token};
+    } catch (error) {
+      const data = error.response?.data;
+      let key_message_error = 'TXT_ERROR_FETCH_FIREBASE_TOKEN';
+      if (data && data.message) {
+        key_message_error = data.message;
+      }
+      return {success: false, error: key_message_error};
+    }
   },
 
   // Actions

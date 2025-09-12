@@ -17,14 +17,12 @@ export const getBoxSearchConfigForClient = async (tenant, app_id, clientWebsite)
     let url = `/${tenant}/${app_id}/client/box_search_config`;
 
     const { origin, href } = clientWebsite;
-    const token = generateTokenByTenant(tenant);
+    const token = generateTokenByTenant(tenant, clientWebsite);
 
     const params = {
-      cw_o: origin,
-      cw_h: href
     };
     const headers = {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
     };
 
     const response = await get(url, params, headers);

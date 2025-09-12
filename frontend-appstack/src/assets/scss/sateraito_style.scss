@@ -196,6 +196,7 @@
 
     .result-search-container {
       padding: 0 10px;
+      max-width: 60vw;
     }
   }
 
@@ -207,19 +208,31 @@
   }
 
   &.has-result {
-    display: block;
+    // display: block;
+    justify-content: space-between;
+    flex-direction: column;
 
     .wrap-header {
       width: 100%;
       display: flex;
       align-items: center;
 
+      // Move to top
+      animation: moveUpHeader 0.5s forwards;
+
       .logo-app {
-        display: block;
+        img {
+          transform: scale(1);
+        }
       }
 
       .logo-app-full {
-        display: none;
+        width: 0px;
+        height: 0px;
+
+        img {
+          transform: scale(0);
+        }
       }
 
       .wrap-input-search {
@@ -239,13 +252,22 @@
     min-width: 300px;
     max-width: 800px;
 
+    .logo-app,
+    .logo-app-full {
+      transition: 0.2s all;
+
+      img {
+        transition: 0.2s all;
+      }
+    }
+
     .logo-app {
-      display: none;
       margin-right: 5px;
 
       img {
         width: 30px;
         height: 30px;
+        transform: scale(0);
       }
     }
 
@@ -256,9 +278,11 @@
       margin-bottom: 30px;
       pointer-events: none;
       user-select: none;
+      width: 100%;
 
       img {
         width: 250px;
+        transform: scale(1);
       }
     }
 
@@ -306,9 +330,22 @@
 
   .result-search-container {
     overflow: auto;
-    height: calc(100% - 60px);
-    margin-top: 10px;
+    height: calc(100% - 50px);
+    // margin-top: 10px;
     padding-right: 5px;
+
+    &.is-loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+
+      .result-search-summary,
+      .result-search-item {
+        display: none;
+      }
+    }
 
     .result-search-summary {
       background-color: #fff;
@@ -330,11 +367,17 @@
         background-color: #fff;
       }
 
+      .result-search-favicon {
+        width: 18px;
+        height: 18px;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
+
       .result-search-title {
         font-size: calc(var(--search-box-font-size, 16px) + 2px);
         font-weight: bold;
         color: var(--theme-color-text-box-search, #000000);
-        margin-bottom: 5px;
         margin-left: 5px;
       }
 
@@ -343,5 +386,16 @@
         color: var(--color-url-box-search, #007bff);
       }
     }
+  }
+}
+
+// Animation for wrap-header, it's will move to top when has result smoothly
+@keyframes moveUpHeader {
+  0% {
+    transform: translateY(210px);
+  }
+
+  100% {
+    transform: translateY(0px);
   }
 }

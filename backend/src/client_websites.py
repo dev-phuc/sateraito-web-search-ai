@@ -13,6 +13,7 @@ client_websites.py
 import requests
 import json
 
+from firebase_admin import auth, db
 from google.appengine.api import namespace_manager
 
 import sateraito_inc
@@ -322,6 +323,45 @@ class OidDeleteClientWebsites(_DeleteClientWebsites):
 		return self.process(tenant, app_id, id)
 
 
+# Get token firebase for client websites
+class _ClientGetFirebaseToken(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+
+	def process(self, tenant, app_id):
+		try:
+			
+			# Check client website domain
+			if not hasattr(self, 'client_website_domain') or not self.client_website_domain:
+				return self.json_response({'message': 'unauthorized'}, status=401)
+
+			additional_claims = {
+				'tenant': tenant,
+				'app_id': app_id,
+				'client_website_uid': self.client_website_uid,
+				'client_website_domain': self.client_website_domain,
+			}
+			firebase_custom_token = auth.create_custom_token(self.client_website_domain, additional_claims)
+			
+			return self.json_response({
+				'token': firebase_custom_token.decode('utf-8')
+			})
+
+		except Exception as e:
+			logging.exception('Error in GetFirebaseTokenForClientWebsites.process: %s', str(e))
+			return self.json_response({'message': 'internal_server_error'}, status=500)
+		
+class ClientGetFirebaseToken(_ClientGetFirebaseToken):
+
+	def doAction(self, tenant, app_id):
+		# set namespace
+		namespace_manager.set_namespace(tenant)
+
+		# Verify bearer token
+		if not self.verifyBearerToken(tenant):
+			return
+
+		return self.process(tenant, app_id)
+
+
 def add_url_rules(app):
 	app.add_url_rule('/<string:tenant>/<string:app_id>/client_websites', methods=['GET'],
 									view_func=FetchClientWebsites.as_view('ClientWebsites'))
@@ -342,3 +382,6 @@ def add_url_rules(app):
 									view_func=DeleteClientWebsites.as_view('DeleteClientWebsites'))
 	app.add_url_rule('/<string:tenant>/<string:app_id>/oid/client_websites/<int:id>', methods=['DELETE'],
 									view_func=OidDeleteClientWebsites.as_view('OidDeleteClientWebsites'))
+	
+	app.add_url_rule('/<string:tenant>/<string:app_id>/client/client_websites/firebase_token', methods=['GET'],
+									view_func=ClientGetFirebaseToken.as_view('ClientGetFirebaseToken'))

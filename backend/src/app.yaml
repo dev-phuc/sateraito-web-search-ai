@@ -1,6 +1,8 @@
 runtime: python311
 instance_class: F1
 automatic_scaling:
+  min_instances: 0
+  max_instances: 2
   max_idle_instances: 2
   min_pending_latency: 300ms
   max_concurrent_requests: 1  # 1ワーカープロセスでの動作設定（app.yamlは1プロセス1スレッドに変更 2023-08-29）

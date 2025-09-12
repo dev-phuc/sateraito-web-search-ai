@@ -20,6 +20,7 @@ from sateraito_inc import developer_mode, flask_docker
 import os
 import json
 from flask import jsonify, send_from_directory
+from flask_cors import CORS, cross_origin
 
 from flask import Flask, Response, render_template, request, session	# GAEGEN2対応:WebフレームワークとしてFlaskを使用
 
@@ -41,20 +42,8 @@ if flask_docker:
         return middleware
     app.wsgi_app = ndb_wsgi_middleware(app.wsgi_app)
     
-    # CORS
-    from sateraito_inc import CORS_LIST
-    from flask_cors import CORS, cross_origin
-    CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
-    CORS(app, resources={r"/static/*": {"origins": '*'}}, supports_credentials=True)
-    
     import memcache
     
-    @app.route('/assets/<path:filename>')
-    def custom_assets(filename):
-        return send_from_directory('static/frontend/assets', filename)
-    @app.route('/static/<path:filename>')
-    def custom_static(filename):
-        return send_from_directory('static', filename)
     @app.route('/images/<path:filename>')
     def custom_images(filename):
         return send_from_directory('images', filename)
@@ -72,6 +61,11 @@ if flask_docker:
         return jsonify({'status': 'success', 'message': 'Memcache cleared.'})
 else:
     app.wsgi_app = wrap_wsgi_app(app.wsgi_app)
+
+# CORS
+from sateraito_inc import CORS_LIST
+CORS(app, resources={r"/*": {"origins": CORS_LIST}}, supports_credentials=True)
+CORS(app, resources={r"/static/*": {"origins": '*'}}, supports_credentials=True)
 
 # セッション管理:セッションインタフェースを上書き
 # 参考）https://flask.palletsprojects.com/en/2.2.x/api/#sessions
@@ -94,6 +88,9 @@ class RegexConverter(BaseConverter):
 		super(RegexConverter, self).__init__(url_map)
 		self.regex = items[0]
 app.url_map.converters['regex'] = RegexConverter
+
+# Firebase initialize
+import firebase
 
 # from health import add_url_rules as health_add_url_rules
 # health_add_url_rules(app)
@@ -132,6 +129,9 @@ box_search_add_url_rules(app)
 from llm_configuration import add_url_rules as llm_configuration_add_url_rules
 llm_configuration_add_url_rules(app)
 
+from llm_actions import add_url_rules as llm_actions_add_url_rules
+llm_actions_add_url_rules(app)
+
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])
 def warmup():
@@ -145,6 +145,13 @@ def start():
 @app.route('/_ah/stop', methods=['GET'])
 def stop():
 	return Response(__name__, status=200)
+
+@app.route('/assets/<path:filename>')
+def custom_assets(filename):
+    return send_from_directory('static/frontend/assets', filename)
+@app.route('/static/<path:filename>')
+def custom_static(filename):
+    return send_from_directory('static', filename)
 
 # tenant/app_id/admin_console/(任意のパス)
 # Example: http://localhost:8080/vn2.sateraito.co.jp/default/admin_console or https://vn2.sateraito.co.jp/default/admin_console/domains

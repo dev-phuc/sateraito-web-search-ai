@@ -1,7 +1,11 @@
 // The request module is used to handle API requests in the application.
 import axios from 'axios';
-
+import { getNewIdQuestion, convertPathRealTimeFirebaseDatabase } from '@/utils';
 import { SERVER_URL } from "@/constants";
+
+// Firebase real-time database
+import { database } from '@/firebase';
+import { ref, set, onValue } from "firebase/database";
 
 const apiClient = axios.create({
   baseURL: SERVER_URL,
@@ -131,11 +135,11 @@ apiClient.interceptors.response.use(
   }
 );
 
-export const get = (url, params = {}, headers={}) => {
+export const get = (url, params = {}, headers = {}) => {
   return apiClient.get(url, { params, headers });
 }
 
-export const post = (url, data, headers={}) => {
+export const post = (url, data, headers = {}) => {
   if (headers['Content-Type'] === 'multipart/form-data') {
     return apiFormDataClient.post(url, data, { headers });
   }
@@ -143,7 +147,7 @@ export const post = (url, data, headers={}) => {
   return apiClient.post(url, data, { headers });
 }
 
-export const put = (url, data, headers={}) => {
+export const put = (url, data, headers = {}) => {
   if (headers['Content-Type'] === 'multipart/form-data') {
     return apiFormDataClient.put(url, data, { headers });
   }
@@ -152,37 +156,134 @@ export const put = (url, data, headers={}) => {
 
 export const deleteReq = (url, params = {}) => {
   return apiClient.delete(url, { params });
-} 
+}
 
-// export const getApi = (url, params = {}) => {
-//   return apiClient.get(`api${url}`, { params });
-// }
+export const postStream = async (url, data, headers = {}, onStream = null) => {
+  /**
+   * 
+  // Use fetch
+  const fullURL = `${SERVER_URL}${url}`;
 
-// export const postApi = (url, data, headers={}) => {
-//   if (headers['Content-Type'] === 'multipart/form-data') {
-//     return apiFormDataClient.post(`api${url}`, data, { headers });
-//   }
+  const fetch = window.fetch;
+  const controller = new AbortController();
+  const signal = controller.signal;
 
-//   return apiClient.post(`api${url}`, data, { headers });
-// }
+  const fetchOptions = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers
+    },
+    body: JSON.stringify(data),
+    signal
+  };
 
-// export const putApi = (url, data, headers={}) => {
-//   if (headers['Content-Type'] === 'multipart/form-data') {
-//     return apiFormDataClient.put(`api${url}`, data, { headers });
-//   }
-//   return apiClient.put(`api${url}`, data, { headers });
-// }
+  const response = await fetch(fullURL, fetchOptions);
+  if (!response.body) throw new Error("No body in response");
 
-// export const patchApi = (url, data, headers={}) => {
-//   if (headers['Content-Type'] === 'multipart/form-data') {
-//     return apiFormDataClient.patch(`api${url}`, data, { headers });
-//   }
-//   return apiClient.patch(`api${url}`, data, { headers });
-// }
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder("utf-8");
+  let buffer = "";
 
-// export const deleteApi = (url, params = {}) => {
-//   return apiClient.delete(`api${url}`, { params });
-// }
+  let dataResult = "";
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+
+    let lines = buffer.split("\n\n");
+    buffer = lines.pop();
+
+    for (const eventText of lines) {
+      const event = {};
+      eventText.split("\n").forEach(line => {
+        if (line.startsWith("id:")) event.id = line.slice(3);
+        else if (line.startsWith("event:")) event.event = line.slice(6);
+        else if (line.startsWith("data:")) {
+          event.data = (event.data || "") + line.slice(5);
+        }
+      });
+
+      let typeEvent = event.event || "message";
+      let dataEvent = event.data || "";
+
+      // ReplaceAll s_endline with \n
+      event.data = dataEvent.replaceAll("s_endline", "\n");
+
+      dataResult += dataEvent;
+
+      if (onStream) {
+        onStream(typeEvent.trim(), event);
+      }
+    }
+  }
+
+  return dataResult;
+  */
+
+  let request;
+  const { tenant, app_id, query } = data;
+
+  // Validate tenant and app_id
+  if (!tenant) throw new Error("Tenant is required in data");
+  if (!app_id) throw new Error("App ID is required in data");
+  if (!query) throw new Error("Query is required in data");
+
+  const uniqueId = getNewIdQuestion();
+  url += (url.includes('?') ? '&' : '?') + `stream_id=${uniqueId}`;
+  const pathStreamingRequest = convertPathRealTimeFirebaseDatabase(`/${tenant}/${app_id}/streaming-requests/${uniqueId}`);
+
+  // Save initial question to Firebase real-time database
+  set(ref(database, pathStreamingRequest), {
+    id: uniqueId,
+    tenant,
+    app_id,
+    question: query,
+    created_at: Date.now(),
+    status: 'started'
+  });
+
+  // Onchange data in Firebase real-time database
+  if (onStream) {
+    const streamRef = ref(database, pathStreamingRequest);
+    // Listen for changes
+    const unsubscribe = onValue(streamRef, (snapshot) => {
+      const val = snapshot.val();
+      if (val && val.answer) {
+        onStream('message', { id: uniqueId, event: 'message', data: val.answer });
+      }
+      if (val && val.metadata) {
+        onStream('metadata', { id: uniqueId, event: 'metadata', data: val.metadata });
+      }
+      if (val && val.status === 'completed') {
+        onStream('done', { id: uniqueId, event: 'done', data: '' });
+        unsubscribe(); // Stop listening after completion
+      }
+      if (val && val.status === 'error') {
+        onStream('error', { id: uniqueId, event: 'error', data: val.error || 'Error occurred' });
+        unsubscribe(); // Stop listening after error
+      }
+    });
+  }
+
+  // Additional headers
+  headers['X-Stream-ID'] = uniqueId;
+  headers['X-Stream-Path'] = pathStreamingRequest;
+  headers['X-Tenant'] = tenant;
+  headers['X-App-ID'] = app_id;
+
+  // Use axios
+  if (headers['Content-Type'] === 'multipart/form-data') {
+    request = await apiFormDataClient.post(url, data, { headers });
+  } else {
+    request = await apiClient.post(url, data, { headers });
+  }
+
+  if (!request.data) throw new Error("No data in response");
+
+  return request.data;
+};
 
 // Export apiClient for direct use in other modules
 export { apiClient, apiFormDataClient };

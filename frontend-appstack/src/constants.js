@@ -11,6 +11,8 @@ import thFlag from "@/assets/img/flags/th.png";
 export const SERVER_URL = import.meta.env.VITE_BASE_URL || "http://localhost:8000";
 export const SECRET_KEY_CRYPTO_JS = import.meta.env.VITE_SECRET_KEY_CRYPTO_JS;
 
+export const NAME_PATH_FIREBASE_REALTIME_DATABASE = "web-search-ai";
+
 export const SIDEBAR_POSITION = {
   LEFT: "left",
   RIGHT: "right",

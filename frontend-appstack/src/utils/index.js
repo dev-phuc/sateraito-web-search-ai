@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 import CryptoJS from "crypto-js";
 
-import { SECRET_KEY_CRYPTO_JS } from "@/constants";
+import { SECRET_KEY_CRYPTO_JS, NAME_PATH_FIREBASE_REALTIME_DATABASE } from "@/constants";
 
 export const dateStringToTimestamp = (strDate) => {
   const dt = Date.parse(strDate);
@@ -159,17 +159,42 @@ export const goBackHistory = (navigate) => {
   }
 };
 
+export const convertPathRealTimeFirebaseDatabase = (path) => {
+  // Paths must be non-empty strings and can't contain ".", "#", "$", "[", or "]"
+  if (!path || typeof path !== "string") return "";
+  
+  // "." -> "dot"
+  let newPath = path.replace(/\./g, '_dot_');
+  // "#" -> "hash"
+  newPath = newPath.replace(/#/g, '_hash_');
+  // "$" -> "dollar"
+  newPath = newPath.replace(/\$/g, '_dollar_');
+  // "[" -> "leftb"
+  newPath = newPath.replace(/\[/g, '_leftb_');
+  // "]" -> "rightb"
+  newPath = newPath.replace(/]/g, '_rightb_');
+
+  // Prefix with NAME_PATH_FIREBASE_REALTIME_DATABASE
+  if (NAME_PATH_FIREBASE_REALTIME_DATABASE) {
+    newPath = `${NAME_PATH_FIREBASE_REALTIME_DATABASE}/${newPath}`;
+  }
+
+  return newPath;
+}
+
 /**
  * Generate token by tenant using AES encryption
  * 
  * @param {string} tenant 
  * @returns {string}
  */
-export const generateTokenByTenant = (tenant) => {
+export const generateTokenByTenant = (tenant, clientWebsite) => {
   const key = CryptoJS.enc.Utf8.parse(SECRET_KEY_CRYPTO_JS);
 
   const payload = JSON.stringify({
     tenant: tenant,
+    client_website_origin: clientWebsite?.origin || '',
+    client_website_href: clientWebsite?.href || '',
     timestamp: Date.now()
   });
 
@@ -180,3 +205,10 @@ export const generateTokenByTenant = (tenant) => {
   
   return encrypted;
 };
+
+export const getNewIdQuestion = () => {
+  // Example: 'q_1633024800_abcd1234'
+  const timestamp = Math.floor(Date.now() / 1000); // Current timestamp in seconds
+  const randomStr = Math.random().toString(36).substring(2, 10); // Random alphanumeric string of length 8
+  return `q_${timestamp}_${randomStr}`;
+}

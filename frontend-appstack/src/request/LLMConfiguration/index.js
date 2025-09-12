@@ -16,15 +16,11 @@ export const getLLMConfigurationForClient = async (tenant, app_id, clientWebsite
   try {
     let url = `/${tenant}/${app_id}/client/llm-configuration`;
 
-    const { origin, href } = clientWebsite;
-    const token = generateTokenByTenant(tenant);
-
+    const token = generateTokenByTenant(tenant, clientWebsite);
     const params = {
-      cw_o: origin,
-      cw_h: href
     };
     const headers = {
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
     };
 
     const response = await get(url, params, headers);
