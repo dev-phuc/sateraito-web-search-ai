@@ -23,3 +23,9 @@ indexes:
   - name: client_domain
   - name: created_date
     direction: desc
+
+- kind: LLMUsageLog
+  properties:
+  - name: name_log
+  - name: timestamp
+    direction: desc

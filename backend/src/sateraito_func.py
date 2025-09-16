@@ -4555,6 +4555,12 @@ def convert_path_real_time_firebase_database(path):
 
 	# Prefix with NAME_PATH_FIREBASE_REALTIME_DATABASE
 	if sateraito_inc.NAME_PATH_FIREBASE_REALTIME_DATABASE:
+
+		# Remove first slash if exists
+		if new_path.startswith('/'):
+			new_path = new_path[1:]
+
+		# Add prefix
 		new_path = f'{sateraito_inc.NAME_PATH_FIREBASE_REALTIME_DATABASE}/{new_path}'
 
 	return new_path

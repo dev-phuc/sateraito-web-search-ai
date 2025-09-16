@@ -82,7 +82,7 @@ const SidebarNavListItem = (props) => {
   return (
     <li className="sidebar-item">
       <div
-        className={`sidebar-link ${pageActive.href === href ? "active" : ""}`}
+        className={`sidebar-link ${(pageActive && pageActive.href === href) ? "active" : ""}`}
         onClick={handleToggle}
         style={{ cursor: 'pointer' }}
       >

@@ -27,7 +27,7 @@ import sateraito_inc
 import sateraito_func
 import sateraito_logger as logging
 
-from sateraito_inc import LLM_MODEL_NAME_DEFAULT, LLM_SYSTEM_PROMPT_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS
+from sateraito_inc import NAME_USAGE_LLM_LOG_DEFAULT, LLM_MODEL_NAME_DEFAULT, LLM_SYSTEM_PROMPT_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS
 from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, STATUS_CLIENT_WEBSITES_LIST, STATUS_CLIENT_WEBSITES_ACTIVE
 from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_LIST
 
@@ -236,7 +236,7 @@ class GoogleAppsDomainEntry(ndb.Model):
 	# Quota in monthly basis
 	llm_quota_monthly = ndb.IntegerProperty(default=0)
 	llm_quota_used = ndb.IntegerProperty(default=0)
-	llm_quota_last_reset = ndb.StringProperty()  # YYYY-MM
+	llm_quota_last_reset = ndb.DateTimeProperty()
 
 	def _pre_put_hook(self):
 		# set to default app id namespace
@@ -1629,6 +1629,7 @@ class LLMUsageLog(ndb.Model):
 	app_id = ndb.StringProperty()
 	client_domain = ndb.StringProperty()
 
+	name_log = ndb.StringProperty(default=NAME_USAGE_LLM_LOG_DEFAULT)
 	unique_id = ndb.StringProperty()
 	stream_path = ndb.StringProperty()
 	
@@ -1637,7 +1638,7 @@ class LLMUsageLog(ndb.Model):
 	total_length = ndb.IntegerProperty()
 	usage_metadata = ndb.TextProperty()
 	
-	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 	@classmethod
 	def save(cls, tenant, app_id, client_domain, unique_id, stream_path, prompt_length, completion_length, total_length, usage_metadata):

@@ -135,6 +135,9 @@ llm_configuration_add_url_rules(app)
 from llm_actions import add_url_rules as llm_actions_add_url_rules
 llm_actions_add_url_rules(app)
 
+from llm_usage import add_url_rules as llm_usage_add_url_rules
+llm_usage_add_url_rules(app)
+
 # GAEGEN2対応：View関数方式でページを定義（本来はflask.views.MethodViewクラス方式を採用だが簡単な処理はView関数でもOK）
 @app.route('/_ah/warmup', methods=['GET', 'POST'])
 def warmup():

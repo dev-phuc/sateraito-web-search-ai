@@ -56,7 +56,7 @@ input[type=checkbox]:focus::before {
 
   // Marker black
   &::before {
-    content: '';
+    // content: '';
     position: absolute;
     top: 0;
     left: 0;
@@ -230,8 +230,6 @@ input[type=checkbox]:focus::before {
       max-width: 60vw;
     }
   }
-
-  &.fullscreen {}
 
   &.fullscreen_blur {
     backdrop-filter: blur(20px);
@@ -435,6 +433,43 @@ input[type=checkbox]:focus::before {
   }
 }
 
+.wrap-overview-usage {
+  .box {
+    color: #fff !important;
+    position: relative;
+    overflow: hidden;
+
+    h3, h5 {
+      color: #fff !important;
+    }
+
+    &::after,
+    &::before {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      z-index: 1;
+      animation: scaleUp 5s infinite alternate;
+      transition: 0.25s all;
+    }
+
+    &::before {
+      top: -20px;
+      right: -20px;
+      width: 100px;
+      height: 100px;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    &::after {
+      bottom: -20px;
+      right: -20px;
+      width: 50px;
+      height: 50px;
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+  }
+}
+
 @keyframes moveUpHeader {
   0% {
     transform: translateY(210px);
@@ -556,5 +591,15 @@ input[type=checkbox]:focus::before {
 
   60% {
     transform: translateY(-5px);
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.8);
+  }
+
+  100% {
+    transform: scale(1.2);
   }
 }

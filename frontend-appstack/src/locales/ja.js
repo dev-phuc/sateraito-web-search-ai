@@ -221,6 +221,30 @@ const JAPANESE_TRANSLATIONS = {
     MSG_ERROR_TO_DATE_REQUIRED: "終了日が必要です！",
     TITLE_DETAIL_OPERATION_LOG: "操作ログの詳細",
 
+    // =================== LLM Usage ===================
+    PAGE_TITLE_LLM_USAGE_MANAGER: "LLM使用状況",
+    LLM_QUOTA_MONTHLY: "月間LLMクォータ",
+    LLM_QUOTA_MONTHLY_DESC: "現在の月の総LLMクォータ。",
+    LLM_QUOTA_REMAINING: "残りLLMクォータ",
+    LLM_QUOTA_REMAINING_DESC: "現在の月にまだ使用可能なLLMクォータ。",
+    LLM_QUOTA_USED: "使用済みLLMクォータ",
+    LLM_QUOTA_USED_DESC: "現在の月に使用されたLLMクォータ。",
+    LAST_RESET: "最終リセット日",
+    TXT_AREA_CHART: "エリアチャート",
+    TXT_LINE_CHART: "ラインチャート",
+    TXT_BAR_CHART: "バー チャート",
+    TXT_ALL_TIME: "全期間",
+    TXT_TODAY: "今日",
+    TXT_THIS_WEEK: "今週",
+    TXT_THIS_MONTH: "今月",
+    TXT_LAST_MONTH: "先月",
+    LABEL_TOTAL_REQUESTS: "総リクエスト数",
+    LABEL_TIMESTAMP: "タイムスタンプ",
+    LABEL_TIME_FRAME: "時間枠",
+    LABEL_CHART_TYPE: "チャートタイプ",
+    MSG_DATA_LLM_USAGE_NO_DATA: "この期間のLLM使用データがありません。",
+    MSG_DATA_LLM_USAGE_LOADING: "LLM使用データを読み込み中...",
+    
     // Other translations can be added here
   }
 };

@@ -292,7 +292,7 @@ const ClientWebsitesTable = ({
                   <th>{t('NAME_COL_WEBSITE_NAME')}</th>
                   <th>{t('NAME_COL_WEBSITE_DESCRIPTION')}</th>
                   <th>{t('NAME_COL_WEBSITE_AI_ENABLED')}</th>
-                  <th>{t('NAME_COL_STATUS')}</th>
+                  <th className="text-center" style={{ width: '80px' }}>{t('NAME_COL_STATUS')}</th>
                   <th>{t('NAME_COL_CREATED_DATE')}</th>
                   <th>{t('NAME_COL_UPDATED_DATE')}</th>
                   <th className="text-center" style={{ width: '100px' }}>{t('NAME_COL_ACTIONS')}</th>

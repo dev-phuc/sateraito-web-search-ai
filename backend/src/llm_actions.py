@@ -57,7 +57,7 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 
 			return {
 				'model_name': model_name,
-				'system_prompt': system_prompt,
+				'system_message': system_prompt,
 				'search_context_size': search_context_size,
 			}
 		
@@ -189,7 +189,7 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 			GoogleAppsDomainEntry.incrementLLMQuotaUsed(tenant, increment_value)
 			
 			# Create a reference to the operation log
-			path_save_log = f'/{tenant}/{app_id}/operation-logs/{unique_id}'
+			path_save_log = f'{tenant}/{app_id}/operation-logs/{unique_id}'
 			operation_ref = db.reference(sateraito_func.convert_path_real_time_firebase_database(path_save_log))
 			operation_ref.set({
 				'log_id': log_entry.key.id(),

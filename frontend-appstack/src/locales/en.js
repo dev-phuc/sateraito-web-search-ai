@@ -221,6 +221,30 @@ const ENGLISH_TRANSLATIONS = {
     MSG_ERROR_TO_DATE_REQUIRED: "To date required!",
     TITLE_DETAIL_OPERATION_LOG: "Operation Log Details",
 
+    // =================== LLM Usage ===================
+    PAGE_TITLE_LLM_USAGE_MANAGER: "LLM Usage",
+    LLM_QUOTA_MONTHLY: "LLM Quota Monthly",
+    LLM_QUOTA_MONTHLY_DESC: "The total number of LLM requests allowed per month.",
+    LLM_QUOTA_REMAINING: "LLM Quota Remaining",
+    LLM_QUOTA_REMAINING_DESC: "The number of LLM requests remaining for the current month.",
+    LLM_QUOTA_USED: "LLM Quota Used",
+    LLM_QUOTA_USED_DESC: "The number of LLM requests used so far this month.",
+    LAST_RESET: "Last Reset",
+    TXT_AREA_CHART: "Area Chart",
+    TXT_LINE_CHART: "Line Chart",
+    TXT_BAR_CHART: "Bar Chart",
+    TXT_ALL_TIME: "All Time",
+    TXT_TODAY: "Today",
+    TXT_THIS_WEEK: "This Week",
+    TXT_THIS_MONTH: "This Month",
+    TXT_LAST_MONTH: "Last Month",
+    LABEL_TOTAL_REQUESTS: "Total Requests",
+    LABEL_TIMESTAMP: "Timestamp",
+    LABEL_TIME_FRAME: "Time Frame",
+    LABEL_CHART_TYPE: "Chart Type",
+    MSG_DATA_LLM_USAGE_NO_DATA: "No LLM usage data available.",
+    MSG_DATA_LLM_USAGE_LOADING: "LLM usage data is loading...",
+
     // Other translations can be added here
   }
 };
