@@ -14,8 +14,10 @@ const SignIn = lazy(() => import("@/desktop/pages/auth/SignIn"));
 const DashboardAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/Dashboard"));
 const ClientWebsitesAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/ClientWebsites"));
 const BoxSearchConfigAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/BoxSearchConfig"));
+const DesignBannerAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/DesignBanner"));
 const LLMConfigurationAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMConfiguration"));
 const OperationLogAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/OperationLog"));
+const LLMUsageAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMUsage"));
 
 // Box search
 const BoxSearchPage = lazy(() => import("@/desktop/pages/BoxSearch"));
@@ -41,7 +43,7 @@ let routes = [
     element: <AdminConsoleLayout />,
     children: [
       {
-        path: "dashboard",
+        index: true,
         element: <DashboardAdminConsolePage />,
       },
       {
@@ -53,6 +55,10 @@ let routes = [
         element: <BoxSearchConfigAdminConsolePage />,
       },
       {
+        path: "design-banner",
+        element: <DesignBannerAdminConsolePage />,
+      },
+      {
         path: "ai-configuration",
         element: <LLMConfigurationAdminConsolePage />,
       },
@@ -60,30 +66,10 @@ let routes = [
         path: "logs",
         element: <OperationLogAdminConsolePage />,
       },
-      // {
-      //   path: "userinfo",
-      //   element: <UserInfoAdminConsolePage />,
-      // },
-      // {
-      //   path: "account",
-      //   element: <AccountAdminConsolePage />,
-      // },
-      // {
-      //   path: "type-book",
-      //   element: <TypeBookAdminConsolePage />,
-      // },
-      // // {
-      // //   path: "category-book",
-      // //   element: <CategoryBookAdminConsolePage />,
-      // // },
-      // {
-      //   path: "book",
-      //   element: <BookAdminConsolePage />,
-      // },
-      // {
-      //   path: "setting",
-      //   element: <SettingAdminConsolePage />,
-      // },
+      {
+        path: "usage",
+        element: <LLMUsageAdminConsolePage />,
+      }
     ],
   },
 

@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import { useTranslation } from "react-i18next";
 
 // Redux components
 
@@ -16,22 +17,35 @@ import { Button } from "react-bootstrap";
 // Components
 
 // Define the component
-const Page404 = () => (
-  <React.Fragment>
+const Page404 = () => {
+  const { t } = useTranslation();
+
+  return <>
     <Helmet title="404 Error" />
-    <div className="text-center">
-      <h1 className="display-1 fw-bold">404</h1>
-      <p className="h1">Page not found.</p>
-      <p className="h2 fw-normal mt-3 mb-4">
-        The page you are looking for might have been removed.
-      </p>
-      <Link to="/">
-        <Button variant="primary" size="lg">
-          Return to website
-        </Button>
-      </Link>
+    <div className="page-404">
+      <div className="page-404-container">
+        <div className="page-404-icon">
+          <span className="error-code">4</span>
+          <span className="error-code zero">0</span>
+          <span className="error-code">4</span>
+        </div>
+        <h1 className="page-404-title">{t("TITLE_PAGE_404")}</h1>
+        <p className="page-404-description">
+          {t("DESC_PAGE_404")}
+        </p>
+        <div className="page-404-actions">
+          <Link to="/">
+            <Button variant="primary" size="lg" className="page-404-btn">
+              {t("BTN_GO_HOME")}
+            </Button>
+          </Link>
+          <Button variant="outline-primary" size="lg" onClick={() => window.history.back()} className="page-404-btn">
+            {t("BTN_GO_BACK")}
+          </Button>
+        </div>
+      </div>
     </div>
-  </React.Fragment>
-);
+  </>
+};
 
 export default Page404;

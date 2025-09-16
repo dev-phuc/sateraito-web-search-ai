@@ -102,7 +102,7 @@ const DetailOperationLogPanel = ({ data }) => {
       <div className="mt-2">
         <strong>{t('LABEL_RESPONSE')}:</strong>
       </div>
-      <div style={{ background: '#f8f9fa', padding: '8px', borderRadius: '4px' }}>
+      <div className="react-markdown-style" style={{ background: '#f8f9fa', padding: '8px', borderRadius: '4px' }}>
         <Markdown>{responseText}</Markdown>
       </div>
 

@@ -201,31 +201,29 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                 </div>
 
                 {/* Result search */}
-                {resultTemp.length > 0 && (
-                  <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
-                    {isLoading && (
-                      <div className="loading-overlay">
-                        <div className="spinner-border text-primary" role="status">
-                          <span className="visually-hidden">Loading...</span>
-                        </div>
+                <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+                  {isLoading && (
+                    <div className="loading-overlay">
+                      <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
                       </div>
-                    )}
-                    <div className="result-search-summary">
-                      {summaryResult}
                     </div>
-                    {resultTemp.map((item, index) => (
-                      <div key={index} className="result-search-item">
-                        <div className="result-search-item-header">
-                          {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
-                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
-                        </div>
-                        <div className="result-search-item-description">
-                          {item.description}
-                        </div>
-                      </div>
-                    ))}
+                  )}
+                  <div className="result-search-summary">
+                    {summaryResult}
                   </div>
-                )}
+                  {resultTemp.map((item, index) => (
+                    <div key={index} className="result-search-item">
+                      <div className="result-search-item-header">
+                        {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
+                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
+                      </div>
+                      <div className="result-search-item-description">
+                        {item.description}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
 
             </div>

@@ -11,7 +11,6 @@ import useTheme from "@/hooks/useTheme";
 // Library imports
 
 // Library IU imports
-import Markdown from 'react-markdown'
 
 // Zustand
 
@@ -56,7 +55,7 @@ const SearchResultItem = ({ data }) => {
 
   useEffect(() => {
     if (data && data.url) {
-      // loadPageInfo(data.url);
+      loadPageInfo(data.url);
     }
   }, [data]);
 

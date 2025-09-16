@@ -79,6 +79,12 @@ const JAPANESE_TRANSLATIONS = {
     PAGE_TITLE_LOGIN: "サインイン",
     TXT_LOGIN_FAILED_PLEASE_TRY_AGAIN: "ログインに失敗しました。もう一度お試しください。",
 
+    // =================== 404 Page ===================
+    TITLE_PAGE_404: "404 - ページが見つかりません",
+    DESC_PAGE_404: "お探しのページは削除されたか、名前が変更されたか、一時的に利用できない可能性があります。",
+    BTN_GO_HOME: "ホームページへ",
+    BTN_GO_BACK: "戻る",
+
     // =================== Dashboard ===================
     PAGE_TITLE_DASHBOARD_MANAGER: "ダッシュボード",
 

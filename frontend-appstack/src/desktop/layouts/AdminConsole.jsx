@@ -45,7 +45,7 @@ const AdminConsoleLayout = ({ children }) => {
     {
       pages: [
         {
-          href: `/${tenant}/${app_id}/admin_console/dashboard`,
+          href: `/${tenant}/${app_id}/admin_console`,
           title: 'TXT_DASHBOARD',
           icon: 'mdi mdi-view-dashboard-outline me-2',
         },

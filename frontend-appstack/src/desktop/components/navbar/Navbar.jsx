@@ -141,9 +141,11 @@ const NavbarComponent = () => {
       </span>
 
       <div className="page-header">
-        <h1 className="text h3 d-inline align-middle">
-          {t(pageActive.title)}
-        </h1>
+        {pageActive && (
+          <h1 className="text h3 d-inline align-middle">
+            {t(pageActive.title)}
+          </h1>
+        )}
       </div>
 
       <Navbar.Collapse>

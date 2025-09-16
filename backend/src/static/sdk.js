@@ -1,4 +1,121 @@
-const STYLES = ``;
+const STYLES = `#sateraito-ai-iframe-panel {
+  position: fixed;
+  z-index: 10000;
+  top: 45px;
+  right: 45px;
+  min-width: 400px;
+  width: 40vw;
+  height: 0px;
+  border: none;
+  overflow: hidden;
+  transition: 0.25s all;
+  pointer-events: none;
+  background-color: var(--search-box-bg-color, #ffffff);
+  font-family: var(--theme-font-family-box-search, Arial, sans-serif);
+  font-size: var(--search-box-font-size, 16px);
+}
+#sateraito-ai-iframe-panel.show {
+  height: 90vh;
+  pointer-events: auto;
+  box-shadow: var(--search-box-box-shadow, 0 2px 8px rgba(0, 0, 0, 0.15));
+  border: var(--search-box-border-size) solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--search-box-border-radius, 10px);
+}
+#sateraito-ai-iframe-panel.show[data-layout=fullscreen], #sateraito-ai-iframe-panel.show[data-layout=fullscreen_blur] {
+  opacity: 1;
+  pointer-events: all;
+  z-index: 10000;
+}
+#sateraito-ai-iframe-panel[data-layout=fullscreen], #sateraito-ai-iframe-panel[data-layout=fullscreen_blur] {
+  position: absolute;
+  max-width: none;
+  height: calc(100vh + 1px);
+  width: 100vw;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  border-radius: 0;
+  top: calc(50% - 1px);
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#sateraito-ai-iframe-panel[data-layout=fullscreen_blur] {
+  -webkit-backdrop-filter: blur(20px);
+          backdrop-filter: blur(20px);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+#sateraito-ai-iframe-panel[data-layout=fullscreen_blur] .result-search-container {
+  padding: 0 10px;
+}
+
+#sateraito-ai-button-panel {
+  cursor: pointer;
+  z-index: 10001;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  overflow: hidden;
+  transition: 0.25s all;
+  font-size: 18px;
+  position: absolute;
+  right: calc(20px + var(--search-box-padding, 0px));
+  top: calc(20px + var(--search-box-padding, 0px));
+  background-color: var(--search-button-bg-color, #fff);
+  border-radius: var(--search-button-border-radius);
+  color: var(--search-button-color-text, #000);
+  fill: var(--search-button-color-text, #000);
+}
+#sateraito-ai-button-panel img {
+  width: 20px;
+  height: 20px;
+}
+#sateraito-ai-button-panel .icon-open,
+#sateraito-ai-button-panel .icon-close {
+  transition: 0.25s all;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+#sateraito-ai-button-panel .icon-open {
+  opacity: 1;
+}
+#sateraito-ai-button-panel .icon-close {
+  opacity: 0;
+}
+#sateraito-ai-button-panel::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  opacity: 0;
+  border-radius: inherit;
+  z-index: -1;
+  transition: 0.25s all;
+}
+#sateraito-ai-button-panel:hover::before {
+  opacity: 0.5;
+  z-index: 2;
+}
+#sateraito-ai-button-panel.show {
+  width: 40px;
+  height: 40px;
+}
+#sateraito-ai-button-panel.show-icon-close {
+  transform: rotate(-180deg);
+}
+#sateraito-ai-button-panel.show-icon-close .icon-open {
+  opacity: 0;
+}
+#sateraito-ai-button-panel.show-icon-close .icon-close {
+  opacity: 1;
+}`;
 
 const CONFIG = {
   // BASE_URL: 'http://localhost:8080',
@@ -46,7 +163,7 @@ const SateraitoAI = {
     }
     this.initShadowRoot();
     this.getStyle(`${CONFIG.BASE_URL}/static/@mdi/font/css/materialdesignicons.min.css`);
-    this.getStyle(`${CONFIG.BASE_URL}/static/box-search-ai/style.css`);
+    // this.getStyle(`${CONFIG.BASE_URL}/static/box-search-ai/style.css`);
     this.initStyle(STYLES);
     this.initButtonPanel();
     this.initIFramePanel(config);

@@ -79,6 +79,12 @@ const ENGLISH_TRANSLATIONS = {
     PAGE_TITLE_LOGIN: "Sign In",
     TXT_LOGIN_FAILED_PLEASE_TRY_AGAIN: "Login failed, please try again.",
 
+    // =================== 404 Page ===================
+    TITLE_PAGE_404: "404 - Page Not Found",
+    DESC_PAGE_404: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
+    BTN_GO_HOME: "Go to Homepage",
+    BTN_GO_BACK: "Go Back",
+
     // =================== Dashboard ===================
     PAGE_TITLE_DASHBOARD_MANAGER: "Dashboard",
 
