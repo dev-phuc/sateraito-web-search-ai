@@ -23,6 +23,9 @@ import { STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED, STATUS_
 // Zustand
 import useStoreClientWebsites from '@/store/client_websites';
 
+// Components
+import SearchClientWebsitesForm from "@/desktop/components/form/SearchClientWebsites";
+
 const ClientWebsitesTable = ({
   tenant,
   app_id,
@@ -40,14 +43,9 @@ const ClientWebsitesTable = ({
   const { t } = useTranslation();
 
   // Zustand stores
-  const { isLoading, clientWebsites, fetchClientWebsites } = useStoreClientWebsites();
+  const { isLoading, clientWebsites, setClientWebsites, fetchClientWebsites } = useStoreClientWebsites();
 
   // States
-  useEffect(() => {
-    if (tenant && app_id) {
-      fetchClientWebsites(tenant, app_id);
-    }
-  }, [tenant, app_id, fetchClientWebsites]);
 
   // Helper function to get status badge
   const getStatusBadge = (status) => {
@@ -58,6 +56,31 @@ const ClientWebsitesTable = ({
 
     const config = statusConfig[status?.toLowerCase()] || { bg: 'secondary', text: status || 'Unknown' };
     return <Badge bg={config.bg} pill>{config.text}</Badge>;
+  };
+
+  const handlerOnSearch = (filters) => {
+    const { domain, site_name, status } = filters;
+
+    if (filters && (domain || site_name || status)) {
+      // Filter client websites based clientWebsites in the store
+      const filteredWebsites = clientWebsites.filter(website => {
+        let matches = true;
+        if (domain) {
+          matches = matches && website.domain.toLowerCase().includes(domain.toLowerCase());
+        }
+        if (site_name) {
+          matches = matches && website.site_name && website.site_name.toLowerCase().includes(site_name.toLowerCase());
+        }
+        if (status) {
+          matches = matches && website.status && website.status.toLowerCase() === status.toLowerCase();
+        }
+        return matches;
+      });
+      // Update the clientWebsites in the store to the filtered list
+      setClientWebsites(filteredWebsites);
+    } else {
+      fetchClientWebsites(tenant, app_id);
+    }
   };
 
   // Render website item row
@@ -115,9 +138,11 @@ const ClientWebsitesTable = ({
           >
             {truncateText(item.domain, 35)}
           </a>
-          <small className="text-muted">
-            {item.site_name ? truncateText(item.site_name, 30) : '-'}
-          </small>
+          {item.site_name && (
+            <small className="text-muted">
+              {truncateText(item.site_name, 30)}
+            </small>
+          )}
         </div>
       </td>
 
@@ -171,13 +196,12 @@ const ClientWebsitesTable = ({
           >
             <Button
               variant="outline-primary"
-              size="sm"
               className="btn-icon"
               disabled={item.isEditing || item.isRemoving}
               onClick={() => onEditClientWebsite && onEditClientWebsite(item)}
             >
               {item.isEditing ? (
-                <Spinner animation="border" size="sm" />
+                <Spinner animation="border" />
               ) : (
                 <i className="mdi mdi-pencil"></i>
               )}
@@ -190,13 +214,12 @@ const ClientWebsitesTable = ({
           >
             <Button
               variant="outline-danger"
-              size="sm"
               className="btn-icon"
               disabled={item.isUpdating || item.isRemoving}
               onClick={() => onDeleteClientWebsite && onDeleteClientWebsite(item)}
             >
               {item.isRemoving ? (
-                <Spinner animation="border" size="sm" />
+                <Spinner animation="border" />
               ) : (
                 <i className="mdi mdi-delete"></i>
               )}
@@ -210,31 +233,25 @@ const ClientWebsitesTable = ({
   // Return the component
   return (
     <div className="client-websites-table">
-      <Card className="shadow-sm border-0">
+      <Card className="shadow-none border-0">
         {/* Header Toolbar */}
         <Card.Header className="bg-white border-bottom">
           <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center justify-content-center h-full">
-              <input
-                id="select_all"
-                type="checkbox"
-                className="form-check-input"
-                checked={clientWebsites.length > 0 && checkedList.length === clientWebsites.length}
-                onChange={(e) => onChangeSelectAllChecked && onChangeSelectAllChecked(e.target.checked)}
+            <div className="">
+              {/* Search Form */}
+              <SearchClientWebsitesForm
+                tenant={tenant}
+                app_id={app_id}
+                isLoading={isLoading}
+                onSearch={handlerOnSearch}
               />
-              <label htmlFor="select_all" className="form-check-label text-muted ms-1">
-                {checkedList.length > 0 ? `${checkedList.length} ${t('TXT_TOTAL_SELECTED')}` : t('TXT_SELECT_ALL')}
-              </label>
             </div>
 
             <div className="text-muted small">
-
               <div className="d-flex gap-2">
-
                 {checkedList.length > 0 && (
                   <Button
                     variant="outline-danger"
-                    size="sm"
                     disabled={isLoading}
                     onClick={() => onDeleteSelectedWebsites && onDeleteSelectedWebsites()}
                   >
@@ -242,26 +259,9 @@ const ClientWebsitesTable = ({
                     Delete ({checkedList.length})
                   </Button>
                 )}
-
-                <Button
-                  variant="outline-primary"
-                  size="sm"
-                  disabled={isLoading}
-                  onClick={() => {
-                    if (onReload) {
-                      onReload();
-                    } else {
-                      fetchClientWebsites(tenant, app_id);
-                    }
-                  }}
-                >
-                  <i className={`mdi mdi-refresh ${isLoading ? 'mdi-spin' : ''}`}></i>
-                  {isLoading ? t('TXT_REFRESHING') : t('TXT_REFRESH')}
-                </Button>
-
                 <Button
                   variant="primary"
-                  size="sm"
+                  type="button"
                   disabled={isLoading}
                   onClick={() => onCreateClientWebsite && onCreateClientWebsite()}
                 >
@@ -279,7 +279,15 @@ const ClientWebsitesTable = ({
             <Table className="mb-0" hover>
               <thead className="table-light">
                 <tr>
-                  <th className="text-center" style={{ width: '40px' }}></th>
+                  <th className="text-center" style={{ width: '40px' }}>
+                    <input
+                      id="select_all"
+                      type="checkbox"
+                      className="form-check-input"
+                      checked={clientWebsites.length > 0 && checkedList.length === clientWebsites.length}
+                      onChange={(e) => onChangeSelectAllChecked && onChangeSelectAllChecked(e.target.checked)}
+                    />
+                  </th>
                   <th className="text-center" style={{ width: '80px' }}></th>
                   <th>{t('NAME_COL_WEBSITE_NAME')}</th>
                   <th>{t('NAME_COL_WEBSITE_DESCRIPTION')}</th>

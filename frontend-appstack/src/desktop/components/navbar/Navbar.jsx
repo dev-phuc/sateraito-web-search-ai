@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-// Redux components
+// Zustand
+import useAppStore from "@/store/app";
 
 // Hook components
 import useAuth from "@/hooks/useAuth";
@@ -99,6 +100,9 @@ const NavbarComponent = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Zustand state
+  const { pageActive } = useAppStore();
+
   // Use hooks state
   const { isOpen, setIsOpen } = useSidebar();
   const { isInitialized, user, isLoading } = useAuth();
@@ -132,30 +136,22 @@ const NavbarComponent = () => {
   // Component return
   return (
     <Navbar variant="light" expand className="navbar-bg">
-      <span className="sidebar-toggle d-flex" onClick={() => { setIsOpen(!isOpen); }}>
+      <span className="sidebar-toggle me-0 d-flex" onClick={() => { setIsOpen(!isOpen); }}>
         <i className="mdi mdi-menu align-self-center" />
       </span>
-      
-      <Form inline="true" className="d-none d-sm-inline-block" onSubmit={handlerSubmitSearch}>
-        <InputGroup className="input-group-navbar">
-          <Form.Control placeholder={t("TXT_KEY_SEARCH_BOOKS")} aria-label={t("TXT_KEY_SEARCH_BOOKS")}
-            value={keyword}
-            onChange={(event) => {
-              setKeyword(event.target.value);
-            }}
-          />
-          <Button type="submit" variant="">
-            <Search className="feather" />
-          </Button>
-        </InputGroup>
-      </Form>
+
+      <div className="page-header">
+        <h1 className="text h3 d-inline align-middle">
+          {t(pageActive.title)}
+        </h1>
+      </div>
 
       <Navbar.Collapse>
         <Nav className="navbar-align">
           {/* <NavbarLanguages /> */}
           <NavbarUser />
         </Nav>
-      </Navbar.Collapse> 
+      </Navbar.Collapse>
     </Navbar>
   );
 };

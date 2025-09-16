@@ -17,3 +17,9 @@ indexes:
     direction: asc
   - name: opensocial_container
     direction: asc
+  
+- kind: OperationLog
+  properties:
+  - name: client_domain
+  - name: created_date
+    direction: desc

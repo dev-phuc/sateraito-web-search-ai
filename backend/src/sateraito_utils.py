@@ -45,8 +45,6 @@ class GetPageInfoByURL(sateraito_page.Handler_Basic_Request, sateraito_page._Bas
 			
 			page_url = sateraito_func.complete_full_url(page_url)
 
-			logging.info('Fetching page info for URL: %s', page_url)
-
 			session = requests.session()
 			session.headers.update({
 				'User-Agent': UserAgent().random 

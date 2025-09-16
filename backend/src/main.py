@@ -120,6 +120,9 @@ oidccallback_add_url_rules(app)
 from sateraito_utils import add_url_rules as sateraito_utils_add_url_rules
 sateraito_utils_add_url_rules(app)
 
+from operationlog import add_url_rules as operation_log_add_url_rules
+operation_log_add_url_rules(app)
+
 from client_websites import add_url_rules as client_websites_add_url_rules
 client_websites_add_url_rules(app)
 

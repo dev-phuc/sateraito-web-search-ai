@@ -4537,6 +4537,28 @@ def is_valid_stream_path(stream_path):
 def get_current_timestamp_ms():
 	return int(datetime.datetime.now().timestamp() * 1000)
 
+def convert_path_real_time_firebase_database(path):
+	# Paths must be non-empty strings and can't contain ".", "#", "$", "[", or "]"
+	if not path or not isinstance(path, str):
+		return ''
+
+	# "." -> "dot"
+	new_path = path.replace('.', '_dot_')
+	# "#" -> "hash"
+	new_path = new_path.replace('#', '_hash_')
+	# "$" -> "dollar"
+	new_path = new_path.replace('$', '_dollar_')
+	# "[" -> "leftb"
+	new_path = new_path.replace('[', '_leftb_')
+	# "]" -> "rightb"
+	new_path = new_path.replace(']', '_rightb_')
+
+	# Prefix with NAME_PATH_FIREBASE_REALTIME_DATABASE
+	if sateraito_inc.NAME_PATH_FIREBASE_REALTIME_DATABASE:
+		new_path = f'{sateraito_inc.NAME_PATH_FIREBASE_REALTIME_DATABASE}/{new_path}'
+
+	return new_path
+
 class MyLang:
 
 	root_node = None

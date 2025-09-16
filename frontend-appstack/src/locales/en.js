@@ -1,12 +1,12 @@
 const ENGLISH_TRANSLATIONS = {
   translation: {
+    // =================== General App Information ===================
     TXT_COMPANY_NAME: "Sateraito",
-    TXT_APP_NAME: "Sateraito AI Search",
+    TXT_APP_NAME: "Web Search AI",
     TXT_APP_DESCRIPTION: "AI-powered search engine for your website",
     TXT_LOGIN_WITH_GOOGLE: "Sign in with Google",
 
-    // =================== Messages from server ===================
-    // Client websites
+    // =================== Server Error Messages ===================
     internal_server_error: "Internal server error",
     id_is_required: "ID is required",
     domain_is_required: "Domain is required",
@@ -14,17 +14,18 @@ const ENGLISH_TRANSLATIONS = {
     page_url_is_required: "Page URL is required",
     client_website_not_found: "Client website not found",
     box_search_invalid_config: "Box search config is invalid",
-    // =================== End messages from server ===================
 
-    // Common
+    // =================== Common UI Elements ===================
     TXT_LOADING: "Loading",
     TXT_REFRESHING: "Refreshing...",
     TXT_REFRESH: "Refresh",
     TXT_RELOAD: "Reload",
     TXT_TOTAL_SELECTED: "selected",
     TXT_SELECT_ALL: "Select All",
+    TXT_APP_ID: "App ID",
+    TXT_OPTION_ALL: "All",
 
-    // Buttons
+    // =================== Button Labels ===================
     BTN_CREATE: "Create",
     BTN_UPDATE: "Update",
     BTN_EDIT: "Edit",
@@ -32,16 +33,29 @@ const ENGLISH_TRANSLATIONS = {
     BTN_CANCEL: "Cancel",
     BTN_YES: "Yes",
     BTN_NO: "No",
+    BTN_SUBMIT: "Submit",
+    BTN_RESET: "Reset",
+    BTN_RESET_TO_DEFAULTS: "Reset to defaults",
+    BTN_PREVIOUS: "Previous",
+    BTN_NEXT_PAGE: "Next page",
+    BTN_FILTER: "Filter",
+    BTN_CLEAR: "Clear",
 
-    // Status
+    // =================== Status and Labels ===================
     LABEL_STATUS: "Status",
     STATUS_ACTIVE: "Active",
     STATUS_DISABLED: "Disabled",
     STATUS_OVER_QUOTA: "Over Quota",
+    STATUS_COMPLETED: "Success",
+    STATUS_FAILED: "Failed",
     LABEL_CREATED_DATE: "Created Date",
     LABEL_UPDATED_DATE: "Updated Date",
+    LABEL_ERROR_MESSAGE: "Error Message",
+    LABEL_PROMPT: "Prompt",
+    LABEL_RESPONSE: "Response",
+    LABEL_RESOURCE: "Resource",
 
-    // SiderApp.jsx
+    // =================== Navigation Menu ===================
     TXT_DASHBOARD: "Dashboard",
     TXT_DOMAINS_MANAGEMENT: "Domains Management",
     TXT_DESIGN_SEARCH_BOX: "Design Search Box",
@@ -51,7 +65,7 @@ const ENGLISH_TRANSLATIONS = {
     TXT_OPERATIONS_LOGS: "Operations Logs",
     TXT_USAGE_STATISTICS: "Usage Statistics",
 
-    // SettingsTheme.jsx
+    // =================== Theme Settings ===================
     LAYOUT_BUILDER_LABEL: "Layout Builder",
     LAYOUT_BUILDER_DES: "Customize the appearance of your search engine to match your website's design.",
     BGCOLOR_SCHEME_LABEL: "Background Color Scheme",
@@ -60,17 +74,15 @@ const ENGLISH_TRANSLATIONS = {
     MENU_BEHAVIOR_LABEL: "Menu Behavior",
     LAYOUT_LABEL: "Layout",
 
-    // HeaderApp.jsx
+    // =================== Authentication ===================
     TXT_LOGOUT: "Logout",
-
-    // Login
     PAGE_TITLE_LOGIN: "Sign In",
     TXT_LOGIN_FAILED_PLEASE_TRY_AGAIN: "Login failed, please try again.",
 
-    // Dashboard
+    // =================== Dashboard ===================
     PAGE_TITLE_DASHBOARD_MANAGER: "Dashboard",
 
-    // ClientWebsites
+    // =================== Client Websites Management ===================
     PAGE_TITLE_CLIENT_WEBSITES: "Client Websites",
     TITLE_CLIENT_WEBSITES_MANAGEMENT: "Client Websites Management",
     BTN_ADD_DOMAIN: "Add Domain",
@@ -93,7 +105,7 @@ const ENGLISH_TRANSLATIONS = {
     PLACEHOLDER_CLIENT_WEBSITES_DOMAIN: "Enter domain (e.g., example.com)",
     LABEL_FAVICON_URL: "Favicon URL",
     PLACEHOLDER_CLIENT_WEBSITES_FAVICON_URL: "Enter favicon URL (e.g., https://example.com/favicon.ico)",
-    LABEL_SITE_NAME: "Site Name",
+    LABEL_SITE_NAME: "Website Name",
     PLACEHOLDER_CLIENT_WEBSITES_SITE_NAME: "Enter site name",
     LABEL_DESCRIPTION: "Description",
     PLACEHOLDER_CLIENT_WEBSITES_DESCRIPTION: "Enter description",
@@ -113,11 +125,10 @@ const ENGLISH_TRANSLATIONS = {
     NAME_COL_UPDATED_DATE: "Updated Date",
     NAME_COL_ACTIONS: "Actions",
 
-    // ClientWebsites
+    // =================== Box Search Configuration ===================
     PAGE_TITLE_BOX_SEARCH_CONFIG: "Box Search Config",
     TXT_ERROR_UPDATE_BOX_SEARCH_CONFIG: "Failed to update box search config. Please try again.",
     TXT_UPDATE_BOX_SEARCH_CONFIG_SUCCESS: "Box search config updated successfully!",
-    TXT_ERROR_UPDATE_BOX_SEARCH_CONFIG: "Failed to update box search config. Please try again.",
     LABEL_SEARCH_BOX: "Search Box",
     LABEL_TYPE: "Type",
     LABEL_BOX: "Box",
@@ -136,10 +147,6 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_BUTTON_BACKGROUND_COLOR: "Button Background Color",
     LABEL_THEME: "Theme",
     LABEL_FONT: "Font",
-    BTN_SUBMIT: "Submit",
-    BTN_CANCEL: "Cancel",
-    BTN_RESET: "Reset",
-    BTN_RESET_TO_DEFAULTS: "Reset to defaults",
     TXT_CHOOSE_SEARCH_UI: "Choose how the search UI should appear to users.",
     TXT_PICK_BACKGROUND_COLOR: "Pick a background color for the search box.",
     TXT_ENABLE_SHADOW: "Enable a subtle shadow to lift the box visually.",
@@ -159,8 +166,13 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_SHOW_BACKGROUND: "Show background",
     LABEL_SHOW_HTML: "Show HTML/JS",
     TXT_SHOW_HTML_DESC: "View the generated HTML/JS code snippet to embed the search box on your website.",
+    MODAL_TEXT_CONFIRM_RESET_BOX_SEARCH_CONFIG_TO_DEFAULTS: "This action will reset the Box Search configuration to default settings. This action cannot be undone. Are you sure you want to proceed?",
+    TXT_RESET_BOX_SEARCH_CONFIG_SUCCESS: "Box Search configuration reset to defaults successfully!",
+    TXT_ERROR_RESET_BOX_SEARCH_CONFIG: "Failed to reset Box Search configuration. Please try again.",
+    NOTICE_COPIED_TO_CLIPBOARD: "Copied to clipboard",
+    BUTTON_COPY_CODE: "Copy Code",
 
-    // LLM Configuration
+    // =================== LLM Configuration ===================
     PAGE_TITLE_LLM_CONFIGURATION: "LLM Configuration",
     LABEL_LLM_CONFIGURATION: "LLM Configuration",
     LABEL_MODEL_NAME: "Model Name",
@@ -174,9 +186,34 @@ const ENGLISH_TRANSLATIONS = {
     TXT_FETCH_LLM_CONFIGURATION_ERROR: "Failed to fetch LLM configuration. Please try again.",
     TXT_UPDATE_LLM_CONFIGURATION_SUCCESS: "LLM configuration updated successfully!",
     TXT_ERROR_UPDATE_LLM_CONFIGURATION: "Failed to update LLM configuration. Please try again.",
+    MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS: "Confirm Reset to Defaults",
+    MODAL_TEXT_CONFIRM_RESET_TO_DEFAULTS: "This action will reset the LLM configuration to default settings. This action cannot be undone. Are you sure you want to proceed?",
+    TXT_RESET_LLM_CONFIGURATION_SUCCESS: "LLM configuration reset to defaults successfully!",
+    TXT_ERROR_RESET_LLM_CONFIGURATION: "Failed to reset LLM configuration. Please try again.",
     // Validation messages
     MSG_ERROR_MODEL_NAME_REQUIRED: "Model name is required!",
     MSG_ERROR_RESPONSE_LENGTH_LEVEL_REQUIRED: "Response length level is required!",
+
+    // =================== Operation Logs ===================
+    PAGE_TITLE_OPERATION_LOGS: "Operation Logs",
+    NAME_COL_TENANT: "Tenant",
+    NAME_COL_APP_ID: "App ID",
+    NAME_COL_CLIENT_DOMAIN: "Client Domain",
+    NAME_COL_MODEL_NAME: "Model Name",
+    NAME_COL_PROMPT: "Prompt",
+    NAME_COL_STATUS: "Status",
+    NAME_COL_CREATED_AT: "Created At",
+    MSG_DATA_OPERATION_LOGS_LOADING: "Operation logs data is loading...",
+    TXT_SHOWING_OPERATION_LOGS: "Showing {{count}} of {{total}} operation logs",
+    NO_OPERATION_LOGS_AVAILABLE: "No operation logs available",
+    TXT_NO_OPERATION_LOGS_AVAILABLE_DESC: "No operation logs found for the selected filters.",
+    LABEL_FROM_DATE: "From",
+    LABEL_TO_DATE: "To",
+    PLACEHOLDER_SELECT_CLIENT_WEBSITE: "Select client website",
+    MSG_ERROR_CLIENT_DOMAIN_REQUIRED: "Client domain required!",
+    MSG_ERROR_FROM_DATE_REQUIRED: "From date required!",
+    MSG_ERROR_TO_DATE_REQUIRED: "To date required!",
+    TITLE_DETAIL_OPERATION_LOG: "Operation Log Details",
 
     // Other translations can be added here
   }

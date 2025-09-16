@@ -199,7 +199,8 @@ export const BOX_SEARCH_DESIGN_DEFAULT = {
 
 export const LLM_CONFIGURATION_DEFAULT = {
 	"model_name": 'sonar',
-	"system_prompt": null,
+	"system_prompt": 'You are a helpful assistant.',
+  'max_characters': 1000,
 	"response_length_level": 'medium', // short, medium, long
 }
 

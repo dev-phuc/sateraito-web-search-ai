@@ -56,7 +56,7 @@ const SearchResultItem = ({ data }) => {
 
   useEffect(() => {
     if (data && data.url) {
-      loadPageInfo(data.url);
+      // loadPageInfo(data.url);
     }
   }, [data]);
 

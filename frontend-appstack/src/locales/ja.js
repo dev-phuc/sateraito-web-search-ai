@@ -1,12 +1,12 @@
 const JAPANESE_TRANSLATIONS = {
   translation: {
+    // =================== General App Information ===================
     TXT_COMPANY_NAME: "サテライト",
-    TXT_APP_NAME: "サテライトウェブ検索AI",
+    TXT_APP_NAME: "ウェブ検索AI",
     TXT_APP_DESCRIPTION: "AIを活用したウェブ検索体験を提供します",
     TXT_LOGIN_WITH_GOOGLE: "Googleでログイン",
 
-    // =================== Messages from server ===================
-    // Client websites
+    // =================== Server Error Messages ===================
     internal_server_error: "内部サーバーエラー",
     id_is_required: "IDは必須です",
     domain_is_required: "ドメインは必須です",
@@ -14,17 +14,18 @@ const JAPANESE_TRANSLATIONS = {
     page_url_is_required: "ページURLは必須です",
     client_website_not_found: "クライアントウェブサイトが見つかりません",
     box_search_invalid_config: "ボックス検索の設定が無効です",
-    // =================== End messages from server ===================
 
-    // Common
+    // =================== Common UI Elements ===================
     TXT_LOADING: "読み込み中",
     TXT_REFRESHING: "更新中...",
     TXT_REFRESH: "更新",
     TXT_RELOAD: "再読み込み",
     TXT_TOTAL_SELECTED: "選択済み",
     TXT_SELECT_ALL: "すべて選択",
+    TXT_APP_ID: "アプリID",
+    TXT_OPTION_ALL: "すべて",
 
-    // Buttons
+    // =================== Button Labels ===================
     BTN_CREATE: "作成",
     BTN_UPDATE: "更新",
     BTN_EDIT: "編集",
@@ -32,16 +33,29 @@ const JAPANESE_TRANSLATIONS = {
     BTN_CANCEL: "キャンセル",
     BTN_YES: "はい",
     BTN_NO: "いいえ",
+    BTN_SUBMIT: "送信",
+    BTN_RESET: "リセット",
+    BTN_RESET_TO_DEFAULTS: "デフォルトにリセット",
+    BTN_PREVIOUS: "前へ",
+    BTN_NEXT_PAGE: "次のページ",
+    BTN_FILTER: "フィルター",
+    BTN_CLEAR: "クリア",
 
-    // Status
+    // =================== Status and Labels ===================
     LABEL_STATUS: "ステータス",
     STATUS_ACTIVE: "有効",
     STATUS_DISABLED: "無効",
     STATUS_OVER_QUOTA: "上限超過",
+    STATUS_COMPLETED: "成功",
+    STATUS_FAILED: "失敗",
     LABEL_CREATED_DATE: "作成日",
     LABEL_UPDATED_DATE: "更新日",
+    LABEL_ERROR_MESSAGE: "エラーメッセージ",
+    LABEL_PROMPT: "プロンプト",
+    LABEL_RESPONSE: "応答",
+    LABEL_RESOURCE: "リソース",
 
-    // SiderApp.jsx
+    // =================== Navigation Menu ===================
     TXT_DASHBOARD: "ダッシュボード",
     TXT_DOMAINS_MANAGEMENT: "ドメイン管理",
     TXT_DESIGN_SEARCH_BOX: "検索ボックスデザイン",
@@ -51,7 +65,7 @@ const JAPANESE_TRANSLATIONS = {
     TXT_OPERATIONS_LOGS: "操作ログ",
     TXT_USAGE_STATISTICS: "利用統計",
 
-    // SettingsTheme.jsx
+    // =================== Theme Settings ===================
     LAYOUT_BUILDER_LABEL: "レイアウトビルダー",
     LAYOUT_BUILDER_DES: "検索エンジンの外観をウェブサイトのデザインに合わせてカスタマイズします。",
     BGCOLOR_SCHEME_LABEL: "背景色スキーム",
@@ -60,13 +74,15 @@ const JAPANESE_TRANSLATIONS = {
     MENU_BEHAVIOR_LABEL: "メニュー動作",
     LAYOUT_LABEL: "レイアウト",
 
-    // HeaderApp.jsx
+    // =================== Authentication ===================
     TXT_LOGOUT: "ログアウト",
+    PAGE_TITLE_LOGIN: "サインイン",
+    TXT_LOGIN_FAILED_PLEASE_TRY_AGAIN: "ログインに失敗しました。もう一度お試しください。",
 
-    // Dashboard
+    // =================== Dashboard ===================
     PAGE_TITLE_DASHBOARD_MANAGER: "ダッシュボード",
 
-    // ClientWebsites
+    // =================== Client Websites Management ===================
     PAGE_TITLE_CLIENT_WEBSITES: "クライアントウェブサイト",
     TITLE_CLIENT_WEBSITES_MANAGEMENT: "クライアントウェブサイト管理",
     BTN_ADD_DOMAIN: "ドメイン追加",
@@ -109,7 +125,7 @@ const JAPANESE_TRANSLATIONS = {
     NAME_COL_UPDATED_DATE: "更新日",
     NAME_COL_ACTIONS: "操作",
 
-    // ClientWebsites
+    // =================== Box Search Configuration ===================
     PAGE_TITLE_BOX_SEARCH_CONFIG: "ボックス検索設定",
     TXT_ERROR_UPDATE_BOX_SEARCH_CONFIG: "ボックス検索設定の更新に失敗しました。もう一度お試しください。",
     TXT_UPDATE_BOX_SEARCH_CONFIG_SUCCESS: "ボックス検索設定が正常に更新されました！",
@@ -131,11 +147,6 @@ const JAPANESE_TRANSLATIONS = {
     LABEL_BUTTON_BACKGROUND_COLOR: "ボタン背景色",
     LABEL_THEME: "テーマ",
     LABEL_FONT: "フォント",
-    BTN_SUBMIT: "送信",
-    BTN_CANCEL: "キャンセル",
-    BTN_RESET: "リセット",
-    BTN_RESET_TO_DEFAULTS: "デフォルトにリセット",
-    TXT_LOADING: "読み込み中...",
     TXT_CHOOSE_SEARCH_UI: "検索UIの表示方法を選択してください。",
     TXT_PICK_BACKGROUND_COLOR: "検索ボックスの背景色を選択してください。",
     TXT_ENABLE_SHADOW: "ボックスにシャドウを追加します。",
@@ -153,6 +164,58 @@ const JAPANESE_TRANSLATIONS = {
     PLACEHOLDER_SEARCH: "何でも検索...",
     LABEL_SHOW_BOX_SEARCH: "検索ボックスを表示",
     LABEL_SHOW_BACKGROUND: "背景を表示",
+    LABEL_SHOW_HTML: "HTML/JSを表示",
+    TXT_SHOW_HTML_DESC: "ウェブサイトに検索ボックスを埋め込むための生成されたHTML/JSコードスニペットを表示します。",
+    MODAL_TEXT_CONFIRM_RESET_BOX_SEARCH_CONFIG_TO_DEFAULTS: "このアクションはボックス検索設定をデフォルト設定にリセットします。このアクションは元に戻すことができません。本当に続行しますか？",
+    TXT_RESET_BOX_SEARCH_CONFIG_SUCCESS: "ボックス検索設定がデフォルトに正常にリセットされました！",
+    TXT_ERROR_RESET_BOX_SEARCH_CONFIG: "ボックス検索設定のリセットに失敗しました。もう一度お試しください。",
+    NOTICE_COPIED_TO_CLIPBOARD: "クリップボードにコピーされました",
+    BUTTON_COPY_CODE: "コードをコピー",
+
+    // =================== LLM Configuration ===================
+    PAGE_TITLE_LLM_CONFIGURATION: "LLM設定",
+    LABEL_LLM_CONFIGURATION: "LLM設定",
+    LABEL_MODEL_NAME: "モデル名",
+    TXT_MODEL_NAME_PLACEHOLDER: "モデル名は読み取り専用で変更できません。",
+    LABEL_RESPONSE_LENGTH_LEVEL: "応答長レベル",
+    LABEL_RESPONSE_SHORT: "短い",
+    LABEL_RESPONSE_MEDIUM: "中",
+    LABEL_RESPONSE_LONG: "長い",
+    LABEL_SYSTEM_PROMPT: "システムプロンプト",
+    TXT_SYSTEM_PROMPT_PLACEHOLDER: "システムプロンプトを入力",
+    TXT_FETCH_LLM_CONFIGURATION_ERROR: "LLM設定の取得に失敗しました。もう一度お試しください。",
+    TXT_UPDATE_LLM_CONFIGURATION_SUCCESS: "LLM設定が正常に更新されました！",
+    TXT_ERROR_UPDATE_LLM_CONFIGURATION: "LLM設定の更新に失敗しました。もう一度お試しください。",
+    MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS: "デフォルトへのリセットを確認",
+    MODAL_TEXT_CONFIRM_RESET_TO_DEFAULTS: "このアクションはLLM設定をデフォルト設定にリセットします。このアクションは元に戻すことができません。本当に続行しますか？",
+    TXT_RESET_LLM_CONFIGURATION_SUCCESS: "LLM設定がデフォルトに正常にリセットされました！",
+    TXT_ERROR_RESET_LLM_CONFIGURATION: "LLM設定のリセットに失敗しました。もう一度お試しください。",
+    // Validation messages
+    MSG_ERROR_MODEL_NAME_REQUIRED: "モデル名は必須です！",
+    MSG_ERROR_RESPONSE_LENGTH_LEVEL_REQUIRED: "応答長レベルは必須です！",
+
+    // =================== Operation Logs ===================
+    PAGE_TITLE_OPERATION_LOGS: "操作ログ",
+    NAME_COL_TENANT: "テナント",
+    NAME_COL_APP_ID: "アプリID",
+    NAME_COL_CLIENT_DOMAIN: "クライアントドメイン",
+    NAME_COL_MODEL_NAME: "モデル名",
+    NAME_COL_PROMPT: "プロンプト",
+    NAME_COL_STATUS: "ステータス",
+    NAME_COL_CREATED_AT: "作成日時",
+    MSG_DATA_OPERATION_LOGS_LOADING: "操作ログデータを読み込み中...",
+    TXT_SHOWING_OPERATION_LOGS: "{{total}}件の操作ログのうち{{count}}件を表示",
+    NO_OPERATION_LOGS_AVAILABLE: "操作ログがありません",
+    TXT_NO_OPERATION_LOGS_AVAILABLE_DESC: "選択したフィルターに操作ログが見つかりません。",
+    LABEL_FROM_DATE: "開始日",
+    LABEL_TO_DATE: "終了日",
+    PLACEHOLDER_SELECT_CLIENT_WEBSITE: "クライアントウェブサイトを選択",
+    MSG_ERROR_CLIENT_DOMAIN_REQUIRED: "クライアントドメインが必要です！",
+    MSG_ERROR_FROM_DATE_REQUIRED: "開始日が必要です！",
+    MSG_ERROR_TO_DATE_REQUIRED: "終了日が必要です！",
+    TITLE_DETAIL_OPERATION_LOG: "操作ログの詳細",
+
+    // Other translations can be added here
   }
 };
 

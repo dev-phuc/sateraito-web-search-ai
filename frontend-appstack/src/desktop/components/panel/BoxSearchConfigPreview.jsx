@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 // Library UI imports
 import { Formik } from 'formik';
-import { Card, Form } from 'react-bootstrap';
+import { Button, Card, Form } from 'react-bootstrap';
 
 // Hook components
 import useTheme from '@/hooks/useTheme'
@@ -201,29 +201,31 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                 </div>
 
                 {/* Result search */}
-                <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
-                  {isLoading && (
-                    <div className="loading-overlay">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
+                {resultTemp.length > 0 && (
+                  <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+                    {isLoading && (
+                      <div className="loading-overlay">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">Loading...</span>
+                        </div>
                       </div>
+                    )}
+                    <div className="result-search-summary">
+                      {summaryResult}
                     </div>
-                  )}
-                  <div className="result-search-summary">
-                    {summaryResult}
+                    {resultTemp.map((item, index) => (
+                      <div key={index} className="result-search-item">
+                        <div className="result-search-item-header">
+                          {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
+                        </div>
+                        <div className="result-search-item-description">
+                          {item.description}
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  {resultTemp.map((item, index) => (
-                    <div key={index} className="result-search-item">
-                      <div className="result-search-item-header">
-                        {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
-                      </div>
-                      <div className="result-search-item-description">
-                        {item.description}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                )}
               </div>
 
             </div>
@@ -237,19 +239,19 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                   {BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id)}
                 </code>
               </pre>
+
+              {/* Button copy code to clipboard */}
+              <Button onClick={() => {
+                navigator.clipboard.writeText(BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id));
+                showNotice('success', t('NOTICE_COPIED_TO_CLIPBOARD'));
+              }} className="btn btn-sm btn-primary">
+                <i className="mdi mdi-content-copy me-2"></i>{t('BUTTON_COPY_CODE')}
+              </Button>
+
             </Card.Body>
           </Card>
         }
       </Card.Body>
-
-      <button onClick={() => {
-        setSummaryResult('');
-        setResultTemp([]);
-        setIsSearching(false);
-        setIsLoading(false);
-      }} className="btn btn-sm btn-secondary position-absolute" style={{ bottom: '15px', right: '15px' }}>
-        clear
-      </button>
 
     </Card>
   );

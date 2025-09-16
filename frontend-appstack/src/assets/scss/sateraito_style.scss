@@ -1,5 +1,35 @@
 @import './default.scss';
 
+.page-header {
+  display: flex;
+  justify-self: start;
+  align-items: center;
+  margin-bottom: 0 !important;
+
+  .icon {
+    color: var(--base-color);
+    font-size: 25px;
+  }
+  .text {
+    margin: 0;
+  }
+}
+
+.table {
+  th {
+    input {
+      &::before {
+        background-color: #eff2f6;
+      }
+    }
+  }
+}
+
+input[type=checkbox]:focus::before {
+  background: #f1f3f4;
+  border-radius: 4px;
+}
+
 .form-check {
 
   &.form-switch,

@@ -232,6 +232,12 @@ class GoogleAppsDomainEntry(ndb.Model):
 	mobile_session_minutes = ndb.IntegerProperty(default=30)
 	mobile_loading_image = ndb.StringProperty(default='')
 
+	# for LLM
+	# Quota in monthly basis
+	llm_quota_monthly = ndb.IntegerProperty(default=0)
+	llm_quota_used = ndb.IntegerProperty(default=0)
+	llm_quota_last_reset = ndb.StringProperty()  # YYYY-MM
+
 	def _pre_put_hook(self):
 		# set to default app id namespace
 		old_namespace = namespace_manager.get_namespace()
@@ -509,6 +515,72 @@ class GoogleAppsDomainEntry(ndb.Model):
 		domain_entry = cls.getInstance(google_apps_domain, auto_create=True)
 		namespace_manager.set_namespace(old_namespace)
 		return domain_entry.ssogadget_app_key
+
+	# for LLM
+	@classmethod
+	def resetLLMQuotaMonthlyIfNeeded(cls, google_apps_domain):
+		""" Reset LLM quota if the month is changed
+			Return: True ... quota is reset
+							False .. no need to reset
+		"""
+		logging.info('resetLLMQuotaMonthlyIfNeeded:google_apps_domain=' + str(google_apps_domain))
+		# set to default app id namespace
+		old_namespace = namespace_manager.get_namespace()
+		namespace_manager.set_namespace(google_apps_domain)
+		# update
+		row = cls.getInstance(google_apps_domain, auto_create=True)
+		tz_utc = zoneinfo.gettz('UTC')
+		current_time_utc = datetime.datetime.now(tz_utc)
+		current_month = current_time_utc.strftime('%Y-%m')
+		ret_val = False
+		if (row.llm_quota_last_reset is None) or (row.llm_quota_last_reset != current_month):
+			logging.info('updating GoogleAppsDomainEntry in resetLLMQuotaMonthlyIfNeeded')
+			row.llm_quota_used = 0
+			row.llm_quota_last_reset = current_month
+			row.put()
+			ret_val = True
+		# restore old namespace
+		namespace_manager.set_namespace(old_namespace)
+		return ret_val
+
+	@classmethod
+	def incrementLLMQuotaUsed(cls, google_apps_domain, increment_value):
+		""" Increment LLM quota used
+			Return: True ... quota is updated
+							False .. error
+		"""
+		logging.info('incrementLLMQuotaUsed:google_apps_domain=' + str(google_apps_domain) + ', increment_value=' + str(increment_value))
+		if increment_value <= 0:
+			return False
+		# set to default app id namespace
+		old_namespace = namespace_manager.get_namespace()
+		namespace_manager.set_namespace(google_apps_domain)
+		# update
+		row = cls.getInstance(google_apps_domain, auto_create=True)
+		if row.llm_quota_used is None:
+			row.llm_quota_used = 0
+		row.llm_quota_used += increment_value
+		row.put()
+		# restore old namespace
+		namespace_manager.set_namespace(old_namespace)
+		return True
+	
+	@classmethod
+	def isLLMQuotaExceeded(cls, google_apps_domain):
+		# set to default app id namespace
+		old_namespace = namespace_manager.get_namespace()
+		namespace_manager.set_namespace(google_apps_domain)
+		# get data
+		row_dict = cls.getDict(google_apps_domain)
+		if row_dict is None:
+			namespace_manager.set_namespace(old_namespace)
+			return True
+		if row_dict['llm_quota_monthly'] is None or row_dict['llm_quota_used'] is None:
+			namespace_manager.set_namespace(old_namespace)
+			return True
+		is_exceeded = row_dict['llm_quota_used'] >= row_dict['llm_quota_monthly']
+		namespace_manager.set_namespace(old_namespace)
+		return is_exceeded
 
 class GoogleAppsUserEntry(ndb.Model):
 	"""	Datastore class to store user info
@@ -1208,18 +1280,45 @@ class BatchTimeLog(ndb.Model):
 		namespace_manager.set_namespace(old_namespace)
 
 class OperationLog(ndb.Model):
-	"""	Datastore class to store user search history
-	"""
-	operation_date = ndb.DateTimeProperty()
+	tenant = ndb.StringProperty()
+	app_id = ndb.StringProperty()
+	client_domain = ndb.StringProperty()
+
+	unique_id = ndb.StringProperty()
+	stream_path = ndb.StringProperty()
+	
+	prompt = ndb.TextProperty()
+	model_name = ndb.StringProperty()
+	system_prompt = ndb.TextProperty()
+
+	response = ndb.TextProperty()
+	metadata = ndb.TextProperty()
+	response_length = ndb.IntegerProperty()
+
+	status = ndb.StringProperty()
+	error_message = ndb.TextProperty()
+
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
-	user_id = ndb.StringProperty()
-	user_email = ndb.StringProperty()
 
-	operation = ndb.StringProperty()
+	@classmethod
+	def save(cls, tenant, app_id, client_domain, unique_id, stream_path, prompt, model_name, system_prompt, response, metadata, response_length, status, error_message):
+		row = cls()
+		row.tenant = tenant
+		row.app_id = app_id
+		row.client_domain = client_domain
+		row.unique_id = unique_id
+		row.stream_path = stream_path
+		row.prompt = prompt
+		row.model_name = model_name
+		row.system_prompt = system_prompt
+		row.response = response
+		row.metadata = metadata
+		row.response_length = response_length
+		row.status = status
+		row.error_message = error_message
+		row.put()
 
-	screen = ndb.StringProperty()
-	type_log = ndb.StringProperty()
-	detail = ndb.TextProperty()
+		return row
 
 
 # Datastore for WebSearchAI
@@ -1522,5 +1621,36 @@ class LLMConfiguration(ndb.Model):
 		# Get and return updated row
 		row = cls.getInstance()
 		logging.info('Updated LLMConfiguration: %s', row)
+
+		return row
+
+class LLMUsageLog(ndb.Model):
+	tenant = ndb.StringProperty()
+	app_id = ndb.StringProperty()
+	client_domain = ndb.StringProperty()
+
+	unique_id = ndb.StringProperty()
+	stream_path = ndb.StringProperty()
+	
+	prompt_length = ndb.IntegerProperty()
+	completion_length = ndb.IntegerProperty()
+	total_length = ndb.IntegerProperty()
+	usage_metadata = ndb.TextProperty()
+	
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+
+	@classmethod
+	def save(cls, tenant, app_id, client_domain, unique_id, stream_path, prompt_length, completion_length, total_length, usage_metadata):
+		row = cls()
+		row.tenant = tenant
+		row.app_id = app_id
+		row.client_domain = client_domain
+		row.unique_id = unique_id
+		row.stream_path = stream_path
+		row.prompt_length = prompt_length
+		row.completion_length = completion_length
+		row.total_length = total_length
+		row.usage_metadata = usage_metadata
+		row.put()
 
 		return row

@@ -15,6 +15,7 @@ const DashboardAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsol
 const ClientWebsitesAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/ClientWebsites"));
 const BoxSearchConfigAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/BoxSearchConfig"));
 const LLMConfigurationAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMConfiguration"));
+const OperationLogAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/OperationLog"));
 
 // Box search
 const BoxSearchPage = lazy(() => import("@/desktop/pages/BoxSearch"));
@@ -54,6 +55,10 @@ let routes = [
       {
         path: "ai-configuration",
         element: <LLMConfigurationAdminConsolePage />,
+      },
+      {
+        path: "logs",
+        element: <OperationLogAdminConsolePage />,
       },
       // {
       //   path: "userinfo",

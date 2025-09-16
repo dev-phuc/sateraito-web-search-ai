@@ -242,25 +242,27 @@ const BoxSearchPage = () => {
         </div>
 
         {/* Result search */}
-        <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
-          {isLoading && (
-            <div className="loading-overlay">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Loading...</span>
+        {searchResult.length > 0 && (
+          <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+            {isLoading && (
+              <div className="loading-overlay">
+                <div className="spinner-border text-primary" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
               </div>
+            )}
+            <div className="result-search-summary">
+              <Markdown>
+                {summaryResult}
+              </Markdown>
             </div>
-          )}
-          <div className="result-search-summary">
-            <Markdown>
-              {summaryResult}
-            </Markdown>
+            {searchResult.map((item, index) => (
+              <div key={index}>
+                <SearchResultItem data={item} />
+              </div>
+            ))}
           </div>
-          {searchResult.map((item, index) => (
-            <div key={index}>
-              <SearchResultItem data={item} />
-            </div>
-          ))}
-        </div>
+        )}
 
       </div>
     </>

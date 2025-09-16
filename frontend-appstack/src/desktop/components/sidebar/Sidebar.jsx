@@ -106,14 +106,14 @@ const Sidebar = ({ items, isLoading, showFooter = true }) => {
         <PerfectScrollbar>
           {/*<div className="wrap-header-static">*/}
 
-          <div className="sidebar-brand">
-            <Link className="text-start mb-2 d-flex align-items-center" to={'/'}>
+          <div className="sidebar-brand mb-2">
+            <Link className="text-start mb-2 d-flex justify-content-center align-items-center" to={'/'}>
               <div className="logo me-2">
                 <Logo />
               </div>
-              <div className="title d-none d-lg-block">
+              <span className="title d-none d-lg-block">
                 {t("TXT_APP_NAME")}
-              </div>
+              </span>
             </Link>
           </div>
 

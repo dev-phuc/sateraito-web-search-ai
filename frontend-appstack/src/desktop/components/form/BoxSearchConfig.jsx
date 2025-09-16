@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from "yup";
 // Library UI imports
 import { Formik } from "formik";
-import { Form, Button, InputGroup, FormControl, Spinner, Row, Col, Card } from "react-bootstrap";
+import { Form, Button, InputGroup, Modal, Row, Col, Card } from "react-bootstrap";
 
 // Hook components
 import useTheme from '@/hooks/useTheme'
@@ -22,6 +22,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
 
   // State
   const [loading, setLoading] = useState({ submitting: false });
+  const [showConfirmResetDefaults, setShowConfirmResetDefaults] = useState(false);
   const submittingRef = useRef(false);
 
   // Zustand stores
@@ -91,6 +92,34 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
 
   }, [editBoxSearchConfig, tenant, app_id, afterSubmit, t, showNotice]);
 
+  const handlerResetToDefaults = async () => {
+    setShowConfirmResetDefaults(false);
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+    setLoading(l => ({ ...l, submitting: true }));
+    try {
+      const result = await editBoxSearchConfig(tenant, app_id, BOX_SEARCH_DESIGN_DEFAULT);
+      const { success, error } = result;
+      let message = '';
+      if (success) {
+        if (afterSubmit) {
+          afterSubmit(success);
+        }
+        message = t('TXT_RESET_BOX_SEARCH_CONFIG_SUCCESS');
+        showNotice('success', message);
+      } else {
+        message = t(error);
+        if (message === error) {
+          message = t('TXT_ERROR_RESET_BOX_SEARCH_CONFIG');
+        }
+        showNotice('error', message);
+      }
+    } finally {
+      submittingRef.current = false;
+      setLoading(l => ({ ...l, submitting: false }));
+    }
+  };
+
   if (!boxSearchConfig) {
     return <div>Loading...</div>;
   }
@@ -104,7 +133,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
       onSubmit={handlerOnSubmit}
     >
       {({ values, handleChange, handleSubmit, setFieldValue, errors, touched, isValid, dirty, isSubmitting, resetForm }) => {
-        
+
         useEffect(() => {
           handlerOnChange(values);
         }, [values]);
@@ -112,7 +141,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
         return (
           <Form onSubmit={handleSubmit} noValidate className=''>
             {/* Search Box Section */}
-            <Card className='p-3 mx-2 mt-2 mb-3'>
+            <Card className='shadow-none mx-2 overflow-hidden'>
               <Card.Title>{t('LABEL_SEARCH_BOX')}</Card.Title>
 
               <Form.Group className="mb-3">
@@ -159,7 +188,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
               <h6>{t('LABEL_OPTIONS')}</h6>
 
               <Row>
-                
+
                 <Col md={2} className="mb-3">
                   <Form.Label>{t('LABEL_COLOR')}</Form.Label>
                   <Form.Control type="color" name="theme.color" value={values.theme.color} onChange={(e) => setFieldValue('theme.color', e.target.value)} />
@@ -179,9 +208,6 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                   </div>
                   <Form.Text className="text-muted small mb-0">{t('TXT_ENABLE_SHADOW')}</Form.Text>
                 </Col>
-              </Row>
-
-              <Row>
 
                 <Col md={12} className="mb-3">
                   <Form.Label>{t('LABEL_FONT')}</Form.Label>
@@ -218,14 +244,10 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                   <Form.Control.Feedback type="invalid">{touched.search_box?.options?.padding && errors.search_box?.options?.padding}</Form.Control.Feedback>
                   <Form.Text className="text-muted small">{t('TXT_INNER_SPACING')}</Form.Text>
                 </Col>
-
               </Row>
-            </Card>
 
-            {/* Search Button Section */}
-            <Card className='p-3 mx-2 mt-2 mb-3'>
+              {/* Search Button Section */}
               <Card.Title>{t('LABEL_SEARCH_BUTTON')}</Card.Title>
-
               <Row>
                 <Col md={6} className="mb-3">
                   <Form.Group className="mb-3">
@@ -254,25 +276,58 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                   <Form.Control type="color" name="search_button.background_color" value={values.search_button.background_color} onChange={(e) => setFieldValue('search_button.background_color', e.target.value)} />
                 </Col>
               </Row>
-            </Card>
 
-            <div className='px-3 mx-2 mb-3'>
-              <Row className="mt-3">
-                <Col md="8">
+              <Row className="mt-3 border-top pt-3">
+                <Col md="7">
                   <Button type="submit" disabled={loading.submitting || !isValid || (!dirty && !isSubmitting)} aria-busy={loading.submitting}>
-                    {loading.submitting ? (<><Spinner animation="border" size="sm" /> <span className="ms-2">{t('TXT_LOADING')}</span></>) : t('BTN_SUBMIT')}
+                    {loading.submitting ? (
+                      <>
+                        <i className="mdi mdi-spin mdi-loading"></i>
+                        <span className="ms-2">{t('TXT_LOADING')}</span>
+                      </>
+                    ) :
+                      <>
+                        <i className="mdi mdi-content-save"></i>
+                        <span className="ms-2">{t('BTN_SUBMIT')}</span>
+                      </>
+                    }
                   </Button>
                   {onCancel && <Button variant="secondary" onClick={onCancel} className="ms-2">{t('BTN_CANCEL')}</Button>}
-                  <Button variant="outline-secondary" onClick={() => resetForm()} className="ms-2">{t('BTN_RESET')}</Button>
+                  <Button variant="outline-secondary" disabled={loading.submitting} onClick={() => resetForm()} className="ms-2">
+                    <i className="mdi mdi-restore"></i>
+                    <span className="ms-2">{t('BTN_RESET')}</span>
+                  </Button>
                 </Col>
-                <Col md="4">
+                <Col md="5">
                   <div className="d-flex justify-content-end">
-                    <Button variant="outline-danger" onClick={() => resetForm({ values: BOX_SEARCH_DESIGN_DEFAULT })}>{t('BTN_RESET_TO_DEFAULTS')}</Button>
+                    <Button variant="outline-danger" onClick={() => setShowConfirmResetDefaults(true)} disabled={loading.submitting || showConfirmResetDefaults}>
+                      <i className="mdi mdi-backup-restore"></i>
+                      <span className="ms-2">{t('BTN_RESET_TO_DEFAULTS')}</span>
+                    </Button>
                   </div>
                 </Col>
                 <Form.Text className="d-block text-muted mt-2">{t('TXT_FORM_SUBMIT_CONDITION')}</Form.Text>
               </Row>
-            </div>
+
+            </Card>
+
+            {/* Modal for confirming reset to defaults */}
+            <Modal show={showConfirmResetDefaults} onHide={() => setShowConfirmResetDefaults(false)} centered>
+              <Modal.Header closeButton>
+                <Modal.Title>{t('MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS')}</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <p>{t('MODAL_TEXT_CONFIRM_RESET_BOX_SEARCH_CONFIG_TO_DEFAULTS')}</p>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={() => setShowConfirmResetDefaults(false)}>
+                  {t('BTN_CANCEL')}
+                </Button>
+                <Button variant="danger" onClick={handlerResetToDefaults}>
+                  {t('BTN_RESET_TO_DEFAULTS')}
+                </Button>
+              </Modal.Footer>
+            </Modal>
 
           </Form>
         )

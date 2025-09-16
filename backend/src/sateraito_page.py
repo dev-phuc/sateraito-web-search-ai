@@ -484,11 +484,11 @@ class _BasePage():
 		return True
 
 	def checkGadgetRequest(self, tenant_or_domain, is_with_check_csrf_token=False):
-		# if sateraito_inc.developer_mode:
-		# 	self.viewer_email = 'admin@vn2.sateraito.co.jp'
-		# 	self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
-		# 	self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
-		# 	return True
+		if sateraito_inc.developer_mode:
+			self.viewer_email = 'admin@vn2.sateraito.co.jp'
+			self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
+			self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
+			return True
 
 		old_namespace = namespace_manager.get_namespace()
 		sateraito_func.setNamespace(tenant_or_domain, '')
@@ -557,11 +557,11 @@ class _BasePage():
 		return True
 
 	def checkOidRequest(self, tenant_or_domain, is_without_error_response_status=False, is_without_check_csrf_token=False):
-		# if sateraito_inc.developer_mode:
-		# 	self.viewer_email = 'admin@vn2.sateraito.co.jp'
-		# 	self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
-		# 	self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
-		# 	return True
+		if sateraito_inc.developer_mode:
+			self.viewer_email = 'admin@vn2.sateraito.co.jp'
+			self.viewer_email_raw = 'admin@vn2.sateraito.co.jp'
+			self.viewer_user_id = 'admin@vn2.sateraito.co.jp'
+			return True
 
 		mode = self.request.get('mode')
 		logging.info('mode=' + mode)
@@ -1072,7 +1072,7 @@ class _BasePage():
 
 						is_check_ok = True
 					else:
-						logging.warning('Client website not found or inactive')
+						logging.warning(f'Client website not found or inactive: origin={client_website_origin} href={client_website_href}')
 
 			except Exception as e:
 				logging.warning(e)

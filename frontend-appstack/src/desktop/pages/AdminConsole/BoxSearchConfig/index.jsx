@@ -55,12 +55,10 @@ const BoxSearchConfigAdminConsolePage = () => {
       </Helmet>
 
       <Container fluid className="p-0">
-        <div className="d-flex flex-row">
+        <div className="d-flex flex-row h-100">
           {/* Form config - Left */}
-          <div className="flex-grow-1" style={{
+          <div className="flex-grow-1 h-100 overflow-auto" style={{
             maxWidth: "600px",
-            overflowY: "auto",
-            maxHeight: "calc(100vh - 75px)",
           }}
           >
             <BoxSearchConfigForm

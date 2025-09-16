@@ -114,10 +114,11 @@ const ClientWebsitesAdminConsolePage = () => {
   return (
     <>
       <Helmet>
-        <title>{t("PAGE_TITLE_CLIENT_WEBSITES")}</title>
+        <title>{t("TXT_DOMAINS_MANAGEMENT")}</title>
       </Helmet>
 
       <Container fluid className="p-0">
+        {/* Table */}
         <ClientWebsitesTable
           tenant={tenant}
           app_id={app_id}
@@ -140,9 +141,7 @@ const ClientWebsitesAdminConsolePage = () => {
         onHide={onCloseForm}
         size="lg"
         centered
-        backdrop="static"
         scrollable
-        animation={false}
       >
         <Modal.Header closeButton>
           <Modal.Title>{t("PAGE_TITLE_CLIENT_WEBSITES")}</Modal.Title>
@@ -167,9 +166,7 @@ const ClientWebsitesAdminConsolePage = () => {
         onHide={onCloseConfirmDelete}
         size="md"
         centered
-        backdrop="static"
         scrollable
-        animation={false}
       >
         <Modal.Header closeButton>
           <Modal.Title>{t("TITLE_CONFIRM_DELETE_CLIENT_WEBSITE")}</Modal.Title>

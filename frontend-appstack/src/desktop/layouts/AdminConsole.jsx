@@ -3,7 +3,8 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-// Redux components
+// Zustand
+import useAppStore from "@/store/app";
 
 // Hook components
 import useAuth from "@/hooks/useAuth";
@@ -33,6 +34,9 @@ const AdminConsoleLayout = ({ children }) => {
   const navigate = useNavigate();
   const { tenant, app_id } = useParams();
 
+  // Zustand state
+  const { pageActive, setPageActive } = useAppStore();
+
   // Use hooks state
   const { setTenantAppId, isInitialized, initializeAuth } = useAuth();
 
@@ -53,7 +57,7 @@ const AdminConsoleLayout = ({ children }) => {
         {
           href: `/${tenant}/${app_id}/admin_console/box-search-config`,
           title: 'TXT_DESIGN_SEARCH_BOX',
-          icon: 'mdi mdi-magnify me-2',
+          icon: 'mdi mdi-lead-pencil me-2',
         },
         {
           href: `/${tenant}/${app_id}/admin_console/design-banner`,
@@ -86,6 +90,19 @@ const AdminConsoleLayout = ({ children }) => {
   useEffect(() => {
     processOnChangeTenantAppId(tenant, app_id);
   }, [tenant, app_id]);
+
+  useEffect(() => {
+    // Update page active
+    let pages = dashboardItems[0].pages;
+
+    let foundPage = pages.find((page) => window.location.pathname === page.href);
+    if (foundPage) {
+      setPageActive(foundPage);
+    } else {
+      setPageActive(null);
+    }
+
+  }, [navigate]);
 
   if (!isInitialized) {
     return <>Loading...</>

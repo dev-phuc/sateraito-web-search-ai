@@ -16,6 +16,10 @@ const useStoreApp = create((set) => ({
     localStorage.setItem('sidebarClosed', closed);
   },
 
+  // Page active
+  pageActive: null,
+  setPageActive: (page) => set({ pageActive: page }),
+
   // Message Notify
   messageNotify: null,
   setMessageNotify: (config) => set({ messageNotify: config }),
