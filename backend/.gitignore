@@ -19,8 +19,10 @@ yarn-error.log*
 *.sln
 *.sw?
 *.pyc
-*static
-*gdata
+# *static
+# *gdata
+
+/src/static/frontend
 
 *sateraito_inc.py
 *service-account-key.json

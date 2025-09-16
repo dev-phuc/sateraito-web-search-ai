@@ -1,0 +1,199 @@
+@charset "UTF-8";
+
+@import url(base.css?v=20220511-01);
+@import url(input.css?v=20220511-01);
+
+img {
+  display: inline-block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.pc {
+  display: none !important;
+}
+
+.img100 {
+  width: 100%;
+  height: auto;
+}
+
+p {
+  font-size: 3.75vw;
+}
+
+/*-------------------------------------------------
+	++ header
+-------------------------------------------------*/
+#header {
+  width: 100%;
+  background-color: #00923a;
+  padding: 0;
+}
+
+#logo {
+  float: left;
+  width: 50%;
+  padding: 2vw 0;
+}
+
+#logo img {
+  display: block;
+}
+
+#bggray {
+  width: 100%;
+  background-color: #f2f2f2;
+  padding: 3vw 0;
+}
+
+.Title {
+  font-size: 4.6875vw;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.btn_clause {
+  float: right;
+  display: block;
+  margin: 2% auto 0 auto;
+  text-align: center;
+}
+
+.btn_clause a {
+  display: inline-block;
+  line-height: 1;
+  padding: 15px 10px 12px 10px;
+  border-radius: 25px;
+  margin: 0;
+  font-size: 4.0625vw;
+  min-width: 10em;
+  background: #FFFFFF;
+  white-space: nowrap;
+  color: #00923a;
+}
+
+/*-------------------------------------------------
+	++ OUTER
+-------------------------------------------------*/
+.cInner {
+  display: block;
+  clear: both;
+  margin: 0 auto;
+  position: relative;
+  padding: 0 3vw;
+}
+
+#content {
+  margin: 0 auto;
+  padding: 3vw 0;
+  background: #FFF;
+}
+
+/*-------------------------------------------------
+	++ register
+-------------------------------------------------*/
+.registerBlock {
+  width: 100%;
+  position: relative;
+  padding: 0px;
+  margin: 0px auto;
+}
+
+.registerBlock dl {
+  margin-bottom: 3%;
+  font-size: 3.75vw;
+}
+
+.registerBlock dl:nth-last-of-type(1) {
+  margin-bottom: 0;
+}
+
+.registerBlock dt {
+  margin-bottom: 5px;
+  font-weight: bold;
+  font-size: 3.75vw;
+}
+
+.registerBlock.confirm dl {
+  border-bottom: 1px #c8c8c8 solid;
+}
+
+.registerBlock.confirm dl dt {
+  float: left;
+  width: 35%;
+  font-size: 3.4375vw;
+}
+
+.registerBlock.confirm dl dd {
+  float: left;
+  width: 65%;
+  font-size: 3.4375vw;
+  vertical-align: bottom;
+}
+
+.registerBlock.confirm2  dl {
+	border-bottom: 1px #c8c8c8 solid;}
+
+.req {
+  display: inline-block;
+  border: 1px #fd0004 solid;
+  border-radius: 3px;
+  font-size: 14px;
+  line-height: 1;
+  color: #fd0004;
+  font-weight: normal;
+  padding: 4px 5px 2px 5px;
+  margin-left: 10px;
+}
+
+.bigBtn li {
+  width: 50%;
+  padding-right: 5px;
+  float: left;
+  margin: 20px 0;
+}
+
+.bigBtn2 li {
+  width: 70%;
+  padding-right: 5px;
+  margin: 20px auto;
+}
+
+.bigBtn li:last-child {
+  padding-right: 0;
+}
+
+.bigBtn ul li a,
+.bigBtn2 ul li a {
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  color: #FFF;
+  padding: 15px 0px;
+  text-align: center;
+}
+
+.bigBtn ul li.reset a,
+.bigBtn2 ul li.reset a {
+  background-color: #c6c6c6;
+}
+
+.bigBtn ul li.confirm a,
+.bigBtn2 ul li.confirm a {
+  background-color: #00923a;
+}
+
+.thanksTxt {
+  text-align: left;
+  padding: 5% 0;
+}
+
+#footer {
+  text-align: center;
+  padding: 3vw 0;
+  font-size: 3.4375vw;
+}
+
+
+
