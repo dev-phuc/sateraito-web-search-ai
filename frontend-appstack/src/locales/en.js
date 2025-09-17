@@ -244,6 +244,11 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_CHART_TYPE: "Chart Type",
     MSG_DATA_LLM_USAGE_NO_DATA: "No LLM usage data available.",
     MSG_DATA_LLM_USAGE_LOADING: "LLM usage data is loading...",
+    LABEL_LLM_USAGE_BREAKDOWN: "LLM Usage Breakdown",
+    MSG_LLM_USAGE_BREAKDOWN_INFO: "This table provides a detailed breakdown of LLM usage over time, including prompt lengths, completion lengths, total lengths, and request counts.",
+    LABEL_PROMPT_LENGTH: "Prompt Length",
+    LABEL_COMPLETION_LENGTH: "Completion Length",
+    LABEL_TOTAL_LENGTH: "Total Length",
 
     // Other translations can be added here
   }

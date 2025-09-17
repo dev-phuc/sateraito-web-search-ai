@@ -104,12 +104,12 @@ class _FetchLLMUsage(sateraito_page.Handler_Basic_Request, sateraito_page._BaseP
 			usage_list = []
 			query = self.build_query_time_frame(time_frame)
 			for usage in query.order(-LLMUsageLog.timestamp).fetch(1000):
-				usage_dict = usage.to_dict()
 				usage_list.append({
-					'timestamp': sateraito_func.toShortLocalTime(usage_dict.get('timestamp')),
-					'prompt_length': usage_dict.get('prompt_length', 0),
-					'completion_length': usage_dict.get('completion_length', 0),
-					'total_length': usage_dict.get('total_length', 0),
+					'timestamp': sateraito_func.toShortLocalTime(usage.timestamp),
+					'model_name': usage.model_name,
+					'prompt_length': usage.prompt_length,
+					'completion_length': usage.completion_length,
+					'total_length': usage.total_length,
 				})
 
 			# Get google apps domain

@@ -85,9 +85,6 @@ class _GetOperationLogListAdmin(__GetOperationLogListAdmin):
 	"""
 	
 	def process(self, google_apps_domain, app_id):
-		# check if user workflow admin
-		if not sateraito_func.isWorkflowAdmin(self.viewer_email, google_apps_domain, app_id):
-			return
 		
 		# get params
 		page = self.request.get('page', 1)

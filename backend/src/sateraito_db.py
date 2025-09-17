@@ -1633,6 +1633,7 @@ class LLMUsageLog(ndb.Model):
 	unique_id = ndb.StringProperty()
 	stream_path = ndb.StringProperty()
 	
+	model_name = ndb.StringProperty()
 	prompt_length = ndb.IntegerProperty()
 	completion_length = ndb.IntegerProperty()
 	total_length = ndb.IntegerProperty()
@@ -1641,13 +1642,14 @@ class LLMUsageLog(ndb.Model):
 	timestamp = ndb.DateTimeProperty(auto_now_add=True)
 
 	@classmethod
-	def save(cls, tenant, app_id, client_domain, unique_id, stream_path, prompt_length, completion_length, total_length, usage_metadata):
+	def save(cls, tenant, app_id, client_domain, unique_id, stream_path, model_name, prompt_length, completion_length, total_length, usage_metadata):
 		row = cls()
 		row.tenant = tenant
 		row.app_id = app_id
 		row.client_domain = client_domain
 		row.unique_id = unique_id
 		row.stream_path = stream_path
+		row.model_name = model_name
 		row.prompt_length = prompt_length
 		row.completion_length = completion_length
 		row.total_length = total_length

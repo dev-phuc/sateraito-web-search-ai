@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 
+// moment
+import moment from 'moment';
+
 // Zustand store
 import useStoreLLMUsage from "@/store/llm_usage";
 
@@ -29,9 +32,9 @@ const LLMUsageAdminConsolePage = () => {
   const { tenant, app_id } = useParams();
 
   const CHART_TYPE = [
+    { value: 'bar', label: t('TXT_BAR_CHART') },
     { value: 'area', label: t('TXT_AREA_CHART') },
     { value: 'line', label: t('TXT_LINE_CHART') },
-    { value: 'bar', label: t('TXT_BAR_CHART') },
   ];
   const TIME_FRAME_LIST = [
     { value: 'all', label: t('TXT_ALL_TIME') },
@@ -45,8 +48,9 @@ const LLMUsageAdminConsolePage = () => {
   const { isLoading, llmUsage, fetchLLMUsage } = useStoreLLMUsage();
 
   // state
-  const [timeFrame, setTimeFrame] = useState('day');
-  const [chartType, setChartType] = useState('area');
+  const [timeFrame, setTimeFrame] = useState('month');
+  const [chartType, setChartType] = useState('bar');
+  const [dataTableShow, setDataTableShow] = useState([]);
 
   useEffect(() => {
     if (!isLoading) {
@@ -55,64 +59,56 @@ const LLMUsageAdminConsolePage = () => {
   }, [timeFrame]);
 
   useEffect(() => {
-    let { usage_list } = llmUsage || {};
-    if (!usage_list) {
-      usage_list = [];
-    }
+    const { usage_list: rawUsageList } = llmUsage || {};
+    const usageList = rawUsageList || [];
 
-    let usageListSorted = [...usage_list];
-    usageListSorted.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    // Sort usage list by timestamp
+    const usageListSorted = [...usageList].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-    let dataShow = [];
-    if (timeFrame === 'day') {
-      let usageMap = {};
+    // Group by hour and count requests
+    const usageMap = {};
+    usageListSorted.forEach((item) => {
+      const dateKey = moment(item.timestamp).format('YYYY-MM-DD HH:00');
+      usageMap[dateKey] = {
+        model_name: (usageMap[dateKey]?.model_name || []).concat(item.model_name || []),
+        total_requests: (usageMap[dateKey]?.total_requests || 0) + 1,
+        prompt_length: (usageMap[dateKey]?.prompt_length || 0) + (item.prompt_length || 0),
+        completion_length: (usageMap[dateKey]?.completion_length || 0) + (item.completion_length || 0),
+        total_length: (usageMap[dateKey]?.total_length || 0) + (item.total_length || 0),
+      }
+    });
 
-      usageListSorted.forEach((item) => {
-        const hourAndMinute = new Date(item.timestamp);
-        hourAndMinute.setSeconds(0, 0);
-        const hourKey = hourAndMinute.toISOString();
-        if (!usageMap[hourKey]) {
-          usageMap[hourKey] = 0;
-        }
-        // usageMap[hourKey] += item.total_length;
-        usageMap[hourKey] += 1; // Count each request
-      });
-
-      console.log(usageMap);
-
-      // Convert to array
-      dataShow = Object.keys(usageMap).map((hour) => ({
-        timestamp: new Date(hour).toISOString(),
-        total_length: usageMap[hour],
+    // Convert to sorted array of data points
+    const dataShow = Object.keys(usageMap)
+      .sort()
+      .map((date) => ({
+        timestamp: moment(date).toDate(),
+        model_name: [...new Set(usageMap[date].model_name)],
+        total_length: usageMap[date].total_length,
+        prompt_length: usageMap[date].prompt_length,
+        completion_length: usageMap[date].completion_length,
+        request_count: usageMap[date].total_requests,
       }));
-      usage_list = dataShow;
 
-    } else {
-      // Total usage per day
-      let usageMap = {};
-      usageListSorted.forEach((item) => {
-        const dateKey = new Date(item.timestamp).toISOString().split('T')[0];
-        if (!usageMap[dateKey]) {
-          usageMap[dateKey] = 0;
-        }
-        // usageMap[dateKey] += item.total_length;
-        usageMap[dateKey] += 1; // Count each request
-      });
+    // Set data show state
+    let dataTableShow = [...dataShow];
+    // Sort by timestamp descending
+    dataTableShow.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+    setDataTableShow(dataTableShow);
 
-      // Convert to array
-      dataShow = Object.keys(usageMap).map((date) => ({
-        timestamp: new Date(date).toISOString(),
-        total_length: usageMap[date],
-      }));
-      usage_list = dataShow;
+    // Prepare chart data
+    const chartData = dataShow.map((item) => ({
+      x: item.timestamp.getTime(),
+      y: item.request_count,
+    }));
+
+    // Clear existing chart container
+    const chartContainer = document.querySelector("#chart-llm-usage");
+    if (chartContainer) {
+      chartContainer.innerHTML = '';
     }
 
-    // Check already chart and destroy
-    const existingChart = document.querySelector("#chart-llm-usage .apexcharts-canvas");
-    if (existingChart) {
-      existingChart.parentNode.removeChild(existingChart);
-    }
-
+    // Chart options
     const options = {
       chart: {
         type: chartType,
@@ -120,38 +116,42 @@ const LLMUsageAdminConsolePage = () => {
       },
       series: [{
         name: t('LABEL_TOTAL_REQUESTS'),
-        data: usage_list.map((item) => ({
-          x: new Date(item.timestamp),
-          y: item.total_length
-        }))
+        data: chartData,
       }],
       xaxis: {
         type: 'datetime',
         title: {
-          text: t('LABEL_TIMESTAMP')
-        }
+          text: t('LABEL_TIMESTAMP'),
+        },
+        labels: {
+          datetimeUTC: false,
+        },
       },
       yaxis: {
         title: {
-          text: t('LABEL_TOTAL_REQUESTS')
-        }
+          text: t('LABEL_TOTAL_REQUESTS'),
+        },
       },
     };
 
-    if (usage_list) {
-      const chart = new ApexCharts(document.querySelector("#chart-llm-usage"), options);
+    // Render chart if data exists
+    let chart = null;
+    if (dataShow.length > 0) {
+      chart = new ApexCharts(chartContainer, options);
       chart.render();
-      return () => {
-        chart.destroy();
-      };
     }
+
+    // Cleanup on unmount or dependency change
+    return () => {
+      if (chart) {
+        chart.destroy();
+      }
+    };
   }, [chartType, llmUsage]);
 
   if (isLoading && !llmUsage) {
     return <div>Loading...</div>;
   }
-
-  let { llm_quota_last_reset, llm_quota_monthly, llm_quota_used, llm_quota_remaining, usage_list } = llmUsage;
 
   // Return component
   return (
@@ -194,7 +194,7 @@ const LLMUsageAdminConsolePage = () => {
               {/* Chart will be rendered here by ApexCharts */}
             </div>
             {/* Empty */}
-            {(!usage_list || usage_list.length === 0) && !isLoading && (
+            {(dataTableShow.length === 0) && !isLoading && (
               <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
                 <div className="text-center">
                   <div className="h1 mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</div>
@@ -212,6 +212,51 @@ const LLMUsageAdminConsolePage = () => {
             )}
           </div>
         </div>
+
+        {/* Usage breakdown */}
+        <Container fluid className="p-0 mt-4">
+          <div className="box p-3 bg-white rounded">
+            <div className="mb-3">
+              <h5 className="">{t('LABEL_LLM_USAGE_BREAKDOWN')}</h5>
+              <p>{t('MSG_LLM_USAGE_BREAKDOWN_INFO')}</p>
+            </div>
+
+            {/* Table of dataTableShow */}
+            <div className="table-responsive">
+              <table className="table table-bordered table-hover">
+                <thead>
+                  <tr>
+                    <th>{t('LABEL_TIMESTAMP')}</th>
+                    <th>{t('LABEL_MODEL_NAME')}</th>
+                    <th>{t('LABEL_PROMPT_LENGTH')}</th>
+                    <th>{t('LABEL_COMPLETION_LENGTH')}</th>
+                    <th>{t('LABEL_TOTAL_LENGTH')}</th>
+                    <th>{t('LABEL_TOTAL_REQUESTS')}</th>
+                    
+                  </tr>
+                </thead>
+                <tbody>
+                  {dataTableShow.length > 0 ? (
+                    dataTableShow.map((item, index) => (
+                      <tr key={index}>
+                        <td>{moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss')}</td>
+                        <td>{item.model_name.join(', ')}</td>
+                        <td>{item.prompt_length}</td>
+                        <td>{item.completion_length}</td>
+                        <td>{item.total_length}</td>
+                        <td>{item.request_count || 1}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="6" className="text-center">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </Container>
 
       </Container>
 

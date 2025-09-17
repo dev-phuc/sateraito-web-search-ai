@@ -1,24 +1,12 @@
-import { defineConfig, splitVendorChunkPlugin, loadEnv } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import svgrPlugin from "vite-plugin-svgr";
 import { ViteEjsPlugin } from "vite-plugin-ejs";
-import { nodePolyfills } from "vite-plugin-node-polyfills";
+// import { nodePolyfills } from "vite-plugin-node-polyfills";
 // import { ssr } from 'vite-plugin-ssr/plugin'
 
 import { resolve } from "path";
 
-function makeid(length) {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
-}
 const now = new Date();
 const timestamp = now.getTime();
 const version = timestamp;
@@ -56,10 +44,10 @@ export default ({ mode }) => {
       }),
       svgrPlugin(),
       ViteEjsPlugin(),
-      nodePolyfills({
-        protocolImports: true,
-      }),
-      splitVendorChunkPlugin(),
+      // nodePolyfills({
+      //   protocolImports: true,
+      // }),
+      // splitVendorChunkPlugin(),
       // ssr({
       //   baseAssets: 'https://sateraito-aiboard-dev.appspot.com//static/frontend/',
       //   baseServer: '/v2/sateraitooffice.personal/'
@@ -108,30 +96,30 @@ export default ({ mode }) => {
             }
             return "assets/[name].[hash][extname]";
           },
-          manualChunks: {
-            markdown: [
-              "react-markdown",
-              "remark-gfm",
-              "rehype-raw",
-              "remark-math",
-              "rehype-katex",
-            ],
-            syntaxhighlighter: ["react-syntax-highlighter"],
-            apexcharts: ["apexcharts"],
-            chartjs: ["chart.js", "react-chartjs-2"],
-            // googlemaps: ["google-map-react"],
-            // vectormaps: [
-            //   "jsvectormap",
-            //   "src/vendor/us_aea_en.js",
-            //   "src/vendor/world.js",
-            // ],
-            // fullcalendar: [
-            //   "@fullcalendar/bootstrap",
-            //   "@fullcalendar/daygrid",
-            //   "@fullcalendar/react",
-            //   "@fullcalendar/timegrid",
-            // ],
-          },
+          // manualChunks: {
+          //   markdown: [
+          //     "react-markdown",
+          //     "remark-gfm",
+          //     "rehype-raw",
+          //     "remark-math",
+          //     "rehype-katex",
+          //   ],
+          //   syntaxhighlighter: ["react-syntax-highlighter"],
+          //   apexcharts: ["apexcharts"],
+          //   chartjs: ["chart.js", "react-chartjs-2"],
+          //   // googlemaps: ["google-map-react"],
+          //   // vectormaps: [
+          //   //   "jsvectormap",
+          //   //   "src/vendor/us_aea_en.js",
+          //   //   "src/vendor/world.js",
+          //   // ],
+          //   // fullcalendar: [
+          //   //   "@fullcalendar/bootstrap",
+          //   //   "@fullcalendar/daygrid",
+          //   //   "@fullcalendar/react",
+          //   //   "@fullcalendar/timegrid",
+          //   // ],
+          // },
         },
       },
     },

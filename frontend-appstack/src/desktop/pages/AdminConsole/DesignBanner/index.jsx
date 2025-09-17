@@ -12,7 +12,7 @@ import useTheme from "@/hooks/useTheme";
 
 // Library imports
 // Library IU imports
-import { Container } from "react-bootstrap";
+import { Container, Alert } from "react-bootstrap";
 
 // Constant value
 
@@ -38,7 +38,16 @@ const DesignBannerAdminConsolePage = () => {
       </Helmet>
 
       <Container fluid className="p-0">
-        <h1>Design Banner - Admin console</h1>
+        <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+          <div variant="info" className="bg-white rounded p-4 text-center">
+            <h3>
+              The Design Banner Manager page is not yet implemented.
+            </h3>
+            <p>
+              Please check back later for updates.
+            </p>
+          </div>
+        </div>
       </Container>
 
     </>

@@ -182,7 +182,7 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 			usage_metadata = ''
 			if metadata and isinstance(metadata, dict) and 'usage' in metadata:
 				usage_metadata = json.dumps(metadata['usage'], ensure_ascii=False)
-			LLMUsageLog.save(tenant, app_id, self.client_website_domain, unique_id, stream_path, prompt_length, completion_length, total_length, usage_metadata)
+			LLMUsageLog.save(tenant, app_id, self.client_website_domain, unique_id, stream_path, model_name, prompt_length, completion_length, total_length, usage_metadata)
 
 			# Update LLM quota used
 			increment_value = 1  # Each operation counts as 1

@@ -244,6 +244,11 @@ const JAPANESE_TRANSLATIONS = {
     LABEL_CHART_TYPE: "チャートタイプ",
     MSG_DATA_LLM_USAGE_NO_DATA: "この期間のLLM使用データがありません。",
     MSG_DATA_LLM_USAGE_LOADING: "LLM使用データを読み込み中...",
+    LABEL_LLM_USAGE_BREAKDOWN: "LLM使用状況の内訳",
+    MSG_LLM_USAGE_BREAKDOWN_INFO: "この表は、時間ごとのLLM使用状況の詳細な内訳を提供します。プロンプトの長さ、完了の長さ、総長さ、およびリクエスト数が含まれます。",
+    LABEL_PROMPT_LENGTH: "プロンプトの長さ",
+    LABEL_COMPLETION_LENGTH: "完了の長さ",
+    LABEL_TOTAL_LENGTH: "総長さ",
     
     // Other translations can be added here
   }
