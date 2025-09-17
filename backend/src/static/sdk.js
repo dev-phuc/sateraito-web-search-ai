@@ -29,8 +29,8 @@ const STYLES = `#sateraito-ai-iframe-panel {
 #sateraito-ai-iframe-panel[data-layout=fullscreen], #sateraito-ai-iframe-panel[data-layout=fullscreen_blur] {
   position: absolute;
   max-width: none;
-  height: calc(100vh + 1px);
-  width: 100vw;
+  height: calc(100vh);
+  width: calc(100vw - 2px);
   opacity: 0;
   pointer-events: none;
   z-index: -1;

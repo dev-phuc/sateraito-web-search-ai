@@ -13,6 +13,7 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 
 import requests
 import json
+import pytz
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
@@ -29,46 +30,56 @@ else:
 	# from google.appengine.api import memcache, taskqueue
 	pass
 
+from sateraito_inc import DEFAULT_TIMEZONE, NAME_USAGE_LLM_LOG_DEFAULT
 from sateraito_db import GoogleAppsDomainEntry, LLMUsageLog
 
 # Fetch LLM usage
 class _FetchLLMUsage(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+	def get_now(self):
+		now_utc = datetime.utcnow()
+		# Convert UTC to DEFAULT_TIMEZONE
+		if DEFAULT_TIMEZONE:
+			tz = pytz.timezone(DEFAULT_TIMEZONE)
+			now = now_utc.replace(tzinfo=pytz.utc).astimezone(tz)
+		else:
+			now = now_utc
+		return now
+
 	def get_start_of_this_year(self):
-		now = datetime.utcnow()
+		now = self.get_now()
 		start_of_year = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
 		return start_of_year, now
 	
 	def get_start_of_last_year(self):
-		now = datetime.utcnow()
+		now = self.get_now()
 		start_of_this_year = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
 		start_of_last_year = start_of_this_year - relativedelta(years=1)
 		return start_of_last_year, start_of_this_year
 	
 	def get_start_of_last_month(self):
-		now = datetime.utcnow()
-		first_of_this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-		last_month_end = first_of_this_month - timedelta(seconds=1)
-		first_of_last_month = last_month_end.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-		return first_of_last_month, first_of_this_month
-	
+		now = self.get_now()
+		start_of_this_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+		start_of_last_month = start_of_this_month - relativedelta(months=1)
+		return start_of_last_month, start_of_this_month
+
 	def get_start_of_this_month(self):
-		now = datetime.utcnow()
+		now = self.get_now()
 		start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
 		return start_of_month, now
 	
 	def get_start_of_this_week(self):
-		now = datetime.utcnow()
+		now = self.get_now()
 		start_of_week = now - timedelta(days=now.weekday())
 		start_of_week = start_of_week.replace(hour=0, minute=0, second=0, microsecond=0)
 		return start_of_week, now
 	
 	def get_start_of_this_day(self):
-		now = datetime.utcnow()
+		now = self.get_now()
 		start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
 		return start_of_day, now
 	
 	def build_query_time_frame(self, time_frame):
-		query = LLMUsageLog.query(LLMUsageLog.name_log == 'web-search-ai')
+		query = LLMUsageLog.query(LLMUsageLog.name_log == NAME_USAGE_LLM_LOG_DEFAULT)
 
 		# get llm usage
 		timestamp_start = None
