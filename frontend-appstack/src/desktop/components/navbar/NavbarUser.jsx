@@ -1,7 +1,7 @@
 // Framework import
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 // Redux components
 
@@ -22,6 +22,7 @@ import { getMobileDetect } from "@/utils";
 const NavbarUser = () => {
   // Use default
   const { t } = useTranslation();
+  const { tenant, app_id } = useParams();
   const navigate = useNavigate();
 
   // Use hooks state
@@ -57,6 +58,10 @@ const NavbarUser = () => {
       </span>
 
       <Dropdown.Menu drop="end">
+        <Dropdown.Item as={Link} to={`/${tenant}/${app_id}/admin_console/setting`} role="button">
+          <span className="mdi mdi mdi-cog align-middle me-2"></span>
+          {t("TXT_SETTINGS")}
+        </Dropdown.Item>
         <Dropdown.Item onClick={signOut} role="button">
           <span className="mdi mdi mdi-logout align-middle me-2"></span>
           {t("TXT_LOGOUT")}

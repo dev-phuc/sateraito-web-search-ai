@@ -32,16 +32,25 @@ const DashboardAdminConsolePage = () => {
 
   // Return component
   return (
-    <React.Fragment>
+    <>
       <Helmet>
         <title>{t("PAGE_TITLE_DASHBOARD_MANAGER")}</title>
       </Helmet>
 
       <Container fluid className="p-0">
-        <h1>Dashboard - Admin console</h1>
+        <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-light">
+          <div variant="info" className="bg-white rounded p-4 text-center">
+            <h3>
+              The Dashboard feature is coming soon!
+            </h3>
+            <p>
+              We are working hard to bring you this feature. Stay tuned for updates.
+            </p>
+          </div>
+        </div>
       </Container>
 
-    </React.Fragment>
+    </>
   );
 };
 

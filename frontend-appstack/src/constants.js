@@ -32,7 +32,7 @@ export const LAYOUT = {
 
 export const THEME = {
   DEFAULT: "default",
-  SKIN_COLOR_DEFAULT: "#2196f3",
+  SKIN_COLOR_DEFAULT: "#673ab7",
   COLORED: "colored",
   DARK: "dark",
   LIGHT: "light",

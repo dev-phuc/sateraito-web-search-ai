@@ -7,9 +7,11 @@ import { useTranslation } from "react-i18next";
 import useAppStore from "@/store/app";
 
 // Hook components
+import useConfig from "@/hooks/useUserConfig";
 import useAuth from "@/hooks/useAuth";
-
-// Context components
+import useTheme from "@/hooks/useTheme";
+import useSidebar from "@/hooks/useSidebar";
+import useLayout from "@/hooks/useLayout";
 
 // Library imports
 // Library IU imports
@@ -20,12 +22,8 @@ import Sidebar from "@/desktop/components/sidebar/Sidebar";
 import Main from "@/desktop/components/Main";
 import Navbar from "@/desktop/components/navbar/Navbar";
 import Content from "@/desktop/components/Content";
-// import Footer from "@/desktop/components/Footer";
-// import Settings from "@/desktop/components/Settings";
 import OffCanvasSettingTheme from "@/desktop/components/OffCanvasSettingTheme";
 import Loader from "@/desktop/components/Loader";
-// import navAdminItems from "@/desktop/components/sidebar/dashboardAdminItems";
-
 
 // Define the component
 const AdminConsoleLayout = ({ children }) => {
@@ -38,6 +36,10 @@ const AdminConsoleLayout = ({ children }) => {
   const { pageActive, setPageActive } = useAppStore();
 
   // Use hooks state
+  const { getUserConfig } = useConfig();
+  const { setTheme } = useTheme();
+  const { setPosition, setBehavior } = useSidebar();
+  const { setLayout } = useLayout();
   const { setTenantAppId, isInitialized, initializeAuth } = useAuth();
 
   // Use state 
@@ -79,17 +81,51 @@ const AdminConsoleLayout = ({ children }) => {
           title: 'TXT_USAGE_STATISTICS',
           icon: 'mdi mdi-chart-bar me-2',
         },
+        {
+          href: `/${tenant}/${app_id}/admin_console/setting`,
+          title: 'TXT_SETTINGS',
+          icon: 'mdi mdi-cog-outline me-2',
+        },
       ],
     },
   ]);
 
-  const processOnChangeTenantAppId = async (tenant, app_id) => {
-    setTenantAppId(tenant, app_id);
-  }
+  // Handlers
+  const processLoadUserConfig = async () => {
+    try {
+      const data = await getUserConfig(tenant, app_id);
+      if (data) {
+        const { config } = data;
+        if (config) {
+          const { theme, sidebar_position, sidebar_behavior, layout } = config;
+          if (theme) {
+            setTheme(theme);
+          }
+          if (sidebar_position) {
+            setPosition(sidebar_position);
+          }
+          if (sidebar_behavior) {
+            setBehavior(sidebar_behavior);
+          }
+          if (layout) {
+            setLayout(layout);
+          }
+        }
+      }
+    } catch (error) {
+      console.error("Failed to load user config:", error);
+    }
+  };
 
   useEffect(() => {
-    processOnChangeTenantAppId(tenant, app_id);
+    setTenantAppId(tenant, app_id);
   }, [tenant, app_id]);
+
+  useEffect(() => {
+    if (isInitialized) {
+      processLoadUserConfig();
+    }
+  }, [isInitialized]);
 
   useEffect(() => {
     // Update page active
@@ -131,8 +167,6 @@ const AdminConsoleLayout = ({ children }) => {
         </Main>
 
       </Wrapper>
-
-      <OffCanvasSettingTheme></OffCanvasSettingTheme>
     </>
   )
 };

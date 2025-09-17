@@ -9,12 +9,10 @@ import ThemeContext from "@/contexts/ThemeContext";
 import NotyfContext from "@/contexts/NotyfContext";
 
 function ThemeProvider({ children }) {
-  const [theme, setTheme] = useSettingsState("theme", THEME.DEFAULT);
-  const [skinColor, setSkinColor] = useSettingsState(
-    "themeSkinColor",
-    THEME.SKIN_COLOR_DEFAULT
-  );
   const notyf = useContext(NotyfContext);
+
+  const [theme, setTheme] = useSettingsState("theme", THEME.DEFAULT);
+  const [skinColor, setSkinColor] = useSettingsState("themeSkinColor", THEME.SKIN_COLOR_DEFAULT);
 
   /**
  * Show notice
@@ -34,101 +32,6 @@ function ThemeProvider({ children }) {
     })
   }
 
-  const confirmRejoin = (callback) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "Would you like to rejoin this book?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, I would!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        callback(true);
-        return;
-      }
-
-      callback(false);
-    })
-  }
-
-  const confirmEditBook = (callback) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "Would you like to edit this book?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, I would!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        callback(true);
-        return;
-      }
-
-      callback(false);
-    })
-  }
-
-  const confirmDeleteBook = (callback) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "Would you like to move this book to the trash?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, I would!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        callback(true);
-        return;
-      }
-
-      callback(false);
-    })
-  }
-
-  const confirmRemoveStoryShared = (callback) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "Do you want to delete this shared information?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, I would!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        callback(true);
-        return;
-      }
-
-      callback(false);
-    })
-  }
-
-  const confirmDisableAccount = (isSetDisable, callback) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: isSetDisable ? "Do you want to disable Account selected?" : "Do you want to enable Account selected?",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, I would!'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        callback(true);
-        return;
-      }
-
-      callback(false);
-    })
-  }
-
   return (
     <ThemeContext.Provider
       value={{
@@ -137,11 +40,6 @@ function ThemeProvider({ children }) {
         skinColor,
         setSkinColor,
         showNotice,
-        confirmRejoin,
-        confirmEditBook,
-        confirmDeleteBook,
-        confirmRemoveStoryShared,
-        confirmDisableAccount,
       }}
     >
       {children}

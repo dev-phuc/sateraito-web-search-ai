@@ -40,6 +40,7 @@ const ENGLISH_TRANSLATIONS = {
     BTN_NEXT_PAGE: "Next page",
     BTN_FILTER: "Filter",
     BTN_CLEAR: "Clear",
+    BTN_SAVE: "Save",
 
     // =================== Status and Labels ===================
     LABEL_STATUS: "Status",
@@ -73,6 +74,18 @@ const ENGLISH_TRANSLATIONS = {
     MENU_POSITION_LABEL: "Menu Position",
     MENU_BEHAVIOR_LABEL: "Menu Behavior",
     LAYOUT_LABEL: "Layout",
+    TXT_THEME_DEFAULT: "Default",
+    TXT_THEME_COLORED: "Colored",
+    TXT_THEME_LIGHT: "Light",
+    TXT_THEME_DARK: "Dark",
+    TXT_SIDEBAR_LEFT: "Left",
+    TXT_SIDEBAR_RIGHT: "Right",
+    TXT_SIDEBAR_BEHAVIOR_STICKY: "Sticky",
+    TXT_SIDEBAR_BEHAVIOR_FIXED: "Fixed",
+    TXT_SIDEBAR_BEHAVIOR_COMPACT: "Compact",
+    TXT_LAYOUT_FLUID: "Fluid",
+    TXT_LAYOUT_BOXED: "Boxed",
+    TXT_LAYOUT_MATERIAL: "Material",
 
     // =================== Authentication ===================
     TXT_LOGOUT: "Logout",
@@ -249,6 +262,14 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_PROMPT_LENGTH: "Prompt Length",
     LABEL_COMPLETION_LENGTH: "Completion Length",
     LABEL_TOTAL_LENGTH: "Total Length",
+
+    // =================== Other Settings ===================
+    PAGE_TITLE_OTHER_SETTINGS: "Other Settings",
+    TXT_SETTINGS: "Settings",
+    LANGUAGE_CONFIG: "Language Configuration",
+    LAYOUT_ANIMATION_LABEL: "Layout & Animation",
+    MSG_UPDATE_USER_CONFIG_SUCCESS: "User configuration updated successfully!",
+    MSG_UPDATE_USER_CONFIG_FAILED: "Failed to update user configuration",
 
     // Other translations can be added here
   }

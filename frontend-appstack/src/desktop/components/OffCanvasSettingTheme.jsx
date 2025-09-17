@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { Alert, Button, Dropdown, Offcanvas } from "react-bootstrap";
@@ -9,7 +8,6 @@ import ColorPicker from "@/desktop/components/ColorPicker";
 
 import NotyfContext from "@/contexts/NotyfContext";
 
-// import useOuterClick from "@/hooks/useOuterClick";
 import useTheme from "@/hooks/useTheme";
 import useSidebar from "@/hooks/useSidebar";
 import useLayout from "@/hooks/useLayout";
@@ -24,75 +22,10 @@ import {
   NOTIFY_CONFIG,
 } from "@/constants";
 
-const themeOptions = [
-  {
-    name: "Default",
-    value: THEME.DEFAULT,
-  },
-  {
-    name: "Colored",
-    value: THEME.COLORED,
-  },
-  {
-    name: "Dark",
-    value: THEME.DARK,
-  },
-  {
-    name: "Light",
-    value: THEME.LIGHT,
-  },
-];
-
-const sidebarPositionOptions = [
-  {
-    name: "Left",
-    value: SIDEBAR_POSITION.LEFT,
-  },
-  {
-    name: "Right",
-    value: SIDEBAR_POSITION.RIGHT,
-  },
-];
-
-const sidebarBehaviorOptions = [
-  {
-    name: "Sticky",
-    value: SIDEBAR_BEHAVIOR.STICKY,
-  },
-  {
-    name: "Fixed",
-    value: SIDEBAR_BEHAVIOR.FIXED,
-  },
-  {
-    name: "Compact",
-    value: SIDEBAR_BEHAVIOR.COMPACT,
-  },
-];
-
-const layoutOptions = [
-  {
-    name: "Fluid",
-    value: LAYOUT.FLUID,
-  },
-  {
-    name: "Boxed",
-    value: LAYOUT.BOXED,
-  },
-  {
-    name: "Material",
-    value: LAYOUT.MATERIAL,
-  },
-];
-
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
-
 const OffCanvasSettingTheme = () => {
   const { t } = useTranslation();
   const notyf = useContext(NotyfContext);
 
-  const query = useQuery();
   const [isOpen, setIsOpen] = useState(false);
 
   const { theme, setTheme, skinColor, setSkinColor } = useTheme();
@@ -100,26 +33,66 @@ const OffCanvasSettingTheme = () => {
   const { layout, setLayout } = useLayout();
   const [isSubmit, setIsSubmit] = useState(false);
 
-  // const innerRef = useOuterClick(() => {
-  //   setIsOpen(false);
-  // });
 
-  // const setSettingByQueryParam = (name, set) => {
-  //   const value = query.get(name);
-  //   if (value) {
-  //     set(value);
-  //   }
-  // };
+  const themeOptions = [
+    {
+      name: t('TXT_THEME_DEFAULT'),
+      value: THEME.DEFAULT,
+    },
+    {
+      name: t('TXT_THEME_COLORED'),
+      value: THEME.COLORED,
+    },
+    {
+      name: t('TXT_THEME_DARK'),
+      value: THEME.DARK,
+    },
+    {
+      name: t('TXT_THEME_LIGHT'),
+      value: THEME.LIGHT,
+    },
+  ];
 
-  // // Read from query parameter (e.g. ?theme=dark)
-  // // only for demo purposes
-  // useEffect(() => {
-  //   setSettingByQueryParam("theme", setTheme);
-  //   setSettingByQueryParam("sidebarPosition", setPosition);
-  //   setSettingByQueryParam("sidebarBehavior", setBehavior);
-  //   setSettingByQueryParam("layout", setLayout);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+  const sidebarPositionOptions = [
+    {
+      name: t('TXT_SIDEBAR_LEFT'),
+      value: SIDEBAR_POSITION.LEFT,
+    },
+    {
+      name: t('TXT_SIDEBAR_RIGHT'),
+      value: SIDEBAR_POSITION.RIGHT,
+    },
+  ];
+
+  const sidebarBehaviorOptions = [
+    {
+      name: t('TXT_SIDEBAR_BEHAVIOR_STICKY'),
+      value: SIDEBAR_BEHAVIOR.STICKY,
+    },
+    {
+      name: t('TXT_SIDEBAR_BEHAVIOR_FIXED'),
+      value: SIDEBAR_BEHAVIOR.FIXED,
+    },
+    {
+      name: t('TXT_SIDEBAR_BEHAVIOR_COMPACT'),
+      value: SIDEBAR_BEHAVIOR.COMPACT,
+    },
+  ];
+
+  const layoutOptions = [
+    {
+      name: t('TXT_LAYOUT_FLUID'),
+      value: LAYOUT.FLUID,
+    },
+    {
+      name: t('TXT_LAYOUT_BOXED'),
+      value: LAYOUT.BOXED,
+    },
+    {
+      name: t('TXT_LAYOUT_MATERIAL'),
+      value: LAYOUT.MATERIAL,
+    },
+  ];
 
   useEffect(() => {
     if (isSubmit) {
@@ -132,14 +105,6 @@ const OffCanvasSettingTheme = () => {
     setIsSubmit(true);
   };
   const hanldeSave = async () => {
-    console.log(
-      "hanldeSave SETTING THEME:",
-      theme,
-      skinColor,
-      layout,
-      position,
-      behavior
-    );
     const theme_config = { theme, skinColor, layout, position, behavior };
     await setUserConfigRequest({
       theme_config: JSON.stringify(theme_config),

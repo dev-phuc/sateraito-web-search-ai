@@ -100,6 +100,7 @@ input[type=checkbox]:focus::before {
 
     &.show {
       height: 420px;
+      overflow: unset;
 
       &.fullscreen_blur,
       &.fullscreen {
@@ -439,7 +440,8 @@ input[type=checkbox]:focus::before {
     position: relative;
     overflow: hidden;
 
-    h3, h5 {
+    h3,
+    h5 {
       color: #fff !important;
     }
 
@@ -460,6 +462,7 @@ input[type=checkbox]:focus::before {
       height: 100px;
       background-color: rgba(255, 255, 255, 0.2);
     }
+
     &::after {
       bottom: -20px;
       right: -20px;

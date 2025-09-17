@@ -18,6 +18,7 @@ const DesignBannerAdminConsolePage = lazy(() => import("@/desktop/pages/AdminCon
 const LLMConfigurationAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMConfiguration"));
 const OperationLogAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/OperationLog"));
 const LLMUsageAdminConsolePage = lazy(() => import("@/desktop/pages/AdminConsole/LLMUsage"));
+const SettingAdminConsolePage = lazy(() => import("@/desktop/pages/Setting"));
 
 // Box search
 const BoxSearchPage = lazy(() => import("@/desktop/pages/BoxSearch"));
@@ -69,6 +70,10 @@ let routes = [
       {
         path: "usage",
         element: <LLMUsageAdminConsolePage />,
+      },
+      {
+        path: "setting",
+        element: <SettingAdminConsolePage />,
       }
     ],
   },

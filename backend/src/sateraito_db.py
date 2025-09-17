@@ -29,7 +29,7 @@ import sateraito_logger as logging
 
 from sateraito_inc import NAME_USAGE_LLM_LOG_DEFAULT, LLM_MODEL_NAME_DEFAULT, LLM_SYSTEM_PROMPT_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS
 from sateraito_inc import NDB_MEMCACHE_TIMEOUT, DICT_MEMCACHE_TIMEOUT, STATUS_CLIENT_WEBSITES_LIST, STATUS_CLIENT_WEBSITES_ACTIVE
-from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_LIST
+from sateraito_inc import THEME_CONFIG_DEFAULT, BOX_SEARCH_DESIGN_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_DEFAULT, LLM_RESPONSE_LENGTH_LEVEL_LIST
 
 DOWNLOAD_CSV_NAMESPACE = 'sateraito_download_csv'
 LTCACHE_USER_LIST_UPDATING_KEY = 'ltcacheuserlistupdating'
@@ -1322,6 +1322,58 @@ class OperationLog(ndb.Model):
 
 
 # Datastore for WebSearchAI
+class UserConfig(ndb.Model):
+	user_email = ndb.StringProperty(required=True)
+	theme_config = ndb.TextProperty()
+
+	created_date = ndb.DateTimeProperty(auto_now_add=True)
+	updated_date = ndb.DateTimeProperty(auto_now=True)
+
+	def _pre_put_hook(self):
+		memcache_key = UserConfig.getMemcacheKey(self.user_email)
+		memcache.delete(memcache_key)
+
+	def _pre_delete_hook(self):
+		UserConfig.clearInstanceCache(self.user_email)
+
+	@classmethod
+	def getMemcacheKey(cls, user_email):
+		return 'script=userconfig-getinstance&user_email=' + user_email + '&g=2'
+	
+	@classmethod
+	def clearInstanceCache(cls, user_email):
+		memcache.delete(cls.getMemcacheKey(user_email))
+
+	@classmethod
+	def getDict(cls, user_email, auto_create=False):
+		# check memcache
+		memcache_key = cls.getMemcacheKey(user_email)
+		cached_dict = memcache.get(memcache_key)
+		if cached_dict is not None:
+			return cached_dict
+		# get data
+		row = cls.getInstance(user_email, auto_create)
+		if row is None:
+			return None
+		row_dict = row.to_dict()
+		row_dict['id'] = row.key.id()
+		# set to memcache
+		memcache.set(memcache_key, row_dict, time=DICT_MEMCACHE_TIMEOUT)
+		return row_dict
+	
+	@classmethod
+	def getInstance(cls, user_email, auto_create=False):
+		# get data
+		user_email_lower = str(user_email).lower()
+		row = cls.get_by_id(user_email_lower, memcache_timeout=NDB_MEMCACHE_TIMEOUT)
+		if row is None:
+			if auto_create:
+				row = cls(id=user_email_lower)
+				row.user_email = user_email_lower
+				row.theme_config = json.dumps(THEME_CONFIG_DEFAULT)
+				row.put()
+		return row
+
 
 class ClientWebsites(ndb.Model):
 	ai_enabled = ndb.BooleanProperty(default=True)

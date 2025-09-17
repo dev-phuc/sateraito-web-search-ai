@@ -10,7 +10,7 @@ const ColorSetting = (props) => {
   const handleChangeComplete = (color) => {
     setSkinColor(color.hex);
     document.documentElement.style.setProperty("--base-color", color.hex);
-    onChange();
+    onChange(color.hex);
   };
   return (
     <React.Fragment>
@@ -19,7 +19,7 @@ const ColorSetting = (props) => {
   );
 };
 ColorSetting.defaultProps = {
-  onChange: () => {},
+  onChange: () => { },
 };
 
 export default ColorSetting;

@@ -120,7 +120,7 @@ function AuthProvider({ children }) {
 
       // Set language
       if (language && LANGUAGE_SUPPORTED.includes(language)) {
-        i18n.changeLanguage('ja');
+        i18n.changeLanguage(language);
       }
 
       if (isLoginPage) {

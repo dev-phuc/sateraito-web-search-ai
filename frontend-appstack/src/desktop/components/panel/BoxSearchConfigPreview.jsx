@@ -193,7 +193,7 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
                     <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
                       {({ handleSubmit, handleChange, values }) => (
                         <Form onSubmit={handleSubmit}>
-                          <input type="text" name="query" className='input-search-box' placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                          <input type="text" name="query" className='input-search-box' style={{paddingRight: 30}} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
                         </Form>
                       )}
                     </Formik>

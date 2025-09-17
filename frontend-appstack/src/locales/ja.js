@@ -40,6 +40,7 @@ const JAPANESE_TRANSLATIONS = {
     BTN_NEXT_PAGE: "次のページ",
     BTN_FILTER: "フィルター",
     BTN_CLEAR: "クリア",
+    BTN_SAVE: "保存",
 
     // =================== Status and Labels ===================
     LABEL_STATUS: "ステータス",
@@ -73,6 +74,18 @@ const JAPANESE_TRANSLATIONS = {
     MENU_POSITION_LABEL: "メニュー位置",
     MENU_BEHAVIOR_LABEL: "メニュー動作",
     LAYOUT_LABEL: "レイアウト",
+    TXT_THEME_DEFAULT: "デフォルト",
+    TXT_THEME_COLORED: "カラー",
+    TXT_THEME_LIGHT: "ライト",
+    TXT_THEME_DARK: "ダーク",
+    TXT_SIDEBAR_LEFT: "左",
+    TXT_SIDEBAR_RIGHT: "右",
+    TXT_SIDEBAR_BEHAVIOR_STICKY: "スティッキー",
+    TXT_SIDEBAR_BEHAVIOR_FIXED: "固定",
+    TXT_SIDEBAR_BEHAVIOR_COMPACT: "コンパクト",
+    TXT_LAYOUT_FLUID: "フルイド",
+    TXT_LAYOUT_BOXED: "ボックス",
+    TXT_LAYOUT_MATERIAL: "マテリアル",
 
     // =================== Authentication ===================
     TXT_LOGOUT: "ログアウト",
@@ -249,7 +262,15 @@ const JAPANESE_TRANSLATIONS = {
     LABEL_PROMPT_LENGTH: "プロンプトの長さ",
     LABEL_COMPLETION_LENGTH: "完了の長さ",
     LABEL_TOTAL_LENGTH: "総長さ",
-    
+
+    // =================== Other Settings ===================
+    TXT_SETTINGS: "設定",
+    PAGE_TITLE_OTHER_SETTINGS: "その他の設定",
+    LANGUAGE_CONFIG: "言語設定",
+    LAYOUT_ANIMATION_LABEL: "レイアウトとアニメーション",
+    MSG_UPDATE_USER_CONFIG_SUCCESS: "ユーザー設定が正常に更新されました！",
+    MSG_UPDATE_USER_CONFIG_FAILED: "ユーザー設定の更新に失敗しました。もう一度お試しください。",
+
     // Other translations can be added here
   }
 };

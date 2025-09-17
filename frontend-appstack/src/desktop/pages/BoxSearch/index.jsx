@@ -234,7 +234,7 @@ const BoxSearchPage = () => {
             <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
               {({ handleSubmit, handleChange, values }) => (
                 <Form onSubmit={handleSubmit}>
-                  <input type="text" name="query" className='input-search-box pe-4' placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                  <input type="text" name="query" className='input-search-box' style={{paddingRight: 30}} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
                 </Form>
               )}
             </Formik>
