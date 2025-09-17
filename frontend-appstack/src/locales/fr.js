@@ -24,6 +24,7 @@ const FRENCH_TRANSLATIONS = {
     TXT_SELECT_ALL: "Sélectionner tout",
     TXT_APP_ID: "ID de l'application",
     TXT_OPTION_ALL: "Tout",
+    TOGGLE_NAVIGATION: "Basculer la navigation",
 
     // =================== Button Labels ===================
     BTN_CREATE: "Créer",

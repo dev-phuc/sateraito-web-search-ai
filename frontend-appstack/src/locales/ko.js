@@ -24,6 +24,7 @@ const KOREAN_TRANSLATIONS = {
     TXT_SELECT_ALL: "모두 선택",
     TXT_APP_ID: "앱 ID",
     TXT_OPTION_ALL: "모두",
+    TOGGLE_NAVIGATION: "탐색 전환",
 
     // =================== Button Labels ===================
     BTN_CREATE: "생성",

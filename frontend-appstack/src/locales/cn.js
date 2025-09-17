@@ -24,6 +24,7 @@ const CHINESE_TRANSLATIONS = {
     TXT_SELECT_ALL: "全选",
     TXT_APP_ID: "应用 ID",
     TXT_OPTION_ALL: "全部",
+    TOGGLE_NAVIGATION: "切换导航",
 
     // =================== Button Labels ===================
     BTN_CREATE: "创建",

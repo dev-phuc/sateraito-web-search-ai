@@ -10,7 +10,7 @@ const SettingAdminConsolePage = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Helmet title={t("SETTING_LABEL")} />
+      <Helmet title={t("PAGE_TITLE_OTHER_SETTINGS")} />
 
       <Container fluid className="setting-page">
         <OtherSetting></OtherSetting>

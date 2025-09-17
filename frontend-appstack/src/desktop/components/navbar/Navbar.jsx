@@ -135,10 +135,30 @@ const NavbarComponent = () => {
 
   // Component return
   return (
-    <Navbar variant="light" expand className="navbar-bg">
-      <span className="sidebar-toggle me-0 d-flex" onClick={() => { setIsOpen(!isOpen); }}>
+    <Navbar variant="light" expand className="navbar-bg sticky-top nav-top-main">
+      {/* <span className="sidebar-toggle me-0 d-flex" onClick={() => { setIsOpen(!isOpen); }}>
         <i className="mdi mdi-menu align-self-center" />
-      </span>
+      </span> */}
+
+      <OverlayTrigger
+        placement="bottom"
+        overlay={<Tooltip>{t("TOGGLE_NAVIGATION")}</Tooltip>}
+      >
+        <Button
+          className="sidebar-toggle d-flex"
+          onClick={() => {
+            setIsOpen(!isOpen);
+          }}
+          onKeyDown={(event) => {
+            if (!event.shiftKey && event.key === "Enter") {
+              setIsOpen(!isOpen);
+            }
+          }}
+          tabIndex={1}
+        >
+          <i className="mdi mdi-menu align-self-center" />
+        </Button>
+      </OverlayTrigger>
 
       <div className="page-header">
         {pageActive && (

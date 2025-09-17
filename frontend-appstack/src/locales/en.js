@@ -24,6 +24,7 @@ const ENGLISH_TRANSLATIONS = {
     TXT_SELECT_ALL: "Select All",
     TXT_APP_ID: "App ID",
     TXT_OPTION_ALL: "All",
+    TOGGLE_NAVIGATION: "Toggle navigation",
 
     // =================== Button Labels ===================
     BTN_CREATE: "Create",

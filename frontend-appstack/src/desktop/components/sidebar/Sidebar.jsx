@@ -78,10 +78,13 @@ import PerfectScrollbar from "react-perfect-scrollbar";
 // Library IU imports
 import { Spinner } from "react-bootstrap";
 
+import { ReactComponent as Logo } from "@/assets/img/logo.svg";
+import { ReactComponent as LogoC } from "@/assets/img/logo_circle.svg";
+
 // Components
+import SidebarHeader from "./SidebarHeader";
 import SidebarFooter from "@/desktop/components/sidebar/SidebarFooter";
 import SidebarNav from "@/desktop/components/sidebar/SidebarNav";
-import { ReactComponent as Logo } from "@/assets/img/logo_circle.svg";
 
 // Define the component
 const Sidebar = ({ items, isLoading, showFooter = true }) => {
@@ -101,21 +104,18 @@ const Sidebar = ({ items, isLoading, showFooter = true }) => {
   // Component return
   return (
     <nav className={`sidebar ${!isOpen ? "collapsed" : ""}`}>
-      <div className="sidebar-content">
+      <div className="sidebar-content sidebar-custom">
 
         <PerfectScrollbar>
-          {/*<div className="wrap-header-static">*/}
 
-          <div className="sidebar-brand mb-2 d-flex align-items-center">
-            <div className="logo me-2">
-              <Logo />
+          <div className="wrap-header-static mb-3">
+            <div className="sidebar-brand" to="/" tabIndex={-1}>
+              <Logo className="normal-logo" style={{ width: '100%' }} />
+              {/* <span className="align-middle me-3">{ t("AI_BOARD_TITLE") }</span> */}
+              <LogoC className="compact-logo" style={{ width: '100%' }} />
             </div>
-            <span className="title d-none d-lg-block">
-              {t("TXT_APP_NAME")}
-            </span>
           </div>
 
-          {/*</div>*/}
           <SidebarNav items={items} />
 
           {isLoading && <>

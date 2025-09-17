@@ -300,20 +300,20 @@ h1#list-title {
 .settings {
   display: block !important;
 }
-// .settings-toggle {
-//   width: fit-content;
-//   box-shadow: none;
-//   position: unset;
-//   height: unset;
-// }
+.settings-toggle {
+  width: fit-content;
+  box-shadow: none;
+  position: unset;
+  height: unset;
+}
 
-// .settings-toggle-option-text {
-//   display: FLEX;
-//   align-items: CENTER;
-//   writing-mode: inherit;
-//   width: unset;
-//   height: unset;
-// }
+.settings-toggle-option-text {
+  display: FLEX;
+  align-items: CENTER;
+  writing-mode: inherit;
+  width: unset;
+  height: unset;
+}
 .chat-message-left {
   &:hover {
     .chat-message-act {
@@ -2570,13 +2570,13 @@ span.bagde-label {
     justify-content: center;
   }
 }
-// a.settings-toggle-option {
-//   display: none;
-// }
-// .settings-toggle-option {
-//   margin-top: 15px;
-//   margin-left: 20px !important;
-// }
+a.settings-toggle-option {
+  display: none;
+}
+.settings-toggle-option {
+  margin-top: 15px;
+  margin-left: 20px !important;
+}
 .setting-row {
   padding-top: 20px;
   // border-bottom: 1px solid #f1f3f4;

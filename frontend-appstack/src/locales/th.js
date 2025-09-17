@@ -24,6 +24,7 @@ const THAI_TRANSLATIONS = {
     TXT_SELECT_ALL: "เลือกทั้งหมด",
     TXT_APP_ID: "ID แอป",
     TXT_OPTION_ALL: "ทั้งหมด",
+    TOGGLE_NAVIGATION: "สลับการนำทาง",
 
     // =================== Button Labels ===================
     BTN_CREATE: "สร้าง",

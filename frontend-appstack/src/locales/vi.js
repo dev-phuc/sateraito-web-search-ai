@@ -22,6 +22,7 @@ const VIETNAMESE_TRANSLATIONS = {
     TXT_RELOAD: "Tải lại",
     TXT_TOTAL_SELECTED: "đã chọn",
     TXT_SELECT_ALL: "Chọn tất cả",
+    TOGGLE_NAVIGATION: "Chuyển đổi điều hướng",
 
     // Buttons
     BTN_CREATE: "Tạo mới",

@@ -24,6 +24,7 @@ const JAPANESE_TRANSLATIONS = {
     TXT_SELECT_ALL: "すべて選択",
     TXT_APP_ID: "アプリID",
     TXT_OPTION_ALL: "すべて",
+    TOGGLE_NAVIGATION: "ナビゲーション切替",
 
     // =================== Button Labels ===================
     BTN_CREATE: "作成",
