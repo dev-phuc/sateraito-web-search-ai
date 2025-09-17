@@ -4,6 +4,10 @@ import { initReactI18next } from "react-i18next";
 import JAPANESE_TRANSLATIONS from "@/locales/ja";
 import ENGLISH_TRANSLATIONS from "@/locales/en";
 import VIETNAMESE_TRANSLATIONS from "@/locales/vi";
+import FRENCH_TRANSLATIONS from "@/locales/fr";
+import KOREAN_TRANSLATIONS from "@/locales/ko";
+import CHINESE_TRANSLATIONS from "@/locales/cn";
+import THAI_TRANSLATIONS from "@/locales/th";
 
 // Get language default from browser
 const userLang = navigator.language || navigator.userLanguage; 
@@ -21,6 +25,10 @@ i18n
       en: ENGLISH_TRANSLATIONS,
       ja: JAPANESE_TRANSLATIONS,
       vi: VIETNAMESE_TRANSLATIONS,
+      fr: FRENCH_TRANSLATIONS,
+      ko: KOREAN_TRANSLATIONS,
+      cn: CHINESE_TRANSLATIONS,
+      th: THAI_TRANSLATIONS
     },
 
     lng: defaultLang, // if you're using a language detector, do not define the lng option

@@ -163,7 +163,7 @@ export const LANGUAGE_OPTIONS = {
 };
 
 export const LANGUAGE_DEFAULT = 'ja';
-export const LANGUAGE_SUPPORTED = ['en', 'ja', 'vi'];
+export const LANGUAGE_SUPPORTED = ['en', 'ja', 'vi', 'fr', 'ko', 'cn', 'th'];
 
 export const DATETIME_FORMAT = "DD/MM/YYYY HH:mm:ss";
 export const DATE_FORMAT = "DD/MM/YYYY";
