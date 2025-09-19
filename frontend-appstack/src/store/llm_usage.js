@@ -9,7 +9,8 @@ const useStoreLLMUsage = create((set) => ({
   setIsLoading: (loading) => set({ isLoading: loading }),
 
   // Data
-  llmUsage: {},
+  llmUsage: null,
+  llmUsageLastMonth: null,
   setLLMUsage: (usage) => {
     set({ llmUsage: usage });
   },
@@ -35,6 +36,28 @@ const useStoreLLMUsage = create((set) => ({
       set({ isLoading: false });
     }
   },
+
+  fetchLLMUsageLastMonth: async (tenant, app_id) => {
+    set({ isLoading: true });
+
+    try {
+      const params = {
+        time_frame: 'last_month',
+      };
+      const result = await fetchLLMUsage(tenant, app_id, params);
+      if (result) {
+        set({ llmUsageLastMonth: result });
+      }
+    }
+    catch (error) {
+      console.error('Error fetching operation logs:', error);
+      set({ llmUsageLastMonth: {} });
+    }
+    finally {
+      set({ isLoading: false });
+    }
+  },
+
 }));
 
 export default useStoreLLMUsage;

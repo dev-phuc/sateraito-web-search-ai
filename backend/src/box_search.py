@@ -11,15 +11,10 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 @author: PhucLeo
 '''
 
-import requests
 import json
 
-from google.appengine.api import namespace_manager
-
-import sateraito_inc
 import sateraito_func
-import sateraito_page
-
+from sateraito_page import Handler_Basic_Request, _BasePage
 from sateraito_logger import logging
 from sateraito_db import BoxSearchConfig
 
@@ -36,7 +31,7 @@ from sateraito_inc import BOX_SEARCH_DESIGN_DEFAULT
 # CRUD for BoxSearchConfig
 
 # Get method
-class _GetBoxSearchConfig(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _GetBoxSearchConfig(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id):
 		try:
@@ -69,8 +64,8 @@ class _GetBoxSearchConfig(sateraito_page.Handler_Basic_Request, sateraito_page._
 class GetBoxSearchConfig(_GetBoxSearchConfig):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -81,8 +76,8 @@ class GetBoxSearchConfig(_GetBoxSearchConfig):
 class OidGetBoxSearchConfig(_GetBoxSearchConfig):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 		
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -93,8 +88,8 @@ class OidGetBoxSearchConfig(_GetBoxSearchConfig):
 class ClientGetBoxSearchConfig(_GetBoxSearchConfig):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		is_check_ok = self.verifyBearerToken(tenant)
 		if not is_check_ok:
@@ -103,7 +98,7 @@ class ClientGetBoxSearchConfig(_GetBoxSearchConfig):
 		return self.process(tenant, app_id)
 
 # Edit method
-class _EditBoxSearchConfig(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _EditBoxSearchConfig(Handler_Basic_Request, _BasePage):
 
 	def validate_params(self):
 		# Get params
@@ -149,8 +144,8 @@ class _EditBoxSearchConfig(sateraito_page.Handler_Basic_Request, sateraito_page.
 class EditBoxSearchConfig(_EditBoxSearchConfig):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -161,8 +156,8 @@ class EditBoxSearchConfig(_EditBoxSearchConfig):
 class OidEditBoxSearchConfig(_EditBoxSearchConfig):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check request
 		if not self.checkOidRequest(tenant):

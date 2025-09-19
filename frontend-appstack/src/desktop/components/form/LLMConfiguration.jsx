@@ -141,7 +141,7 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                     >
                       <option value="low">{t('LABEL_RESPONSE_SHORT')}</option>
                       <option value="medium">{t('LABEL_RESPONSE_MEDIUM')}</option>
-                      <option value="high">{t('LABEL_RESPONSE_LONG')}</option>
+                      <option value="high">{t('LABEL_RESPONSE_HIGH')}</option>
                     </Form.Select>
                     <Form.Control.Feedback type="invalid">{touched.response_length_level && errors.response_length_level}</Form.Control.Feedback>
                   </Form.Group>

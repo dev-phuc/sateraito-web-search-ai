@@ -11,8 +11,6 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 @author: PhucLeo
 '''
 
-from flask import Response, stream_with_context
-import requests
 import json
 import random
 
@@ -21,13 +19,10 @@ from google.appengine.api import namespace_manager
 # Realtime Database
 from firebase_admin import db
 
-import sateraito_inc
 import sateraito_func
-import sateraito_page
-from sateraito_page import Handler_Basic_Request, _BasePage
-from sateraito_ai.perplexity import PerplexityAI
-
 from sateraito_logger import logging
+from sateraito_ai.perplexity import PerplexityAI
+from sateraito_page import Handler_Basic_Request, _BasePage
 from sateraito_db import GoogleAppsDomainEntry, LLMConfiguration, OperationLog, LLMUsageLog
 
 from sateraito_inc import flask_docker
@@ -264,8 +259,8 @@ class _ActionLLMSearchWeb(LLMActionAPI):
 class ClientActionLLMSearchWeb(_ActionLLMSearchWeb):
 
 	def post(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		if not self.verifyBearerToken(tenant):
 			return self.json_response({'message': 'forbidden'}, status=403)

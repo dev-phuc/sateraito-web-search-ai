@@ -169,9 +169,6 @@ const LLMUsageAdminConsolePage = () => {
           {/* Header */}
           <div className="d-flex align-items-center justify-content-between mb-3">
             <div className="d-flex align-items-center header-left">
-              {/* </div>
-
-            <div className="header-right"> */}
               <div className="d-flex align-items-center">
                 <label className="me-2 mb-0">{t('LABEL_TIME_FRAME')}:</label>
                 <select className="form-select me-3" style={{ width: '150px' }} value={timeFrame} onChange={(e) => setTimeFrame(e.target.value)}>

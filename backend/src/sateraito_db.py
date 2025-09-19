@@ -237,6 +237,13 @@ class GoogleAppsDomainEntry(ndb.Model):
 	llm_quota_monthly = ndb.IntegerProperty(default=0)
 	llm_quota_used = ndb.IntegerProperty(default=0)
 	llm_quota_last_reset = ndb.DateTimeProperty()
+	
+	# Contract information
+	contact_mail_address = ndb.StringProperty()	# 担当者メールアドレス
+	contact_tel_no = ndb.StringProperty()	# 電話番号
+
+	# Edit 2024-10-03
+	target_link_domains = ndb.StringProperty(repeated=True)  # 連携対象ドメインリスト
 
 	def _pre_put_hook(self):
 		# set to default app id namespace
@@ -794,8 +801,11 @@ class OtherSetting(ndb.Model):
 	additional_admin_user_groups = ndb.StringProperty(repeated=True)
 	limit_access_to_doc_management = ndb.BooleanProperty()
 	access_allowed_user_groups = ndb.StringProperty(repeated=True)
-	csv_file_encoding = ndb.StringProperty()
 	allow_user_or_groups = ndb.StringProperty()
+	
+	csv_file_encoding = ndb.StringProperty()
+	timezone = ndb.StringProperty(indexed=False)	# タイムゾーン
+	language = ndb.StringProperty(indexed=False)	# 言語設定 
 
 	# get other app_id's UserInfo if below is enabled
 	enable_other_app_id_reference = ndb.BooleanProperty(default=False)

@@ -11,16 +11,14 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 @author: PhucLeo
 '''
 
-import requests
-import json
 import pytz
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
-import sateraito_page
 import sateraito_func
-
 from sateraito_logger import logging
+from sateraito_page import Handler_Basic_Request, _BasePage
+from sateraito_inc import DEFAULT_TIMEZONE, NAME_USAGE_LLM_LOG_DEFAULT
 
 from sateraito_inc import flask_docker
 if flask_docker:
@@ -30,11 +28,10 @@ else:
 	# from google.appengine.api import memcache, taskqueue
 	pass
 
-from sateraito_inc import DEFAULT_TIMEZONE, NAME_USAGE_LLM_LOG_DEFAULT
 from sateraito_db import GoogleAppsDomainEntry, LLMUsageLog
 
 # Fetch LLM usage
-class _FetchLLMUsage(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _FetchLLMUsage(Handler_Basic_Request, _BasePage):
 	def get_now(self):
 		now_utc = datetime.utcnow()
 		# Convert UTC to DEFAULT_TIMEZONE
@@ -116,11 +113,12 @@ class _FetchLLMUsage(sateraito_page.Handler_Basic_Request, sateraito_page._BaseP
 			query = self.build_query_time_frame(time_frame)
 			for usage in query.order(-LLMUsageLog.timestamp).fetch(1000):
 				usage_list.append({
-					'timestamp': sateraito_func.toShortLocalTime(usage.timestamp),
+					'client_domain': usage.client_domain,
 					'model_name': usage.model_name,
 					'prompt_length': usage.prompt_length,
 					'completion_length': usage.completion_length,
 					'total_length': usage.total_length,
+					'timestamp': sateraito_func.toShortLocalTime(usage.timestamp),
 				})
 
 			# Get google apps domain
@@ -144,7 +142,6 @@ class _FetchLLMUsage(sateraito_page.Handler_Basic_Request, sateraito_page._BaseP
 		except Exception as e:
 			logging.exception('Error in FetchLLMUsage.process: %s', str(e))
 			return self.json_response({'message': 'internal_server_error'}, status=500)
-		
 class FetchLLMUsage(_FetchLLMUsage):
 	def doAction(self, tenant, app_id):
 		# set namespace
@@ -156,7 +153,6 @@ class FetchLLMUsage(_FetchLLMUsage):
 			return
 
 		return self.process(tenant, app_id)
-	
 class OidFetchLLMUsage(_FetchLLMUsage):
 	def doAction(self, tenant, app_id):
 		# set namespace

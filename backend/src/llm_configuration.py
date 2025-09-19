@@ -11,17 +11,10 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 @author: PhucLeo
 '''
 
-import requests
-import json
-
-from google.appengine.api import namespace_manager
-
-import sateraito_inc
 import sateraito_func
-import sateraito_page
-
 from sateraito_logger import logging
 from sateraito_db import LLMConfiguration
+from sateraito_page import Handler_Basic_Request, _BasePage
 
 from sateraito_inc import flask_docker
 if flask_docker:
@@ -36,7 +29,7 @@ from sateraito_inc import LLM_CONFIGURATION_DEFAULT
 # CRUD for LLMConfiguration
 
 # Get method
-class _GetLLMConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _GetLLMConfiguration(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id):
 		try:
@@ -67,8 +60,8 @@ class _GetLLMConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page.
 class GetLLMConfiguration(_GetLLMConfiguration):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -79,8 +72,8 @@ class GetLLMConfiguration(_GetLLMConfiguration):
 class OidGetLLMConfiguration(_GetLLMConfiguration):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 		
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -91,8 +84,8 @@ class OidGetLLMConfiguration(_GetLLMConfiguration):
 class ClientGetLLMConfiguration(_GetLLMConfiguration):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		if not self.verifyBearerToken(tenant):
 			return self.json_response({'message': 'forbidden'}, status=403)
@@ -100,7 +93,7 @@ class ClientGetLLMConfiguration(_GetLLMConfiguration):
 		return self.process(tenant, app_id)
 
 # Edit method
-class _EditLLMConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _EditLLMConfiguration(Handler_Basic_Request, _BasePage):
 
 	def validate_params(self):
 		# Get params
@@ -148,8 +141,8 @@ class _EditLLMConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page
 class EditLLMConfiguration(_EditLLMConfiguration):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -160,8 +153,8 @@ class EditLLMConfiguration(_EditLLMConfiguration):
 class OidEditLLMConfiguration(_EditLLMConfiguration):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check request
 		if not self.checkOidRequest(tenant):

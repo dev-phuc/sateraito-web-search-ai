@@ -10,16 +10,12 @@ client_websites.py
 @author: PhucLeo
 '''
 
-import requests
-import json
-
-from firebase_admin import auth, db
+from firebase_admin import auth
 from google.appengine.api import namespace_manager
 
 import sateraito_inc
 import sateraito_func
-import sateraito_page
-
+from sateraito_page import Handler_Basic_Request, _BasePage
 from sateraito_logger import logging
 from sateraito_db import ClientWebsites
 
@@ -34,7 +30,7 @@ else:
 # CRUD for ClientWebsites
 
 # Fetch method
-class _FetchClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _FetchClientWebsites(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id):
 		try:
@@ -67,8 +63,8 @@ class _FetchClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page.
 class FetchClientWebsites(_FetchClientWebsites):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -79,8 +75,8 @@ class FetchClientWebsites(_FetchClientWebsites):
 class OidFetchClientWebsites(_FetchClientWebsites):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 		
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -89,7 +85,7 @@ class OidFetchClientWebsites(_FetchClientWebsites):
 		return self.process(tenant, app_id)
 
 # Create method
-class _CreateClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _CreateClientWebsites(Handler_Basic_Request, _BasePage):
 
 	def validate_params(self):
 		# Get params
@@ -166,8 +162,8 @@ class _CreateClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page
 class CreateClientWebsites(_CreateClientWebsites):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -178,8 +174,8 @@ class CreateClientWebsites(_CreateClientWebsites):
 class OidCreateClientWebsites(_CreateClientWebsites):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 		
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -188,7 +184,7 @@ class OidCreateClientWebsites(_CreateClientWebsites):
 		return self.process(tenant, app_id)
 
 # Edit method
-class _EditClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _EditClientWebsites(Handler_Basic_Request, _BasePage):
 
 	def validate_params(self, id):
 		# Get params
@@ -255,8 +251,8 @@ class _EditClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._
 class EditClientWebsites(_EditClientWebsites):
 
 	def doAction(self, tenant, app_id, id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -267,8 +263,8 @@ class EditClientWebsites(_EditClientWebsites):
 class OidEditClientWebsites(_EditClientWebsites):
 
 	def doAction(self, tenant, app_id, id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -277,7 +273,7 @@ class OidEditClientWebsites(_EditClientWebsites):
 		return self.process(tenant, app_id, id)
 
 # Delete method
-class _DeleteClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _DeleteClientWebsites(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id, id):
 		try:
@@ -301,8 +297,8 @@ class _DeleteClientWebsites(sateraito_page.Handler_Basic_Request, sateraito_page
 class DeleteClientWebsites(_DeleteClientWebsites):
 
 	def doAction(self, tenant, app_id, id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
@@ -313,8 +309,8 @@ class DeleteClientWebsites(_DeleteClientWebsites):
 class OidDeleteClientWebsites(_DeleteClientWebsites):
 
 	def doAction(self, tenant, app_id, id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# check request
 		if not self.checkOidRequest(tenant):
@@ -324,7 +320,7 @@ class OidDeleteClientWebsites(_DeleteClientWebsites):
 
 
 # Get token firebase for client websites
-class _ClientGetFirebaseToken(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _ClientGetFirebaseToken(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id):
 		try:
@@ -352,8 +348,8 @@ class _ClientGetFirebaseToken(sateraito_page.Handler_Basic_Request, sateraito_pa
 class ClientGetFirebaseToken(_ClientGetFirebaseToken):
 
 	def doAction(self, tenant, app_id):
-		# set namespace
-		namespace_manager.set_namespace(tenant)
+		if sateraito_func.setNamespace(tenant, app_id) is False:
+			return self.json_response({'message': 'namespace_error'}, status=500)
 
 		# Verify bearer token
 		if not self.verifyBearerToken(tenant):

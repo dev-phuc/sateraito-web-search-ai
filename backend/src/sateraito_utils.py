@@ -16,12 +16,8 @@ import json
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
-from google.appengine.api import namespace_manager
-
-import sateraito_inc
 import sateraito_func
-import sateraito_page
-
+from sateraito_page import Handler_Basic_Request, _BasePage
 from sateraito_logger import logging
 
 from sateraito_inc import flask_docker
@@ -33,7 +29,7 @@ else:
 	pass
 
 # Utils for ClientWebsites
-class GetPageInfoByURL(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class GetPageInfoByURL(Handler_Basic_Request, _BasePage):
 
 	def doAction(self):
 		try:

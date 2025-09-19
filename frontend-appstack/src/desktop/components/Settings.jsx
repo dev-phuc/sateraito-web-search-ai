@@ -116,7 +116,7 @@ const Settings = ({ onChange }) => {
           <Col md={2}>
             <span className="d-block font-size-lg fw-bold">
               {" "}
-              {t("BGCOLOR_SCHEME_LABEL")}
+              {t("BG_COLOR_SCHEME_LABEL")}
             </span>
             <div className="row g-0 text-center mx-n1 mb-2">
               {themeOptions.map(({ name, value }) => (

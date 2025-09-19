@@ -13,8 +13,7 @@ __author__ = 'PhucLeo <phuc@vnd.sateraito.co.jp>'
 
 import json
 
-import sateraito_page
-
+from sateraito_page import Handler_Basic_Request, _BasePage
 from sateraito_logger import logging
 from sateraito_db import UserInfo, UserConfig
 from sateraito_func import setNamespace
@@ -32,7 +31,7 @@ from sateraito_inc import DEFAULT_LANGUAGE, THEME_CONFIG_DEFAULT
 # CRUD for UserConfig
 
 # Get method
-class _GetUserConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _GetUserConfiguration(Handler_Basic_Request, _BasePage):
 
 	def process(self, tenant, app_id):
 		try:
@@ -96,7 +95,7 @@ class OidGetUserConfiguration(_GetUserConfiguration):
 		return self.process(tenant, app_id)
 
 # Update method
-class _UpdateUserConfiguration(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _UpdateUserConfiguration(Handler_Basic_Request, _BasePage):
 
 	def validate_params(self):
 		# Get params

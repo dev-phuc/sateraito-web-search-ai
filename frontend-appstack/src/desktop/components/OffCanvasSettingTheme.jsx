@@ -157,7 +157,7 @@ const OffCanvasSettingTheme = () => {
             <div className="mb-3">
               <span className="d-block font-size-lg fw-bold">
                 {" "}
-                {t("BGCOLOR_SCHEME_LABEL")}
+                {t("BG_COLOR_SCHEME_LABEL")}
               </span>
               {/*<span className="d-block text-muted mb-2">*/}
               {/*  The perfect color mode for your app.*/}

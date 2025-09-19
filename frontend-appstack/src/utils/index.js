@@ -212,3 +212,7 @@ export const getNewIdQuestion = () => {
   const randomStr = Math.random().toString(36).substring(2, 10); // Random alphanumeric string of length 8
   return `q_${timestamp}_${randomStr}`;
 }
+
+export const randomString = (length = 8) => {
+  return Math.random().toString(36).substring(2, 2 + length);
+}

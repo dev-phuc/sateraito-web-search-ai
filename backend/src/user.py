@@ -5,7 +5,7 @@ __author__ = 'Akitoshi Abe <abe@baytech.co.jp>'
 
 # set default encodeing to utf-8
 # from flask import Flask, Response, render_template, request, make_response, session, redirect, after_this_request
-from flask import render_template, request, make_response
+from flask import request, make_response
 import json
 from sateraito_logger import logging
 import datetime
@@ -14,7 +14,7 @@ import os
 import jinja2
 from ucf.utils import jinjacustomfilters
 
-from google.appengine.api import namespace_manager, datastore_errors, urlfetch
+from google.appengine.api import namespace_manager, datastore_errors
 from google.appengine.ext import ndb
 from google.appengine.api.urlfetch import DownloadError
 from apiclient.errors import HttpError
@@ -22,7 +22,8 @@ from apiclient.errors import HttpError
 import sateraito_inc
 import sateraito_func
 import sateraito_db
-import sateraito_page
+
+from sateraito_page import Handler_Basic_Request, _BasePage, _BaseAPI, _OidBasePage
 
 from sateraito_inc import flask_docker
 if flask_docker:
@@ -40,7 +41,7 @@ user.py
 
 GET_USER_LIST_CACHE_MINUTES = 60
 
-class _GetUser(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _GetUser(Handler_Basic_Request, _BasePage):
 	def fetch_google_data(self, google_apps_domain, viewer_email, return_by_object=False):
 		""" 
             Get user list data from google
@@ -127,7 +128,7 @@ class TokenGetUser(_GetUser):
 		return self.process(google_apps_domain, app_id)
 
 
-class _GetMe(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
+class _GetMe(Handler_Basic_Request, _BaseAPI):
 	def fetch_google_data(self, google_apps_domain, viewer_email, return_by_object=False):
 		"""Get user list data from google"""
 		# OAuth Token(gdata.auth)
@@ -235,7 +236,7 @@ class OidGetMe(_GetMe):
 		return self.process(google_apps_domain, app_id)
 
 
-class _UserLogout(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI):
+class _UserLogout(Handler_Basic_Request, _BaseAPI):
 	def process(self, google_apps_domain, app_id):
 		try:
 			# Set namespace
@@ -248,7 +249,7 @@ class _UserLogout(sateraito_page.Handler_Basic_Request, sateraito_page._BaseAPI)
 			self.session['is_oidc_need_show_signin_link'] = False
 
 			# clear openid connect session
-			self.removeCookie(sateraito_page.OPENID_COOKIE_NAME)
+			self.removeCookie(OPENID_COOKIE_NAME)
 
 			data_res = {
 				'message': 'User logged out successfully.',
@@ -277,7 +278,7 @@ class OidUserLogout(_UserLogout):
 		return self.process(google_apps_domain, app_id)
 
 
-class UserLogin(sateraito_page.Handler_Basic_Request, sateraito_page._OidBasePage):
+class UserLogin(Handler_Basic_Request, _OidBasePage):
 
 	def doAction(self, google_apps_domain, app_id):
 		# Set namespace
@@ -292,7 +293,7 @@ class UserLogin(sateraito_page.Handler_Basic_Request, sateraito_page._OidBasePag
 		if is_ok:
 			self.redirect(sateraito_inc.my_site_url + '/user/after-login')
 
-class HandlerAfterLogin(sateraito_page.Handler_Basic_Request, sateraito_page._OidBasePage):
+class HandlerAfterLogin(Handler_Basic_Request, _OidBasePage):
 
 	def doAction(self):
 
@@ -312,7 +313,7 @@ class HandlerAfterLogin(sateraito_page.Handler_Basic_Request, sateraito_page._Oi
 			return
 
 
-class _GetUserList(sateraito_page.Handler_Basic_Request, sateraito_page._BasePage):
+class _GetUserList(Handler_Basic_Request, _BasePage):
 	""" Get User list
 """
 
