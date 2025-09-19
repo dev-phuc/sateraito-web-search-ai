@@ -18,23 +18,28 @@ const useStoreOperationLogs = create((set) => ({
 
   // Actions
   fetchOperationLogs: async (tenant, app_id, page, limit, paramsSearch) => {
-    set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_GET_OPERATION_LOGS';
 
+    set({ isLoading: true });
     try {
       const params = {
         page: page || 1,
         limit: limit || 20,
         ...paramsSearch
       };
-      const result = await fetchOperationLogs(tenant, app_id, params);
-      if (result) {
-        const { total_rows, have_more_rows, operation_logs } = result;
+      const { message, logs_data } = await fetchOperationLogs(tenant, app_id, params);
+      if (message == 'success') {
+        const { total_rows, have_more_rows, operation_logs } = logs_data;
         set({ operationLogs: operation_logs });
         set({ total: total_rows });
         set({ isHaveMore: have_more_rows });
+        success = true;
+        message_result = '';
       }
     }
     catch (error) {
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
       console.error('Error fetching operation logs:', error);
       set({ operationLogs: [] });
       set({ total: 0 });
@@ -43,6 +48,8 @@ const useStoreOperationLogs = create((set) => ({
     finally {
       set({ isLoading: false });
     }
+
+    return { success, message: message_result };
   },
 }));
 

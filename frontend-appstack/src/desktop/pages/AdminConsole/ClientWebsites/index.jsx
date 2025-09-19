@@ -47,6 +47,15 @@ const ClientWebsitesAdminConsolePage = () => {
   const [dataDelete, setDataDelete] = useState(null);
 
   // Handler method
+  const handlerLoadClientWebsites = async () => {
+    if (tenant && app_id) {
+      const { success, message } = await fetchClientWebsites(tenant, app_id);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
+  };
+
   const onChangeSelectAllChecked = (checked) => {
     if (checked) {
       const allIds = clientWebsites.map(item => item.id);
@@ -97,7 +106,7 @@ const ClientWebsitesAdminConsolePage = () => {
   };
   const afterDeleteClientWebsite = (success) => {
     if (success) {
-      fetchClientWebsites(tenant, app_id);
+      handlerLoadClientWebsites();
     }
     setItemSelected([]);
     onCloseConfirmDelete();
@@ -106,7 +115,7 @@ const ClientWebsitesAdminConsolePage = () => {
   // Effects
   useEffect(() => {
     if (!isLoading) {
-      fetchClientWebsites(tenant, app_id);
+      handlerLoadClientWebsites();
     }
   }, []);
 
@@ -128,7 +137,7 @@ const ClientWebsitesAdminConsolePage = () => {
           onChangeSelectChecked={onChangeSelectOneChecked}
           onCreateClientWebsite={onCreateClientWebsite}
           onEditClientWebsite={onEditClientWebsite}
-          onReload={() => fetchClientWebsites(tenant, app_id)}
+          onReload={handlerLoadClientWebsites}
           onDeleteClientWebsite={onDeleteClientWebsite}
           onDeleteSelectedWebsites={onDeleteSelectedWebsites}
         />
@@ -153,7 +162,7 @@ const ClientWebsitesAdminConsolePage = () => {
             data={dataEdit}
             onCancel={onCloseForm}
             afterSubmit={() => {
-              fetchClientWebsites(tenant, app_id);
+              handlerLoadClientWebsites();
               onCloseForm();
             }}
           />

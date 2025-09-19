@@ -38,11 +38,11 @@ class _GetLLMConfiguration(Handler_Basic_Request, _BasePage):
 			# get llm configuration
 			entity_dict = LLMConfiguration.getDict(auto_create=True)
 
-			result = LLM_CONFIGURATION_DEFAULT
+			llm_config = LLM_CONFIGURATION_DEFAULT
 
 			if entity_dict:
 				try:
-					result = {
+					llm_config = {
 						'model_name': entity_dict.get('model_name', LLM_CONFIGURATION_DEFAULT['model_name']),
 						'system_prompt': entity_dict.get('system_prompt', LLM_CONFIGURATION_DEFAULT['system_prompt']),
 						'response_length_level': entity_dict.get('response_length_level', LLM_CONFIGURATION_DEFAULT['response_length_level']),
@@ -51,7 +51,10 @@ class _GetLLMConfiguration(Handler_Basic_Request, _BasePage):
 				except Exception as e:
 					logging.exception('Error parsing LLMConfiguration design JSON: %s', str(e))
 
-			return self.json_response(result)
+			return self.json_response({
+				'message': 'success',
+				'config': llm_config
+			})
 		
 		except Exception as e:
 			logging.exception('Error in GetLLMConfiguration.process: %s', str(e))
@@ -65,7 +68,7 @@ class GetLLMConfiguration(_GetLLMConfiguration):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -77,7 +80,7 @@ class OidGetLLMConfiguration(_GetLLMConfiguration):
 		
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -146,7 +149,7 @@ class EditLLMConfiguration(_EditLLMConfiguration):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -158,7 +161,7 @@ class OidEditLLMConfiguration(_EditLLMConfiguration):
 
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 

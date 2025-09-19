@@ -6,6 +6,10 @@ import { fetchClientWebsitesList, createClientWebsites, editClientWebsites, dele
 const useStoreClientWebsites = create((set) => ({
   // Flag
   isLoading: false,
+  isCreating: false,
+  isUpdating: false,
+  isDeleting: false,
+  isFetchingFirebaseToken: false,
   setIsLoading: (loading) => set({ isLoading: loading }),
 
   // Data
@@ -19,102 +23,133 @@ const useStoreClientWebsites = create((set) => ({
     set({ firebaseToken: token });
   },
   getFirebaseToken: async (tenant, app_id, clientWebsite) => {
-    try {
-      const data = await getFirebaseTokenForClient(tenant, app_id, clientWebsite);
-      const token = data.token;
+    let success, message_result = 'TXT_ERROR_FETCH_FIREBASE_TOKEN';
 
-      set({ firebaseToken: token });
-      return {success: true, data: token};
-    } catch (error) {
-      const data = error.response?.data;
-      let key_message_error = 'TXT_ERROR_FETCH_FIREBASE_TOKEN';
-      if (data && data.message) {
-        key_message_error = data.message;
+    set({ isFetchingFirebaseToken: true });
+    try {
+      const { message, token } = await getFirebaseTokenForClient(tenant, app_id, clientWebsite);
+      if (message == 'success') {
+        set({ firebaseToken: token });
+        success = true;
+        message_result = '';
       }
-      return {success: false, error: key_message_error};
     }
+    catch (error) {
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      success = false;
+      console.error('Error fetching firebase token:', message_result);
+    }
+    finally {
+      set({ isFetchingFirebaseToken: false });
+    }
+
+    return { success, message: message_result };
   },
 
   // Actions
   fetchClientWebsites: async (tenant, app_id) => {
-    set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_FETCH_CLIENT_WEBSITES';
 
+    set({ isLoading: true });
     try {
-      const websites = await fetchClientWebsitesList(tenant, app_id);
-      set({ clientWebsites: websites });
+      const { message, client_websites } = await fetchClientWebsitesList(tenant, app_id);
+      if (message == 'success') {
+        set({ clientWebsites: client_websites });
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
-      console.error('Error fetching client websites:', error);
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      console.error('Error fetching client websites:', message_result);
     }
     finally {
       set({ isLoading: false });
     }
+
+    return { success, message: message_result };
   },
 
   createClientWebsites: async (tenant, app_id, data) => {
-    try {
-      const newWebsite = await createClientWebsites(tenant, app_id, data);
-      set((state) => ({
-        clientWebsites: [...state.clientWebsites, newWebsite],
-      }));
+    let success = false, message_result = 'TXT_ERROR_CREATE_CLIENT_WEBSITES';
 
-      return {success: true, data: newWebsite};
+    set({ isCreating: true });
+    try {
+      const { message, client_website } = await createClientWebsites(tenant, app_id, data);
+      if (message == 'success') {
+        set((state) => ({
+          clientWebsites: [...state.clientWebsites, client_website],
+        }));
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
       const data = error.response?.data;
-
-      let key_message_error = 'TXT_ERROR_CREATE_CLIENT_WEBSITES';
-      if (data && data.message) {
-        key_message_error = data.message;
-      }
-
-      return {success: false, error: key_message_error};
+      if (data && data.message) message_result = data.message;
+      console.error('Error creating client websites:', message_result);
     }
+    finally {
+      set({ isCreating: false });
+    }
+
+    return { success, message: message_result };
   },
 
   editClientWebsites: async (tenant, app_id, id, data) => {
+    let success = false, message_result = 'TXT_ERROR_UPDATE_CLIENT_WEBSITES';
+
+    set({ isUpdating: true });
     try {
-      const updatedWebsite = await editClientWebsites(tenant, app_id, id, data);
-      set((state) => ({
-        clientWebsites: state.clientWebsites.map((website) =>
-          website.id === id ? updatedWebsite : website
-        ),
-      }));
-      return {success: true, data: updatedWebsite};
+      const { message, client_website } = await editClientWebsites(tenant, app_id, id, data);
+      if (message == 'success') {
+        set((state) => ({
+          clientWebsites: state.clientWebsites.map((website) =>
+            (website.id === id) ? client_website : website
+          ),
+        }));
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
       const data = error.response?.data;
-      let key_message_error = 'TXT_ERROR_UPDATE_CLIENT_WEBSITES';
-      if (data && data.message) {
-        key_message_error = data.message;
-      }
-      return {success: false, error: key_message_error};
+      if (data && data.message) message_result = data.message;
+      console.error('Error updating client websites:', message_result);
     }
+    finally {
+      set({ isUpdating: false });
+    }
+
+    return { success, message: message_result };
   },
 
   deleteClientWebsites: async (tenant, app_id, id) => {
-    try {
-      // Set loading state
-      set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_DELETE_CLIENT_WEBSITES';
 
-      await deleteClientWebsites(tenant, app_id, id);
-      set((state) => ({
-        clientWebsites: state.clientWebsites.filter((website) => website.id !== id),
-      }));
-      return {success: true};
+    set({ isDeleting: true });
+    try {
+      const { message } = await deleteClientWebsites(tenant, app_id, id);
+      if (message == 'success') {
+        set((state) => ({
+          clientWebsites: state.clientWebsites.filter((website) => website.id !== id),
+        }));
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
       const data = error.response?.data;
-      let key_message_error = 'TXT_ERROR_DELETE_CLIENT_WEBSITES';
-      if (data && data.message) {
-        key_message_error = data.message;
-      }
-      return {success: false, error: key_message_error};
+      if (data && data.message) message_result = data.message;
+      console.error('Error deleting client websites:', message_result);
     }
     finally {
-      // Clear loading state
-      set({ isLoading: false });
+      set({ isDeleting: false });
     }
+
+    return { success, message: message_result };
   },
 }));
 

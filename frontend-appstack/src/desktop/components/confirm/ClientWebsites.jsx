@@ -49,7 +49,7 @@ const ClientWebsitesConfirmDelete = ({ tenant, app_id, data, onCancel, afterSubm
       result = await processDeleteSingle();
     }
 
-    let { success, error, message } = result;
+    let { success, message } = result;
     if (success) {
       message = t('TXT_DELETE_CLIENT_WEBSITES_SUCCESS');
       showNotice('success', message);

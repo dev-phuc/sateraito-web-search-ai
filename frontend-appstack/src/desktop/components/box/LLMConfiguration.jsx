@@ -13,6 +13,9 @@ import useStoreLLMConfiguration from '@/store/llm_configuration';
 
 // Constants
 
+// Component
+import MakerLoading from '@/desktop/components/MakerLoading';
+
 const LLMConfigurationBox = ({ }) => {
   // Default hooks
   const { tenant, app_id } = useParams();
@@ -27,6 +30,13 @@ const LLMConfigurationBox = ({ }) => {
   // state
 
   // Handler
+  const handlerLoadData = async () => {
+    const { success, message } = await getLLMConfiguration(tenant, app_id);
+    if (!success) {
+      showNotice("danger", t(message));
+    }
+  };
+
   const getBadgeVariant = (status) => {
     switch (status) {
       case 'low':
@@ -47,13 +57,9 @@ const LLMConfigurationBox = ({ }) => {
   // Effects
   useEffect(() => {
     if (!isLoading && !llmConfiguration) {
-      getLLMConfiguration(tenant, app_id);
+      handlerLoadData();
     }
   }, []);
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  };
 
   // Return the component
   return (
@@ -83,28 +89,34 @@ const LLMConfigurationBox = ({ }) => {
           </div>
 
           <div className="box-content box-content px-4">
-            <div>
-              <p className='mb-2'>
-                <strong>{t("LABEL_MODEL_NAME")}:</strong> <span className="ms-2 badge bg-info">{llmConfiguration?.model_name}</span>
-              </p>
-              <p className='mb-2'>
-                <strong>{t("LABEL_RESPONSE_LENGTH_LEVEL")}:</strong>
-                <span className={`ms-2 badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)}`}>
-                  {llmConfiguration?.response_length_level ? t(`LABEL_RESPONSE_${llmConfiguration.response_length_level.toUpperCase()}`) : t("TXT_NOT_SET")}
-                </span>
-              </p>
-              {llmConfiguration && llmConfiguration.system_prompt && (
-                <div className='mb-2'>
-                  <strong>{t("LABEL_SYSTEM_PROMPT")}:</strong>
+            {llmConfiguration && (
+              <>
+                <div>
+                  <p className='mb-2'>
+                    <strong>{t("LABEL_MODEL_NAME")}:</strong> <span className="ms-2 badge bg-info">{llmConfiguration?.model_name}</span>
+                  </p>
+                  <p className='mb-2'>
+                    <strong>{t("LABEL_RESPONSE_LENGTH_LEVEL")}:</strong>
+                    <span className={`ms-2 badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)}`}>
+                      {llmConfiguration?.response_length_level ? t(`LABEL_RESPONSE_${llmConfiguration.response_length_level.toUpperCase()}`) : t("TXT_NOT_SET")}
+                    </span>
+                  </p>
+                  {llmConfiguration && llmConfiguration.system_prompt && (
+                    <div className='mb-2'>
+                      <strong>{t("LABEL_SYSTEM_PROMPT")}:</strong>
 
-                  <div className='bg-white p-2 border rounded'>
-                    <Markdown>
-                      {llmConfiguration.system_prompt}
-                    </Markdown>
-                  </div>
+                      <div className='bg-white p-2 border rounded'>
+                        <Markdown>
+                          {llmConfiguration.system_prompt}
+                        </Markdown>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
+
+            {isLoading && <MakerLoading opacity="10" />}
           </div>
 
         </div>

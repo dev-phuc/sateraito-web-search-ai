@@ -32,6 +32,7 @@ const DashboardAdminConsolePage = () => {
   // Use default
   const { tenant, app_id } = useParams();
   const { t } = useTranslation();
+  const { showNotice } = useTheme();
 
   // Zustand store
   const { loaded, loading, error, fetchTenantConfig } = useTenantConfigStore();
@@ -40,9 +41,17 @@ const DashboardAdminConsolePage = () => {
 
   // state
 
+  // Handler
+  const handlerLoadData = async () => {
+    const { success, message } = await fetchTenantConfig(tenant, app_id);
+    if (!success) {
+      showNotice('error', message);
+    }
+  }
+
   useEffect(() => {
     if (!loading && !loaded && !error) {
-      fetchTenantConfig(tenant, app_id);
+      handlerLoadData();
     }
   }, []);
 

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 // Requests
-import { getTenantConfig, updateTenantConfig } from '@/request/TenantConfig';
+import { getTenantConfig, updateContractInfo } from '@/request/TenantConfig';
 
 const useStoreTenantConfig = create((set) => ({
   // Flags
@@ -24,37 +24,49 @@ const useStoreTenantConfig = create((set) => ({
 
   // Fetch tenant configuration
   fetchTenantConfig: async (tenant, app_id) => {
+    let success = false, message_result = 'TXT_ERROR_GET_TENANT_CONFIG';
+
     set({ loading: true, error: null });
     try {
-      const data = await getTenantConfig(tenant, app_id);
-      set({
-        contractInformation: data.contract_information,
-        llmQuota: data.llm_quota,
-        otherSetting: data.other_setting,
-        loading: false,
-        loaded: true,
-      });
+      const { message, tenant_config } = await getTenantConfig(tenant, app_id);
+      if (message == 'success' && tenant_config) {
+        set({
+          contractInformation: tenant_config.contract_information,
+          llmQuota: tenant_config.llm_quota,
+          otherSetting: tenant_config.other_setting,
+          loading: false,
+          loaded: true,
+        });
+        success = true;
+        message_result = '';
+      }
     } catch (error) {
-      set({ error: error.message || 'Failed to fetch tenant configuration', loading: false });
+      const { response } = error;
+      const errorMessage = response?.data?.message || error.message || 'Failed to fetch tenant configuration';
+      message_result = errorMessage;
     }
+    finally {
+      set({ loading: false });
+    }
+
+    return { success, message: message_result };
   },
 
   // Update tenant configuration
-  updateTenantConfig: async (tenant, app_id, newData) => {
-    set({ loading: true, error: null });
+  updateContractInfo: async (tenant, app_id, contractInfo) => {
     try {
-      const data = await updateTenantConfig(tenant, app_id, newData);
-      set({
-        contractInformation: data.contractInformation,
-        llmQuota: data.llmQuota,
-        otherSetting: data.otherSetting,
-        loading: false,
-      });
+      const { message } = await updateContractInfo(tenant, app_id, contractInfo);
+      if (message == 'success') {
+        set({ contractInformation: { ...contractInfo } });
+        return { success: true };
+      }
+      return { success: false, error: message || 'Failed to update contract information' };
     } catch (error) {
-      set({ error: error.message || 'Failed to update tenant configuration', loading: false });
-    } 
+      const { response } = error;
+      const errorMessage = response?.data?.message || error.message || 'Failed to update contract information';
+      return { success: false, error: errorMessage };
+    }
   },
-
 }));
 
 export default useStoreTenantConfig;

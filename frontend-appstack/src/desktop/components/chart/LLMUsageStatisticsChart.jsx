@@ -8,6 +8,7 @@ import moment from 'moment';
 import useStoreLLMUsage from "@/store/llm_usage";
 
 // Hook components
+import useTheme from "@/hooks/useTheme";
 
 // Context components
 
@@ -20,12 +21,14 @@ import { Container, Spinner } from "react-bootstrap";
 import { randomString } from "@/utils";
 
 // Components
+import MakerLoading from "../MakerLoading";
 
 // Define the component
 const LLMUsageStatisticsChart = ({ }) => {
   // Use default
   const { t } = useTranslation();
   const { tenant, app_id } = useParams();
+  const { showNotice } = useTheme();
 
   // Zustand store
   const { isLoading, llmUsage, llmUsageLastMonth, fetchLLMUsage, fetchLLMUsageLastMonth } = useStoreLLMUsage();
@@ -37,12 +40,26 @@ const LLMUsageStatisticsChart = ({ }) => {
 
   const idChart = `llm-usage-chart-${randomString(6)}`;
 
+  // Handler
+  const handlerLoadData = async () => {
+    const { success, message } = await fetchLLMUsage(tenant, app_id, timeFrame);
+    if (!success) {
+      showNotice('danger', t(message));
+    }
+  }
+  const handlerLoadDataLastMonth = async () => {
+    const { success, message } = await fetchLLMUsageLastMonth(tenant, app_id);
+    if (!success) {
+      showNotice('danger', t(message));
+    }
+  }
+
   useEffect(() => {
     if (!isLoading && !llmUsage) {
-      fetchLLMUsage(tenant, app_id, timeFrame);
+      handlerLoadData();
     }
     if (!llmUsageLastMonth) {
-      fetchLLMUsageLastMonth(tenant, app_id, timeFrame);
+      handlerLoadDataLastMonth();
     }
   }, [timeFrame]);
 
@@ -136,11 +153,8 @@ const LLMUsageStatisticsChart = ({ }) => {
     };
 
     // Render chart if there is data
-    let chart = null;
-    if (currentMonthData.length > 0 || lastMonthData.length > 0) {
-      chart = new ApexCharts(chartContainer, options);
-      chart.render();
-    }
+    let chart = new ApexCharts(chartContainer, options);
+    chart.render();
 
     // Cleanup
     return () => {
@@ -150,11 +164,6 @@ const LLMUsageStatisticsChart = ({ }) => {
     };
   }, [chartType, llmUsage, llmUsageLastMonth]);
 
-
-  if (isLoading && !llmUsage && !llmUsageLastMonth) {
-    return <div>Loading...</div>;
-  }
-
   // Return component
   return (
     <>
@@ -162,14 +171,19 @@ const LLMUsageStatisticsChart = ({ }) => {
         <div id={idChart} className="chart">
           {/* Chart will be rendered here by ApexCharts */}
         </div>
+
         {/* Empty */}
-        {(dataTableShow.length === 0) && (
+        {(!isLoading && dataTableShow.length === 0) && (
           <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
             <div className="text-center">
               <div className="h1 mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</div>
             </div>
           </div>
         )}
+
+        {/* Loading */}
+        {isLoading && <MakerLoading />}
+        
       </div>
     </>
   );

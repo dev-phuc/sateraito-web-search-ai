@@ -24,9 +24,6 @@ class __GetOperationLogListAdmin(sateraito_page.Handler_Basic_Request, sateraito
 	def getRows(self, page, limit, client_domain, from_date_localtime_raw, to_date_localtime_raw):
 		q = OperationLog.query()
 		
-		# Get total rows
-		total_rows = q.count()
-		
 		# from_date
 		if from_date_localtime_raw and from_date_localtime_raw.strip() != '':
 			from_date_localtime = None
@@ -72,6 +69,9 @@ class __GetOperationLogListAdmin(sateraito_page.Handler_Basic_Request, sateraito
 		# get rows
 		rows = q.fetch(limit, offset=row_start)
 		row_next = q.fetch(1, offset=row_end)
+		
+		# Get total rows
+		total_rows = q.count()
 
 		have_more_rows = False
 		if len(row_next) > 0:
@@ -119,10 +119,15 @@ class _GetOperationLogListAdmin(__GetOperationLogListAdmin):
 				'created_date': sateraito_func.toShortLocalTime(row.created_date),
 			})
 
-		return self.json_response({
+		result = {
 			'operation_logs': data,
 			'total_rows': total_rows,
 			'have_more_rows': have_more_rows,
+		}
+
+		return self.json_response({
+			'message': 'success',
+			'logs_data': result
 		})
 
 class GetOperationLogListAdmin(_GetOperationLogListAdmin):

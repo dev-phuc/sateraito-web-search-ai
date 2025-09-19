@@ -38,16 +38,22 @@ const LLMConfigurationAdminConsolePage = () => {
   // state
 
   // Handler method
+  const handlerLoadData = async () => {
+    const { success, message } = await getLLMConfiguration(tenant, app_id);
+    if (!success) {
+      showNotice("danger", t(message));
+    }
+  };
+
   const handlerAfterSubmit = (data) => {
-    // Reload data
-    getLLMConfiguration(tenant, app_id);
+    handlerLoadData();
   };
 
   // Effects
   useEffect(() => {
-    // if (!isLoading) {
-      getLLMConfiguration(tenant, app_id);
-    // }
+    if (!isLoading) {
+      handlerLoadData();
+    }
   }, []);
 
   // Return component
@@ -58,20 +64,12 @@ const LLMConfigurationAdminConsolePage = () => {
       </Helmet>
 
       <Container fluid className="p-0">
-        {isLoading ? (
-          <div className="text-center my-5">
-            <Spinner animation="border" role="status">
-              <span className="visually-hidden">{t('TXT_LOADING')}</span>
-            </Spinner>
-          </div>
-        ) : (
-          <LLMConfigurationForm
-            tenant={tenant}
-            app_id={app_id}
-            initialValues={llmConfiguration}
-            afterSubmit={handlerAfterSubmit}
-          />
-        )}
+        <LLMConfigurationForm
+          tenant={tenant}
+          app_id={app_id}
+          initialValues={llmConfiguration}
+          afterSubmit={handlerAfterSubmit}
+        />
       </Container>
     </>
   );

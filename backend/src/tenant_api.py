@@ -45,7 +45,6 @@ class _GetTenantConfig(Handler_Basic_Request, _BasePage):
 			'last_reset': '',
 			'next_reset': '',
 		}
-		
 		other_setting = {
 			'csv_file_encoding': '',
 			'timezone': '',
@@ -63,8 +62,18 @@ class _GetTenantConfig(Handler_Basic_Request, _BasePage):
 			contract_information['tel_no'] = tenant_dict.get('contact_tel_no', '')
 
 			# get llm quota
-			llm_quota['quota'] = tenant_dict.get('llm_quota_monthly', 0)
-			llm_quota['used'] = tenant_dict.get('llm_quota_used', 0)
+			quota = 0
+			used = 0
+			remaining = 0
+
+			quota = tenant_dict.get('llm_quota_monthly', 0)
+			used = tenant_dict.get('llm_quota_used', 0)
+			if quota and used:
+				remaining = quota - used
+
+			llm_quota['quota'] = quota
+			llm_quota['used'] = used
+			llm_quota['remaining'] = remaining
 			llm_quota['last_reset'] = sateraito_func.toShortLocalDate(tenant_dict.get('llm_quota_last_reset'))
 
 			# calculate next reset date
@@ -79,10 +88,15 @@ class _GetTenantConfig(Handler_Basic_Request, _BasePage):
 			other_setting['timezone'] = other_setting_dict.get('timezone', DEFAULT_TIMEZONE)
 			other_setting['language'] = other_setting_dict.get('language', DEFAULT_LANGUAGE)
 
-		return self.json_response({
+		result = {
 			'contract_information': contract_information,
 			'llm_quota': llm_quota,
 			'other_setting': other_setting,
+		}
+
+		return self.json_response({
+			'message': 'success',
+			'tenant_config': result
 		})
 
 class GetTenantConfig(_GetTenantConfig):
@@ -110,8 +124,74 @@ class OidGetTenantConfig(_GetTenantConfig):
 		return self.process(tenant, app_id)
 
 
+class _UpdateContractInfo(Handler_Basic_Request, _BasePage):
+	def validate(self, tenant, app_id):
+		# Get parameters
+		mail_address = self.request.json.get('mail_address', '').strip()
+		tel_no = self.request.json.get('tel_no', '').strip()
+
+		# validate mail address
+		if mail_address:
+			if not sateraito_func.isValidEmail(mail_address):
+				return False, 'invalid_mail_address', None
+			
+		# validate tel no
+		if tel_no:
+			if len(tel_no) > 50:
+				return False, 'invalid_tel_no', None
+
+		return True, '', {
+			'mail_address': mail_address,
+			'tel_no': tel_no,
+		}
+	
+	def process(self, tenant, app_id):
+		# validate parameters
+		is_valid, error_message, params = self.validate(tenant, app_id)
+		if not is_valid:
+			return self.json_response({'message': error_message}, status=400)
+
+		# update contract information
+		tenant_entity = GoogleAppsDomainEntry.getInstance(tenant)
+		if tenant_entity:
+			tenant_entity.contact_mail_address = params['mail_address']
+			tenant_entity.contact_tel_no = params['tel_no']
+			tenant_entity.put()
+		
+		return self.json_response({'message': 'success'})
+	
+class UpdateContractInfo(_UpdateContractInfo):
+	def doAction(self, tenant, app_id):
+		# set namespace
+		if not sateraito_func.setNamespace(tenant, app_id):
+			return self.json_response({'message': 'namespace_error'}, status=500)
+
+		# check openid login
+		if not self.checkGadgetRequest(tenant):
+			return self.json_response({'message': 'forbidden'}, status=403)
+
+		return self.process(tenant, app_id)
+	
+class OidUpdateContractInfo(_UpdateContractInfo):
+	def doAction(self, tenant, app_id):
+		# set namespace
+		if not sateraito_func.setNamespace(tenant, app_id):
+			return self.json_response({'message': 'namespace_error'}, status=500)
+
+		# check openid login
+		if not self.checkOidRequest(tenant):
+			return self.json_response({'message': 'forbidden'}, status=403)
+
+		return self.process(tenant, app_id)
+
+
 def add_url_rules(app):
 	app.add_url_rule('/<string:tenant>/<string:app_id>/tenant-config', methods=['GET'],
 									view_func=GetTenantConfig.as_view('GetTenantConfig'))
 	app.add_url_rule('/<string:tenant>/<string:app_id>/oid/tenant-config', methods=['GET'],
 									view_func=OidGetTenantConfig.as_view('OidGetTenantConfig'))
+
+	app.add_url_rule('/<string:tenant>/<string:app_id>/tenant-config/update-contract-info', methods=['PUT'],
+									view_func=UpdateContractInfo.as_view('UpdateContractInfo'))
+	app.add_url_rule('/<string:tenant>/<string:app_id>/oid/tenant-config/update-contract-info', methods=['PUT'],
+									view_func=OidUpdateContractInfo.as_view('OidUpdateContractInfo'))

@@ -138,10 +138,14 @@ class _FetchLLMUsage(Handler_Basic_Request, _BasePage):
 				'llm_quota_last_reset': llm_quota_last_reset,
 				'usage_list': usage_list,
 			}
-			return self.json_response(result)
+			return self.json_response({
+				'message': 'success',
+				'usage_data': result
+			})
 		except Exception as e:
 			logging.exception('Error in FetchLLMUsage.process: %s', str(e))
 			return self.json_response({'message': 'internal_server_error'}, status=500)
+
 class FetchLLMUsage(_FetchLLMUsage):
 	def doAction(self, tenant, app_id):
 		# set namespace
@@ -153,6 +157,7 @@ class FetchLLMUsage(_FetchLLMUsage):
 			return
 
 		return self.process(tenant, app_id)
+
 class OidFetchLLMUsage(_FetchLLMUsage):
 	def doAction(self, tenant, app_id):
 		# set namespace
@@ -164,6 +169,7 @@ class OidFetchLLMUsage(_FetchLLMUsage):
 			return
 
 		return self.process(tenant, app_id)
+
 
 def add_url_rules(app):
 	app.add_url_rule('/<string:tenant>/<string:app_id>/llm-usage', methods=['GET'],

@@ -14,6 +14,9 @@ import {
   Tooltip
 } from "react-bootstrap";
 
+// Hook components
+import useTheme from '@/hooks/useTheme';
+
 // Utils
 import { formatDate, truncateText } from '@/utils';
 
@@ -41,6 +44,7 @@ const ClientWebsitesTable = ({
   // Default hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { showNotice } = useTheme();
 
   // Zustand stores
   const { isLoading, clientWebsites, setClientWebsites, fetchClientWebsites } = useStoreClientWebsites();
@@ -56,6 +60,16 @@ const ClientWebsitesTable = ({
 
     const config = statusConfig[status?.toLowerCase()] || { bg: 'secondary', text: status || 'Unknown' };
     return <Badge bg={config.bg} pill>{config.text}</Badge>;
+  };
+
+  // Handlers
+  const handlerLoadClientWebsites = async () => {
+    if (tenant && app_id) {
+      const { success, message } = await fetchClientWebsites(tenant, app_id);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
   };
 
   const handlerOnSearch = (filters) => {
@@ -79,7 +93,7 @@ const ClientWebsitesTable = ({
       // Update the clientWebsites in the store to the filtered list
       setClientWebsites(filteredWebsites);
     } else {
-      fetchClientWebsites(tenant, app_id);
+      handlerLoadClientWebsites();
     }
   };
 

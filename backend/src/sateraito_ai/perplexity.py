@@ -143,7 +143,7 @@ class PerplexityAI:
         
         if search_context_size:
             if web_search_options:
-                web_search_options = {"search_context_size": search_context_size}
+                web_search_options = web_search_options['search_context_size'] = search_context_size
             else:
                 web_search_options = {"search_context_size": search_context_size}
 

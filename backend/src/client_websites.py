@@ -54,7 +54,10 @@ class _FetchClientWebsites(Handler_Basic_Request, _BasePage):
 					'updated_date': sateraito_func.toShortLocalTime(cw.get('updated_date')),
 				})
 
-			return self.json_response(result)
+			return self.json_response({
+				'message': 'success',
+				'client_websites': result
+			})
 		
 		except Exception as e:
 			logging.exception('Error in GetClientWebsites.process: %s', str(e))
@@ -68,7 +71,7 @@ class FetchClientWebsites(_FetchClientWebsites):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -80,7 +83,7 @@ class OidFetchClientWebsites(_FetchClientWebsites):
 		
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -143,7 +146,7 @@ class _CreateClientWebsites(Handler_Basic_Request, _BasePage):
 			)
 			cw.put()
 
-			return self.json_response({
+			result = {
 				'id': str(cw.key.id()),
 				'domain': cw.domain,
 				'favicon_url': cw.favicon_url,
@@ -153,6 +156,11 @@ class _CreateClientWebsites(Handler_Basic_Request, _BasePage):
 				'status': cw.status,
 				'created_date': sateraito_func.toShortLocalTime(cw.created_date),
 				'updated_date': sateraito_func.toShortLocalTime(cw.updated_date),
+			}
+
+			return self.json_response({
+				'message': 'success',
+				'client_website': result
 			}, status=201)
 		
 		except Exception as e:
@@ -167,7 +175,7 @@ class CreateClientWebsites(_CreateClientWebsites):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 	
@@ -179,7 +187,7 @@ class OidCreateClientWebsites(_CreateClientWebsites):
 		
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -232,7 +240,7 @@ class _EditClientWebsites(Handler_Basic_Request, _BasePage):
 			# update ClientWebsites entity
 			ClientWebsites.updateRow(cw.domain, site_name, description, favicon_url, ai_enabled, status, self.viewer_email)
 
-			return self.json_response({
+			result = {
 				'id': str(cw.key.id()),
 				'domain': cw.domain,
 				'favicon_url': cw.favicon_url,
@@ -242,6 +250,11 @@ class _EditClientWebsites(Handler_Basic_Request, _BasePage):
 				'status': cw.status,
 				'created_date': sateraito_func.toShortLocalTime(cw.created_date),
 				'updated_date': sateraito_func.toShortLocalTime(cw.updated_date),
+			}
+
+			return self.json_response({
+				'message': 'success',
+				'client_website': result
 			})
 
 		except Exception as e:
@@ -256,7 +269,7 @@ class EditClientWebsites(_EditClientWebsites):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id, id)
 
@@ -268,7 +281,7 @@ class OidEditClientWebsites(_EditClientWebsites):
 
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id, id)
 
@@ -288,7 +301,7 @@ class _DeleteClientWebsites(Handler_Basic_Request, _BasePage):
 
 			cw.key.delete()
 
-			return self.json_response({'message': 'deleted'}, status=200)
+			return self.json_response({'message': 'success'}, status=200)
 
 		except Exception as e:
 			logging.exception('Error in DeleteClientWebsites.process: %s', str(e))
@@ -302,7 +315,7 @@ class DeleteClientWebsites(_DeleteClientWebsites):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id, id)
 
@@ -314,7 +327,7 @@ class OidDeleteClientWebsites(_DeleteClientWebsites):
 
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id, id)
 
@@ -338,6 +351,7 @@ class _ClientGetFirebaseToken(Handler_Basic_Request, _BasePage):
 			firebase_custom_token = auth.create_custom_token(self.client_website_domain, additional_claims)
 			
 			return self.json_response({
+				'message': 'success',
 				'token': firebase_custom_token.decode('utf-8')
 			})
 
@@ -353,7 +367,7 @@ class ClientGetFirebaseToken(_ClientGetFirebaseToken):
 
 		# Verify bearer token
 		if not self.verifyBearerToken(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 

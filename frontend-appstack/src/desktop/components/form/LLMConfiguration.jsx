@@ -41,29 +41,25 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
   const handlerOnSubmit = useCallback(async (values, { setSubmitting }) => {
     if (submittingRef.current) return;
     submittingRef.current = true;
-    setLoading(l => ({ ...l, submitting: true }));
+    setLoading(temp => ({ ...temp, submitting: true }));
 
     try {
-      const result = await editLLMConfiguration(tenant, app_id, values);
-      const { success, error } = result;
-      let message = '';
+      const { success, message } = await editLLMConfiguration(tenant, app_id, values);
       if (success) {
-        message = t('TXT_UPDATE_LLM_CONFIGURATION_SUCCESS');
-        showNotice('success', message);
-
         if (afterSubmit) {
           afterSubmit(success);
         }
+        showNotice('success', t('TXT_UPDATE_LLM_CONFIGURATION_SUCCESS'));
       } else {
-        message = t(error);
-        if (message === error) {
-          message = t('TXT_ERROR_UPDATE_LLM_CONFIGURATION');
+        let messageNotice = t(message);
+        if (messageNotice === message) {
+          messageNotice = t('TXT_ERROR_UPDATE_LLM_CONFIGURATION');
         }
-        showNotice('error', message);
+        showNotice('error', messageNotice);
       }
     } finally {
       submittingRef.current = false;
-      setLoading(l => ({ ...l, submitting: false }));
+      setLoading(temp => ({ ...temp, submitting: false }));
       if (setSubmitting) setSubmitting(false);
     }
 
@@ -75,21 +71,18 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
     submittingRef.current = true;
     setLoading(l => ({ ...l, submitting: true }));
     try {
-      const result = await editLLMConfiguration(tenant, app_id, LLM_CONFIGURATION_DEFAULT);
-      const { success, error } = result;
-      let message = '';
+      const { success, message } = await editLLMConfiguration(tenant, app_id, LLM_CONFIGURATION_DEFAULT);
       if (success) {
         if (afterSubmit) {
           afterSubmit(success);
         }
-        message = t('TXT_RESET_LLM_CONFIGURATION_SUCCESS');
-        showNotice('success', message);
+        showNotice('success', t('TXT_RESET_LLM_CONFIGURATION_SUCCESS'));
       } else {
-        message = t(error);
-        if (message === error) {
-          message = t('TXT_ERROR_RESET_LLM_CONFIGURATION');
+        let messageNotice = t(message);
+        if (messageNotice === message) {
+          messageNotice = t('TXT_ERROR_UPDATE_LLM_CONFIGURATION');
         }
-        showNotice('error', message);
+        showNotice('error', messageNotice);
       }
     } finally {
       submittingRef.current = false;
@@ -97,8 +90,14 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
     }
   };
 
-  if (!llmConfiguration) {
-    return <div>Loading...</div>;
+  if (loading && !llmConfiguration) {
+    return (
+      <div className="text-center my-5">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">{t('TXT_LOADING')}</span>
+        </Spinner>
+      </div>
+    )
   }
 
   // Return the component

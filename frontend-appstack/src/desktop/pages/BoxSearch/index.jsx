@@ -41,6 +41,7 @@ const BoxSearchPage = () => {
   // Use default
   const { t } = useTranslation();
   const { tenant, app_id } = useParams();
+  const { showNotice } = useTheme();
 
   // Zustand stores
   const storeClientWebsites = useStoreClientWebsites();
@@ -139,19 +140,32 @@ const BoxSearchPage = () => {
     });
   };
 
+  const handlerLoadData = async () => {
+    if (!boxSearchConfigForClient) {
+      const { success, message } = await getBoxSearchConfigForClient(tenant, app_id, clientWebSite);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
+
+    if (!llmConfigurationForClient) {
+      const { success, message } = await getLLMConfigurationForClient(tenant, app_id, clientWebSite);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
+
+    if (!firebaseToken) {
+      const { success, message } = await getFirebaseToken(tenant, app_id, clientWebSite);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
+  };
+
   useEffect(() => {
     if (clientWebSite && tenant && app_id) {
-      if (!llmConfigurationForClient) {
-        getLLMConfigurationForClient(tenant, app_id, clientWebSite);
-      }
-
-      if (!boxSearchConfigForClient) {
-        getBoxSearchConfigForClient(tenant, app_id, clientWebSite);
-      }
-
-      if (!firebaseToken) {
-        getFirebaseToken(tenant, app_id, clientWebSite);
-      }
+      handlerLoadData();
     }
   }, [clientWebSite]);
 
@@ -234,7 +248,7 @@ const BoxSearchPage = () => {
             <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
               {({ handleSubmit, handleChange, values }) => (
                 <Form onSubmit={handleSubmit}>
-                  <input type="text" name="query" className='input-search-box' style={{paddingRight: 30}} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                  <input type="text" name="query" className='input-search-box' style={{ paddingRight: 30 }} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
                 </Form>
               )}
             </Formik>

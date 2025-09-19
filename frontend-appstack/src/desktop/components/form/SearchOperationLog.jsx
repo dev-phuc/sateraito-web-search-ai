@@ -8,6 +8,7 @@ import { Formik } from "formik";
 import { Form, Button, Spinner } from "react-bootstrap";
 
 // Hook components
+import useTheme from "@/hooks/useTheme";
 
 // Requests API
 
@@ -20,6 +21,7 @@ const SearchOperationLogForm = ({ tenant, app_id, onSearch, isLoading = false })
   // Default hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { showNotice } = useTheme();
 
   // Zustand stores
   const { clientWebsites, fetchClientWebsites } = useStoreClientWebsites();
@@ -37,11 +39,19 @@ const SearchOperationLogForm = ({ tenant, app_id, onSearch, isLoading = false })
     to_date: '',
   };
 
+  // Handlers
+  const handlerLoadClientWebsites = async () => {
+    if (tenant && app_id) {
+      const { success, message } = await fetchClientWebsites(tenant, app_id);
+      if (!success) {
+        showNotice("danger", t(message));
+      }
+    }
+  };
+
   // Effects
   useEffect(() => {
-    if (clientWebsites.length === 0 && tenant && app_id) {
-      fetchClientWebsites(tenant, app_id);
-    }
+    handlerLoadClientWebsites();
   }, [tenant, app_id]);
 
   const handlerOnSubmit = useCallback(async (values) => {

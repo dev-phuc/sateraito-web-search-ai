@@ -19,6 +19,7 @@ import ApexCharts from "apexcharts";
 import { randomString } from "@/utils";
 
 // Components
+import MakerLoading from "../MakerLoading";
 
 // Define the component
 const LLMClientWebsiteUsageStatisticsChart = ({ }) => {
@@ -175,11 +176,8 @@ const LLMClientWebsiteUsageStatisticsChart = ({ }) => {
     };
 
     // Render chart if there is data
-    let chart = null;
-    if (Object.keys(domainData).length > 0) {
-      chart = new ApexCharts(chartContainer, options);
-      chart.render();
-    }
+    let chart = new ApexCharts(chartContainer, options);
+    chart.render();
 
     // Cleanup
     return () => {
@@ -189,11 +187,6 @@ const LLMClientWebsiteUsageStatisticsChart = ({ }) => {
     };
   }, [chartType, llmUsage]);
 
-
-  if (isLoading && !llmUsage) {
-    return <div>Loading...</div>;
-  }
-
   // Return component
   return (
     <>
@@ -201,14 +194,19 @@ const LLMClientWebsiteUsageStatisticsChart = ({ }) => {
         <div id={idChart} className="chart">
           {/* Chart will be rendered here by ApexCharts */}
         </div>
+        
         {/* Empty */}
-        {(dataTableShow.length === 0) && (
+        {(!isLoading && dataTableShow.length === 0) && (
           <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
             <div className="text-center">
               <div className="h1 mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</div>
             </div>
           </div>
         )}
+
+        {/* Loading */}
+        {isLoading && <MakerLoading />}
+
       </div>
     </>
   );

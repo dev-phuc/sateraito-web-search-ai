@@ -12,13 +12,13 @@ export const getTenantConfig = async (tenant, app_id) => {
 }
 
 
-export const updateTenantConfig = async (tenant, app_id, data) => {
+export const updateContractInfo = async (tenant, app_id, data) => {
   try {
-    let url = `/${tenant}/${app_id}/oid/tenant-config`;
+    let url = `/${tenant}/${app_id}/oid/tenant-config/update-contract-info`;
     const response = await put(url, data);
     return response.data;
   } catch (error) {
-    console.error("Error update tenant configuration:", error);
+    console.error("Error updating contract info:", error);
     throw error;
   }
 }

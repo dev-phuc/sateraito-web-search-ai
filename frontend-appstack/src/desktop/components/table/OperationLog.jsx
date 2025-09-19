@@ -5,6 +5,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 // Library UI imports
 import { Card, Table, Spinner, Modal } from "react-bootstrap";
 
+// Hook
+import useTheme from '@/hooks/useTheme';
+
 // Utils
 
 // Constants
@@ -23,6 +26,7 @@ const OperationLogsTable = ({
   // Default hooks
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { showNotice } = useTheme();
 
   // Zustand stores
   const { fetchOperationLogs, isLoading, total, isHaveMore, operationLogs } = useStoreOperationLogs();
@@ -67,10 +71,20 @@ const OperationLogsTable = ({
   const [showDetailLog, setShowDetailLog] = useState(false);
   const [detailLogData, setDetailLogData] = useState(null);
 
+  // Handlers
+  const handlerLoadData = async () => {
+    if (tenant && app_id) {
+      const { success, message} = await fetchOperationLogs(tenant, app_id, page, limit, paramsSearch);
+      if (!success) {
+        showNotice('danger', t(message || 'TXT_ERROR_GET_OPERATION_LOGS'));
+      }
+    }
+  };
+
   // Effects
   useEffect(() => {
     if (tenant && app_id) {
-      fetchOperationLogs(tenant, app_id, page, limit, paramsSearch);
+      handlerLoadData();
     }
   }, [tenant, app_id, page, limit, paramsSearch]);
 

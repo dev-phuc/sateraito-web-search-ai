@@ -55,7 +55,10 @@ class _GetBoxSearchConfig(Handler_Basic_Request, _BasePage):
 					logging.exception('Error loading BoxSearchConfig design JSON: %s', str(e))
 					box_search_config = BOX_SEARCH_DESIGN_DEFAULT
 
-			return self.json_response(box_search_config)
+			return self.json_response({
+				'message': 'success',
+				'config': box_search_config
+			})
 		
 		except Exception as e:
 			logging.exception('Error in GetBoxSearchConfig.process: %s', str(e))
@@ -69,7 +72,7 @@ class GetBoxSearchConfig(_GetBoxSearchConfig):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -81,7 +84,7 @@ class OidGetBoxSearchConfig(_GetBoxSearchConfig):
 		
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -149,7 +152,7 @@ class EditBoxSearchConfig(_EditBoxSearchConfig):
 
 		# check openid login
 		if not self.checkGadgetRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 
@@ -161,7 +164,7 @@ class OidEditBoxSearchConfig(_EditBoxSearchConfig):
 
 		# check request
 		if not self.checkOidRequest(tenant):
-			return
+			return self.json_response({'message': 'forbidden'}, status=403)
 
 		return self.process(tenant, app_id)
 

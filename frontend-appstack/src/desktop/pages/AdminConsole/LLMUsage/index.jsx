@@ -30,6 +30,7 @@ const LLMUsageAdminConsolePage = () => {
   // Use default
   const { t } = useTranslation();
   const { tenant, app_id } = useParams();
+  const { showNotice } = useTheme();
 
   const CHART_TYPE = [
     { value: 'bar', label: t('TXT_BAR_CHART') },
@@ -52,9 +53,17 @@ const LLMUsageAdminConsolePage = () => {
   const [chartType, setChartType] = useState('bar');
   const [dataTableShow, setDataTableShow] = useState([]);
 
+  // Handler
+  const handlerLoadData = async () => {
+    const { success, message } = await fetchLLMUsage(tenant, app_id, timeFrame);
+    if (!success) {
+      showNotice('danger', t(message));
+    }
+  }
+
   useEffect(() => {
     if (!isLoading) {
-      fetchLLMUsage(tenant, app_id, timeFrame);
+      handlerLoadData();
     }
   }, [timeFrame]);
 

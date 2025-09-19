@@ -216,3 +216,16 @@ export const getNewIdQuestion = () => {
 export const randomString = (length = 8) => {
   return Math.random().toString(36).substring(2, 2 + length);
 }
+
+export const isTelephoneNumber = (str) => {
+  // This regex matches various international and local telephone number formats
+  const phoneRegex = /^\+?(\d[\d-. ]+)?(\([\d-. ]+\))?[\d-. ]+\d$/;
+  return phoneRegex.test(str);
+}
+
+export const removeTrailingSlash = (url) => {
+  if (typeof url === 'string') {
+    return url.replace(/\/+$/, '');
+  }
+  return url;
+}

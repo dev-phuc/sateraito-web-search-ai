@@ -14,6 +14,10 @@ const JAPANESE_TRANSLATIONS = {
     id_is_required: "IDは必須です",
     internal_server_error: "内部サーバーエラー",
     page_url_is_required: "ページURLは必須です",
+    invalid_tel_no: "無効な電話番号形式です",
+    invalid_mail_address: "無効なメール形式です",
+    forbidden: "このリソースにアクセスする権限がありません",
+    namespace_error: "名前空間エラーが発生しました。サポートにお問い合わせください",
 
     // =================== Common UI Elements ===================
     TXT_APP_ID: "アプリID",
@@ -297,6 +301,18 @@ const JAPANESE_TRANSLATIONS = {
     MSG_UPDATE_USER_CONFIG_SUCCESS: "ユーザー設定が正常に更新されました！",
     PAGE_TITLE_OTHER_SETTINGS: "その他の設定",
     TXT_SETTINGS: "設定",
+
+    // =================== Contract Information ===================
+    EDIT_CONTRACT_INFORMATION: "契約情報編集",
+    MSG_ERROR_INVALID_EMAIL: "無効なメール形式です！",
+    MSG_ERROR_REQUIRED: "必須項目です！",
+    LABEL_MAIL_ADDRESS: "メールアドレス",
+    PLACEHOLDER_MAIL_ADDRESS: "メールアドレスを入力",
+    LABEL_TEL_NO: "電話番号",
+    PLACEHOLDER_TEL_NO: "電話番号を入力（例：+81-3-1234-5678）",
+    TITLE_CONTRACT_INFORMATION: "契約情報",
+    TXT_UPDATE_SUCCESS: "契約情報が正常に更新されました！",
+    TXT_ERROR_UPDATE_FAILED: "契約情報の更新に失敗しました。もう一度お試しください。",
 
     // Other translations can be added here
   }

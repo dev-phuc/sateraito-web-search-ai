@@ -14,18 +14,27 @@ const useStoreBoxSearchConfig = create((set) => ({
     set({ boxSearchConfig });
   },
   getBoxSearchConfig: async (tenant, app_id) => {
-    set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_GET_BOX_SEARCH_CONFIG';
 
+    set({ isLoading: true });
     try {
-      const boxSearchConfig = await getBoxSearchConfig(tenant, app_id);
-      set({ boxSearchConfig });
+      const { message, config } = await getBoxSearchConfig(tenant, app_id);
+      if (message == 'success') {
+        set({ boxSearchConfig: config });
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
-      console.error('Error fetching box search config:', error);
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      console.error('Error fetching box search config:', message);
     }
     finally {
       set({ isLoading: false });
     }
+
+    return { success, message: message_result };
   },
 
   boxSearchConfigPreview: null,
@@ -38,33 +47,50 @@ const useStoreBoxSearchConfig = create((set) => ({
     set({ boxSearchConfigForClient });
   },
   getBoxSearchConfigForClient: async (tenant, app_id, clientWebsite) => {
+    let success = false, message_result = 'TXT_ERROR_GET_BOX_SEARCH_CONFIG';
     set({ isLoading: true });
     try {
-      const boxSearchConfigForClient = await getBoxSearchConfigForClient(tenant, app_id, clientWebsite);
-      set({ boxSearchConfigForClient });
+      const { message, config } = await getBoxSearchConfigForClient(tenant, app_id, clientWebsite);
+      if (message == 'success') {
+        set({ boxSearchConfigForClient: config });
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
-      console.error('Error fetching box search config for client:', error);
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      console.error('Error fetching box search config for client:', message);
     }
     finally {
       set({ isLoading: false });
     }
+
+    return { success, message: message_result };
   },
 
   // Actions
   editBoxSearchConfig: async (tenant, app_id, config) => {
+    let success = false, message_result = 'TXT_ERROR_UPDATE_BOX_SEARCH_CONFIG';
+
+    set({ isLoading: true });
     try {
-      const updated = await editBoxSearchConfig(tenant, app_id, { config: config });
-      return { success: true, data: updated };
+      const { message } = await editBoxSearchConfig(tenant, app_id, { config: config });
+      if (message == 'success') {
+        success = true;
+        message_result = '';
+      }
     }
     catch (error) {
       const data = error.response?.data;
-      let key_message_error = 'TXT_ERROR_UPDATE_BOX_SEARCH_CONFIG';
-      if (data && data.message) {
-        key_message_error = data.message;
-      }
-      return { success: false, error: key_message_error };
+      if (data && data.message) message_result = data.message;
+      console.error('Error updating box search config:', message);
     }
+    finally {
+      set({ isLoading: false });
+    }
+
+    return { success, message: message_result };
   },
 }));
 

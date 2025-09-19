@@ -39,11 +39,17 @@ const BoxSearchConfigAdminConsolePage = () => {
   // state
 
   // Handler method
+  const handlerLoadData = async () => {
+    const { success, message } = await getBoxSearchConfig(tenant, app_id);
+    if (!success) {
+      showNotice("danger", t(message));
+    }
+  };
 
   // Effects
   useEffect(() => {
     if (!isLoading) {
-      getBoxSearchConfig(tenant, app_id);
+      handlerLoadData();
     }
   }, []);
 
@@ -65,9 +71,7 @@ const BoxSearchConfigAdminConsolePage = () => {
               tenant={tenant}
               app_id={app_id}
               data={boxSearchConfig}
-              afterSubmit={() => {
-                getBoxSearchConfig(tenant, app_id);
-              }}
+              afterSubmit={handlerLoadData}
             />
           </div>
 

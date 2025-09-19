@@ -615,9 +615,12 @@ input[type=checkbox]:focus::before {
       }
     }
   }
-
   .text-warning {
     font-size: 13px;
+  }
+
+  .box-content {
+    min-height: 120px;
   }
 
   &.circle-bg {

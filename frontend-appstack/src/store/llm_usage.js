@@ -6,6 +6,7 @@ import { fetchLLMUsage } from '@/request/LLMUsage';
 const useStoreLLMUsage = create((set) => ({
   // Flag
   isLoading: false,
+  isLoadingLastMonth: false,
   setIsLoading: (loading) => set({ isLoading: loading }),
 
   // Data
@@ -17,45 +18,57 @@ const useStoreLLMUsage = create((set) => ({
 
   // Actions
   fetchLLMUsage: async (tenant, app_id, timeFrame) => {
-    set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_GET_LLM_USAGE';
 
+    set({ isLoading: true });
     try {
       const params = {
         time_frame: timeFrame || 'month',
       };
-      const result = await fetchLLMUsage(tenant, app_id, params);
-      if (result) {
-        set({ llmUsage: result });
+      const { message, usage_data } = await fetchLLMUsage(tenant, app_id, params);
+      if (message == 'success') {
+        set({ llmUsage: usage_data });
+        success = true;
+        message_result = '';
       }
     }
     catch (error) {
-      console.error('Error fetching operation logs:', error);
-      set({ llmUsage: {} });
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      console.error('Error fetching LLM usage:', message_result);
     }
     finally {
       set({ isLoading: false });
     }
+
+    return { success, message: message_result };
   },
 
   fetchLLMUsageLastMonth: async (tenant, app_id) => {
-    set({ isLoading: true });
+    let success = false, message_result = 'TXT_ERROR_GET_LLM_USAGE';
 
+    set({ isLoadingLastMonth: true });
     try {
       const params = {
         time_frame: 'last_month',
       };
-      const result = await fetchLLMUsage(tenant, app_id, params);
-      if (result) {
-        set({ llmUsageLastMonth: result });
+      const { message, usage_data } = await fetchLLMUsage(tenant, app_id, params);
+      if (message == 'success') {
+        set({ llmUsageLastMonth: usage_data });
+        success = true;
+        message_result = '';
       }
     }
     catch (error) {
-      console.error('Error fetching operation logs:', error);
-      set({ llmUsageLastMonth: {} });
+      const data = error.response?.data;
+      if (data && data.message) message_result = data.message;
+      console.error('Error fetching LLM usage for last month:', message_result);
     }
     finally {
-      set({ isLoading: false });
+      set({ isLoadingLastMonth: false });
     }
+
+    return { success, message: message_result };
   },
 
 }));

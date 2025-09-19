@@ -14,6 +14,10 @@ const ENGLISH_TRANSLATIONS = {
     id_is_required: "ID is required",
     internal_server_error: "Internal server error",
     page_url_is_required: "Page URL is required",
+    invalid_tel_no: "Invalid telephone number format",
+    invalid_mail_address: "Invalid email format",
+    forbidden: "You do not have permission to access this resource",
+    namespace_error: "Namespace error, please contact support",
 
     // =================== Common UI Elements ===================
     TXT_APP_ID: "App ID",
@@ -157,6 +161,7 @@ const ENGLISH_TRANSLATIONS = {
     PLACEHOLDER_CLIENT_WEBSITES_FAVICON_URL: "Enter favicon URL (e.g., https://example.com/favicon.ico)",
     PLACEHOLDER_CLIENT_WEBSITES_SITE_NAME: "Enter site name",
     TITLE_ADD_DOMAIN: "Add Domain",
+    TXT_FETCHING_PAGE_INFO: "Fetching page info...",
     TITLE_CLIENT_WEBSITES_MANAGEMENT: "Client Websites Management",
     TITLE_CONFIRM_DELETE_CLIENT_WEBSITE: "Delete Client Website",
     TXT_CREATE_CLIENT_WEBSITES_SUCCESS: "Client website created successfully!",
@@ -297,6 +302,18 @@ const ENGLISH_TRANSLATIONS = {
     MSG_UPDATE_USER_CONFIG_SUCCESS: "User configuration updated successfully!",
     PAGE_TITLE_OTHER_SETTINGS: "Other Settings",
     TXT_SETTINGS: "Settings",
+
+    // =================== Contract Information ===================
+    EDIT_CONTRACT_INFORMATION: "Edit Contract Information",
+    MSG_ERROR_INVALID_EMAIL: "Invalid email format",
+    MSG_ERROR_REQUIRED: "This field is required",
+    LABEL_MAIL_ADDRESS: "Mail address",
+    PLACEHOLDER_MAIL_ADDRESS: "Enter email address",
+    LABEL_TEL_NO: "Telephone number",
+    PLACEHOLDER_TEL_NO: "Enter telephone number",
+    TITLE_CONTRACT_INFORMATION: "Contract Information",
+    TXT_UPDATE_SUCCESS: "Update successful",
+    TXT_ERROR_UPDATE_FAILED: "Failed to update. Please try again.",
 
     // Other translations can be added here
   }

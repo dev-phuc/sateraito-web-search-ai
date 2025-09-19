@@ -10,26 +10,24 @@ import useTenantConfigStore from '@/store/tenant_config';
 
 // Constants
 
+// Component
+import MakerLoading from '@/desktop/components/MakerLoading';
+
 const TenantInformationBox = ({ }) => {
   // Default hooks
   const { t } = useTranslation();
 
   // Zustand stores
-  const { contractInformation } = useTenantConfigStore();
+  const { loading, contractInformation } = useTenantConfigStore();
 
   // Use state
 
   // Handler
 
-  if (!contractInformation) {
-    return <>
-    </>
-  };
-
   // Return the component
   return (
     <>
-      <div className="bg-light pb-1">
+      <div className="bg-light">
         <div className="wrap-box">
           <div className="box-header d-flex align-items-center px-2 justify-content-between">
             <div className="box-header-left d-flex align-items-center justify-content-start">
@@ -44,27 +42,31 @@ const TenantInformationBox = ({ }) => {
             </div>
           </div>
 
-          <div className="box-content px-4">
-            <div>
-              <p className='mb-2'>
-                <strong>{t("TENANT")}:</strong> {contractInformation.tenant}
-              </p>
-              <p className='mb-2'>
-                <strong>{t("APP_ID")}:</strong> {contractInformation.app_id}
-              </p>
-              <p className='mb-2'>
-                <strong>{t("TARGET_LINK_DOMAINS")}:</strong> {contractInformation.target_link_domains || t("TXT_NOT_SET")}
-              </p>
-            </div>
-          </div>
+          <div className="box-content position-relative pb-2">
+            {contractInformation && (
+              <>
+                <div className="px-4">
+                  <p className='mb-2'>
+                    <strong>{t("TENANT")}:</strong> {contractInformation.tenant}
+                  </p>
+                  <p className='mb-2'>
+                    <strong>{t("APP_ID")}:</strong> {contractInformation.app_id}
+                  </p>
+                  <p className='mb-2'>
+                    <strong>{t("TARGET_LINK_DOMAINS")}:</strong> {contractInformation.target_link_domains || t("TXT_NOT_SET")}
+                  </p>
+                </div>
+                <div className="box-warning px-4">
+                  <div className="alert mb-0">
+                    <span className="mb-0 text-warning">
+                      {t("PLEASE_CONTACT_SATERAITO_IF_YOU_WANT_TO_USE_SUBDOMAIN_AS_WELL")}
+                    </span>
+                  </div>
+                </div>
+              </>
+            )}
 
-          {/* Warning message */}
-          <div className="box-warning px-4">
-            <div className="alert mb-0">
-              <span className="mb-0 text-warning">
-                {t("PLEASE_CONTACT_SATERAITO_IF_YOU_WANT_TO_USE_SUBDOMAIN_AS_WELL")}
-              </span>
-            </div>
+            {loading && <MakerLoading opacity="10"/>}
           </div>
         </div>
       </div>

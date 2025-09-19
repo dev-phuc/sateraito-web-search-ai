@@ -16,6 +16,9 @@ import { getPageInfoByUrl } from '@/request/sateraitoUtils';
 // Zustand
 import useStoreClientWebsites from '@/store/client_websites';
 
+// Utils
+import { removeTrailingSlash } from '@/utils';
+
 // Constants
 import { STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED } from '@/constants';
 
@@ -74,7 +77,7 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
       return;
     }
 
-    setLoading(l => ({ ...l, fetchingPageInfo: true }));
+    setLoading(temp => ({ ...temp, fetchingPageInfo: true }));
     try {
       const pageInfo = await getPageInfoByUrl(url);
       if (pageInfo) {
@@ -91,13 +94,13 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
       }
       showNotice('warning', t(message));
     } finally {
-      setLoading(l => ({ ...l, fetchingPageInfo: false }));
+      setLoading(temp => ({ ...temp, fetchingPageInfo: false }));
     }
   }, [tenant, app_id, pageInfoCache]);
 
   const handlerOnSubmit = useCallback(async (values) => {
     if (loading.submitting) return;
-    setLoading(l => ({ ...l, submitting: true }));
+    setLoading(temp => ({ ...temp, submitting: true }));
 
     let result;
     if (isEdit) {
@@ -106,24 +109,23 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
       result = await createClientWebsites(tenant, app_id, values);
     }
 
-    const { success, error } = result;
-    let message = '';
+    const { success, message } = result;
     if (success) {
-      message = isEdit ? t('TXT_UPDATE_CLIENT_WEBSITES_SUCCESS') : t('TXT_CREATE_CLIENT_WEBSITES_SUCCESS');
-      showNotice('success', message);
+      let messageNotice = isEdit ? t('TXT_UPDATE_CLIENT_WEBSITES_SUCCESS') : t('TXT_CREATE_CLIENT_WEBSITES_SUCCESS');
+      showNotice('success', messageNotice);
 
       if (afterSubmit) {
         afterSubmit(success);
       }
     } else {
-      message = t(error);
-      if (message === error) {
-        message = isEdit ? t('TXT_ERROR_UPDATE_CLIENT_WEBSITES') : t('TXT_ERROR_CREATE_CLIENT_WEBSITES');
+      let messageNotice = t(message);
+      if (messageNotice === message) {
+        messageNotice = isEdit ? t('TXT_ERROR_UPDATE_CLIENT_WEBSITES') : t('TXT_ERROR_CREATE_CLIENT_WEBSITES');
       }
-      showNotice('error', message);
+      showNotice('error', messageNotice);
     }
 
-    setLoading(l => ({ ...l, submitting: false }));
+    setLoading(temp => ({ ...temp, submitting: false }));
 
   }, [loading.submitting, createClientWebsites, editClientWebsites, tenant, app_id, data?.id, isEdit, t, afterSubmit]);
 
@@ -293,7 +295,15 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
               disabled={loading.fetchingPageInfo || loading.submitting}
             >
               <i className={`mdi ${isEdit ? 'mdi-pencil' : 'mdi-plus'} me-1`}></i>
-              {loading.submitting ? t('TXT_LOADING') + '...' : (isEdit ? t('BTN_UPDATE') : t('BTN_CREATE'))}
+              {
+                loading.fetchingPageInfo ?
+                  t('TXT_FETCHING_PAGE_INFO') :
+                  loading.submitting ?
+                    t('TXT_LOADING') :
+                    (isEdit ?
+                      t('BTN_UPDATE') :
+                      t('BTN_CREATE'))
+              }
             </Button>
           </div>
         </Form>
