@@ -804,8 +804,8 @@ class OtherSetting(ndb.Model):
 	allow_user_or_groups = ndb.StringProperty()
 	
 	csv_file_encoding = ndb.StringProperty()
-	timezone = ndb.StringProperty(indexed=False)	# タイムゾーン
-	language = ndb.StringProperty(indexed=False)	# 言語設定 
+	timezone = ndb.StringProperty()	# タイムゾーン
+	language = ndb.StringProperty()	# 言語設定 
 
 	# get other app_id's UserInfo if below is enabled
 	enable_other_app_id_reference = ndb.BooleanProperty(default=False)
@@ -1609,6 +1609,12 @@ class LLMConfiguration(ndb.Model):
 	response_length_level = ndb.StringProperty(choices=LLM_RESPONSE_LENGTH_LEVEL_LIST, default=LLM_RESPONSE_LENGTH_LEVEL_DEFAULT)
 	max_characters = ndb.IntegerProperty()
 
+	# Config for Perplexity AI
+	# Search Domain Filter
+	enabled_domain_filter = ndb.BooleanProperty(default=True)
+	search_domain_filter = ndb.StringProperty(repeated=True)
+	excluded_domain_filter = ndb.StringProperty(repeated=True)
+
 	created_date = ndb.DateTimeProperty(auto_now_add=True)
 	updated_date = ndb.DateTimeProperty(auto_now=True)
 
@@ -1654,7 +1660,8 @@ class LLMConfiguration(ndb.Model):
 		return row
 
 	@classmethod
-	def updateConfig(cls, model_name=None, system_prompt=None, response_length_level=None, max_characters=None):
+	def updateConfig(cls, model_name=None, system_prompt=None, response_length_level=None, max_characters=None, 
+					enabled_domain_filter=None, search_domain_filter=None, excluded_domain_filter=None):
 		row = cls.getInstance(auto_create=True)
 		if row is None:
 			return None
@@ -1672,6 +1679,20 @@ class LLMConfiguration(ndb.Model):
 			logging.info(LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS.get(response_length_level))
 			row.max_characters = LLM_RESPONSE_LENGTH_LEVEL_TO_MAX_CHARACTERS.get(response_length_level)
 			need_update = True
+
+		if enabled_domain_filter is not None and row.enabled_domain_filter != enabled_domain_filter:
+			row.enabled_domain_filter = enabled_domain_filter
+			need_update = True
+		if search_domain_filter is not None:
+			# Compare as set
+			if set(row.search_domain_filter) != set(search_domain_filter):
+				row.search_domain_filter = search_domain_filter
+				need_update = True
+		if excluded_domain_filter is not None:
+			# Compare as set
+			if set(row.excluded_domain_filter) != set(excluded_domain_filter):
+				row.excluded_domain_filter = excluded_domain_filter
+				need_update = True
 
 		# if max_characters is not None and row.max_characters != max_characters:
 		# 	row.max_characters = max_characters

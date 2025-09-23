@@ -50,10 +50,25 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 			system_prompt = llm_config_dict.get('system_prompt')
 			search_context_size = llm_config_dict.get('response_length_level', 'medium')
 
+			enabled_domain_filter = llm_config_dict.get('enabled_domain_filter', False)
+			search_domain_filter = llm_config_dict.get('search_domain_filter', [])
+			excluded_domain_filter = llm_config_dict.get('excluded_domain_filter', [])
+
+			if enabled_domain_filter:
+				search_domain_filter.append(self.client_website_domain)
+				search_domain_filter = list(set(search_domain_filter))  # Remove duplicates
+
+			# Add "-" prefix to excluded domains
+			if excluded_domain_filter:
+				excluded_domain_filter = ['-' + domain if not domain.startswith('-') else domain for domain in excluded_domain_filter]
+				search_domain_filter.extend(excluded_domain_filter)
+				search_domain_filter = list(set(search_domain_filter))  # Remove duplicates
+
 			return {
 				'model_name': model_name,
 				'system_message': system_prompt,
 				'search_context_size': search_context_size,
+				'search_domain_filter': search_domain_filter,
 			}
 		
 		except Exception as e:

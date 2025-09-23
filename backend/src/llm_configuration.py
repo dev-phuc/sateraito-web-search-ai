@@ -42,11 +42,18 @@ class _GetLLMConfiguration(Handler_Basic_Request, _BasePage):
 
 			if entity_dict:
 				try:
+					enabled_domain_filter = entity_dict.get('enabled_domain_filter', LLM_CONFIGURATION_DEFAULT['enabled_domain_filter'])
+					search_domain_filter = entity_dict.get('search_domain_filter', LLM_CONFIGURATION_DEFAULT['search_domain_filter'])
+					excluded_domain_filter = entity_dict.get('excluded_domain_filter', LLM_CONFIGURATION_DEFAULT['excluded_domain_filter'])
+					
 					llm_config = {
 						'model_name': entity_dict.get('model_name', LLM_CONFIGURATION_DEFAULT['model_name']),
 						'system_prompt': entity_dict.get('system_prompt', LLM_CONFIGURATION_DEFAULT['system_prompt']),
 						'response_length_level': entity_dict.get('response_length_level', LLM_CONFIGURATION_DEFAULT['response_length_level']),
 						'max_characters': entity_dict.get('max_characters'),
+						'enabled_domain_filter': enabled_domain_filter,
+						'search_domain_filter': search_domain_filter,
+						'excluded_domain_filter': excluded_domain_filter,
 					}
 				except Exception as e:
 					logging.exception('Error parsing LLMConfiguration design JSON: %s', str(e))
@@ -126,13 +133,19 @@ class _EditLLMConfiguration(Handler_Basic_Request, _BasePage):
 			system_prompt = config.get('system_prompt', LLM_CONFIGURATION_DEFAULT['system_prompt'])
 			response_length_level = config.get('response_length_level', LLM_CONFIGURATION_DEFAULT['response_length_level'])
 			max_characters = config.get('max_characters')
+			enabled_domain_filter = config.get('enabled_domain_filter', LLM_CONFIGURATION_DEFAULT['enabled_domain_filter'])
+			search_domain_filter = config.get('search_domain_filter', LLM_CONFIGURATION_DEFAULT['search_domain_filter'])
+			excluded_domain_filter = config.get('excluded_domain_filter', LLM_CONFIGURATION_DEFAULT['excluded_domain_filter'])
 			
 			# Update llm configuration
 			LLMConfiguration.updateConfig(
 				model_name=model_name,
 				system_prompt=system_prompt,
 				response_length_level=response_length_level,
-				max_characters=max_characters
+				max_characters=max_characters,
+				enabled_domain_filter=enabled_domain_filter,
+				search_domain_filter=search_domain_filter,
+				excluded_domain_filter=excluded_domain_filter,
 			)
 
 			return self.json_response({'message': 'success'})

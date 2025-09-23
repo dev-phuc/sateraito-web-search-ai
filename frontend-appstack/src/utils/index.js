@@ -67,6 +67,16 @@ export const validateEmail = (emailStr) => {
   return false;
 };
 
+export const validateDomainOrUrl = (domainOrUrl) => {
+  let domainformat = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/;
+  let urlformat = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([\/\w .-]*)*\/?$/;
+
+  if (domainOrUrl.match(domainformat) || domainOrUrl.match(urlformat)) {
+    return true;
+  }
+  return false;
+};
+
 export const parseTextSearchResultSnipet = (text) => {
   if (typeof text !== "string") {
     return "";

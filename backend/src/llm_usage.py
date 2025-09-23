@@ -34,13 +34,7 @@ from sateraito_db import GoogleAppsDomainEntry, LLMUsageLog
 class _FetchLLMUsage(Handler_Basic_Request, _BasePage):
 	def get_now(self):
 		now_utc = datetime.utcnow()
-		# Convert UTC to DEFAULT_TIMEZONE
-		if DEFAULT_TIMEZONE:
-			tz = pytz.timezone(DEFAULT_TIMEZONE)
-			now = now_utc.replace(tzinfo=pytz.utc).astimezone(tz)
-		else:
-			now = now_utc
-		return now
+		return now_utc  # Always naive UTC
 
 	def get_start_of_this_year(self):
 		now = self.get_now()

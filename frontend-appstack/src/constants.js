@@ -202,6 +202,9 @@ export const LLM_CONFIGURATION_DEFAULT = {
 	"system_prompt": 'You are a helpful assistant.',
   'max_characters': 1000,
 	"response_length_level": 'medium', // short, medium, long
+  "enabled_domain_filter": false,
+  "search_domain_filter": [],
+  "excluded_domain_filter": [],
 }
 
 export const BOX_SEARCH_TO_HTML_TEMPLATE = `<link rel="stylesheet" href="SERVER_URL/static/@mdi/font/css/materialdesignicons.min.css">
