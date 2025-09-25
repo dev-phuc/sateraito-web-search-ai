@@ -1343,8 +1343,11 @@ class UserConfig(ndb.Model):
 		memcache_key = UserConfig.getMemcacheKey(self.user_email)
 		memcache.delete(memcache_key)
 
+	@classmethod
 	def _pre_delete_hook(self):
-		UserConfig.clearInstanceCache(self.user_email)
+		row = self.key.get()
+		if row is not None:
+			self.clearInstanceCache(row.user_email)
 
 	@classmethod
 	def getMemcacheKey(cls, user_email):
@@ -1403,8 +1406,10 @@ class ClientWebsites(ndb.Model):
 		self.clearInstanceCache(self.domain)
 
 	@classmethod
-	def _pre_delete_hook(cls, key):
-		ClientWebsites.clearInstanceCache(key.id())
+	def _pre_delete_hook(self, key):
+		row = key.get()
+		if row is not None:
+			self.clearInstanceCache(row.domain)
 
 	@classmethod
 	def getMemcacheKey(cls, domain):

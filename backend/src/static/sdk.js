@@ -118,10 +118,10 @@ const STYLES = `#sateraito-ai-iframe-panel {
 }`;
 
 const CONFIG = {
-  // BASE_URL: 'http://localhost:8080',
-  // SERVER_URL: 'http://localhost:3000',
-  BASE_URL: 'https://aisearch-dot-vn-sateraito-apps-timecard2.appspot.com',
-  SERVER_URL: 'https://aisearch-dot-vn-sateraito-apps-timecard2.appspot.com',
+  BASE_URL: 'http://localhost:8080',
+  SERVER_URL: 'http://localhost:3000',
+  // BASE_URL: 'https://aisearch-dot-vn-sateraito-apps-timecard2.appspot.com',
+  // SERVER_URL: 'https://aisearch-dot-vn-sateraito-apps-timecard2.appspot.com',
   ID_ROOT: 'sateraito-ai-root',
   ID_IFRAME_PANEL: 'sateraito-ai-iframe-panel',
   ID_BUTTON_PANEL: 'sateraito-ai-button-panel',
@@ -297,6 +297,30 @@ const SateraitoAI = {
     }
   },
 
+  removeBoxSearch: function () {
+    if (this._shadowRoot) {
+      const buttonEl = this._shadowRoot.getElementById(CONFIG.ID_BUTTON_PANEL);
+      const iframeEl = this._shadowRoot.getElementById(CONFIG.ID_IFRAME_PANEL);
+      if (buttonEl) {
+        buttonEl.remove();
+      }
+      if (iframeEl) {
+        iframeEl.remove();
+      }
+      this._shadowRoot = null;
+      this._iframePanel = null;
+    }
+
+    // Remove root element if exists
+    const rootEl = document.getElementById(CONFIG.ID_ROOT);
+    if (rootEl) {
+      rootEl.remove();
+    }
+
+    MyRedis.remove('box_search_config');
+    this._boxSearchConfig = null;
+  },
+
   initEvents: function () {
     if (!this._shadowRoot) {
       this.initShadowRoot();
@@ -309,10 +333,10 @@ const SateraitoAI = {
 
         // Toggle class name 'show' on iframe panel
         this._iframePanel.classList.toggle('show', !isShow);
-        
+
         buttonEl.classList.toggle('show-icon-close', !isShow);
 
-        this.sendMessageToIFrame({ type: 'toggle_panel', data: { show: !isShow }});
+        this.sendMessageToIFrame({ type: 'toggle_panel', data: { show: !isShow } });
       });
     }
   }
@@ -326,6 +350,11 @@ if (window.SateraitoAIAsyncInit) {
     if (!event.data || !event.data.type) return;
     const { type, data } = event.data;
     switch (type) {
+      case 'unauthorized':
+        // Remove box search config from local storage
+        SateraitoAI.removeBoxSearch();
+        break;
+
       case 'request_client_web_site': {
         const { origin, href } = window.location;
         try {
@@ -338,6 +367,7 @@ if (window.SateraitoAIAsyncInit) {
         }
         break;
       }
+
       case 'box_search_config': {
         if (!data) return;
         SateraitoAI._boxSearchConfig = data;
@@ -345,6 +375,7 @@ if (window.SateraitoAIAsyncInit) {
         SateraitoAI.refreshUI();
         break;
       }
+
       default:
         break;
     }

@@ -16,6 +16,7 @@ const JAPANESE_TRANSLATIONS = {
     page_url_is_required: "ページURLは必須です",
     invalid_tel_no: "無効な電話番号形式です",
     invalid_mail_address: "無効なメール形式です",
+    invalid_content_type: "無効なコンテンツタイプです",
     forbidden: "このリソースにアクセスする権限がありません",
     namespace_error: "名前空間エラーが発生しました。サポートにお問い合わせください",
 

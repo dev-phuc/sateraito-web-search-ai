@@ -16,6 +16,7 @@ const ENGLISH_TRANSLATIONS = {
     page_url_is_required: "Page URL is required",
     invalid_tel_no: "Invalid telephone number format",
     invalid_mail_address: "Invalid email format",
+    invalid_content_type: "Invalid content type",
     forbidden: "You do not have permission to access this resource",
     namespace_error: "Namespace error, please contact support",
 

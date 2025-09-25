@@ -10,3 +10,14 @@ export const getPageInfoByUrl = async (pageUrl) => {
     throw error;
   }
 }
+
+export const getFaviconByUrl = async (pageUrl) => {
+  try {
+    let url = `/utils/favicon-by-url`;
+    const response = await get(url, { page_url: pageUrl });
+    return response.data;
+  } catch (error) {
+    console.error('Failed to fetch favicon:', error);
+    throw error;
+  }
+}

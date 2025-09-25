@@ -239,3 +239,13 @@ export const removeTrailingSlash = (url) => {
   }
   return url;
 }
+
+export const extractDomain = (url) => {
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname;
+  }
+  catch (e) {
+    return null;
+  }
+}

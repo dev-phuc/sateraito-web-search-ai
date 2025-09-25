@@ -4503,6 +4503,23 @@ def complete_full_url(url):
 			url = url.replace('https://', 'https://www.', 1)
 	return url
 
+def extract_domain(url):
+	if url is None or url == '':
+		return url
+
+	url = complete_full_url(url)
+
+	try:
+		from urllib import parse as urllib_parse
+		parsed_url = urllib_parse.urlparse(url)
+		domain = parsed_url.netloc
+		if domain.startswith('www.'):
+			domain = domain[4:]
+		return domain
+	except Exception as e:
+		logging.warning('e:' + str(e))
+		return url
+
 def format_date(date, format_str='%Y/%m/%d'):
 	if date is None:
 		return ''

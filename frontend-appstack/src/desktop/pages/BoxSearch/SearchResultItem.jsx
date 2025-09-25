@@ -21,7 +21,7 @@ import useTheme from "@/hooks/useTheme";
 // API
 
 // Utils
-import { getPageInfoByUrl } from "@/request/sateraitoUtils";
+import { getFaviconByUrl } from "@/request/sateraitoUtils";
 
 // Define the component
 const SearchResultItem = ({ data }) => {
@@ -36,27 +36,20 @@ const SearchResultItem = ({ data }) => {
     description: data.snippet || '',
   });
 
-  const loadPageInfo = async (url) => {
+  const loadFaviconByUrl = async () => {
     try {
-      const info = await getPageInfoByUrl(url);
-
-      // Update only favicon
-      if (info.favicon_url) {
-        setPageInfo(prev => ({
-          ...prev,
-          favicon: info.favicon_url,
-        }));
-      }
-
+      const { favicon_url } = await getFaviconByUrl(pageInfo.url);
+      setPageInfo((prev) => ({
+        ...prev,
+        favicon: favicon_url || prev.favicon,
+      }));
     } catch (error) {
-      console.error('Failed to load page info:', error);
+      console.error('Error loading favicon:', error);
     }
   };
 
   useEffect(() => {
-    if (data && data.url) {
-      loadPageInfo(data.url);
-    }
+    loadFaviconByUrl();
   }, [data]);
 
   // Return component

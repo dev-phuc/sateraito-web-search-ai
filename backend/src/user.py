@@ -24,6 +24,7 @@ import sateraito_func
 import sateraito_db
 
 from sateraito_page import Handler_Basic_Request, _BasePage, _BaseAPI, _OidBasePage
+from sateraito_page import OPENID_COOKIE_NAME
 
 from sateraito_inc import flask_docker
 if flask_docker:
