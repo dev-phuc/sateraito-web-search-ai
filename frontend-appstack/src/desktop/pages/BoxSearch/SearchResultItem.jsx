@@ -38,10 +38,12 @@ const SearchResultItem = ({ data }) => {
 
   const loadFaviconByUrl = async () => {
     try {
-      const { favicon_url } = await getFaviconByUrl(pageInfo.url);
+      const domain = new URL(pageInfo.url).hostname;
+      const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
       setPageInfo((prev) => ({
         ...prev,
-        favicon: favicon_url || prev.favicon,
+        favicon: faviconUrl || prev.favicon,
       }));
     } catch (error) {
       console.error('Error loading favicon:', error);

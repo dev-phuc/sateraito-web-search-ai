@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 // Library UI imports
 import { Formik } from 'formik';
 import { Button, Card, Form, Tab, Tabs } from 'react-bootstrap';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 // Components
 import Loader from '@/desktop/components/Loader';
@@ -130,8 +132,13 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
         defaultActiveKey="preview"
         className="mb-3"
       >
-        <Tab eventKey="preview" title={t('LABEL_PREVIEW')}>
-          <Card.Body className="px-4">
+        <Tab eventKey="preview" title={
+          <span>
+            <i className="mdi mdi-eye-outline me-1"></i>
+            {t('LABEL_PREVIEW')}
+          </span>
+        }>
+          <Card.Body>
             <div className="d-flex align-items-center justify-content-end mb-3 gap-3">
               <Form.Switch
                 id="switch-show-box-search"
@@ -205,13 +212,16 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
             </div>
           </Card.Body>
         </Tab>
-        <Tab eventKey="source_code" title={t('LABEL_SHOW_HTML')}>
-          <Card.Body className="p-4">
-            <pre>
-              <code>
-                {BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id)}
-              </code>
-            </pre>
+        <Tab eventKey="source_code" title={
+          <span>
+            <i className="mdi mdi-code-tags me-1"></i>
+            {t('LABEL_SHOW_HTML')}
+          </span>
+        }>
+          <Card.Body>
+            <SyntaxHighlighter language="javascript" style={oneDark}>
+              {BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id)}
+            </SyntaxHighlighter>
 
             {/* Button copy code to clipboard */}
             <Button onClick={() => {
@@ -224,7 +234,6 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
           </Card.Body>
         </Tab>
       </Tabs>
-
     </Card>
   );
 };

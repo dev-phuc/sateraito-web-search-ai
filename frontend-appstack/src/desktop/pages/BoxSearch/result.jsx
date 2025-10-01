@@ -21,6 +21,7 @@ import Markdown from 'react-markdown'
 // Constant value
 
 // Components
+import Loader from '@/desktop/components/Loader';
 import SearchResultItem from './SearchResultItem';
 
 // API
@@ -42,11 +43,7 @@ const BoxSearchResult = ({ }) => {
     <>
       <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
         {isLoading && (
-          <div className="loading-overlay">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">{t('LOADING')}...</span>
-            </div>
-          </div>
+          <Loader />
         )}
         <div className="result-search-summary">
           <Markdown>

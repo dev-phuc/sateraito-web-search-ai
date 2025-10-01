@@ -18,6 +18,7 @@ const SET_BOX_SEARCH_CONFIG = "SET_BOX_SEARCH_CONFIG";
 const SET_LLM_CONFIGURATION = "SET_LLM_CONFIGURATION";
 const SET_CURRENT_CLIENT_WEBSITE = "SET_CURRENT_CLIENT_WEBSITE";
 const CLEAR_DATA_SEARCH = "CLEAR_DATA_SEARCH";
+const CLEAR_DATA_SEARCH_BEFORE = "CLEAR_DATA_SEARCH_BEFORE";
 
 const SET_SUMMARY_RESULT = "SET_SUMMARY_RESULT";
 const SET_RESOURCE_LIST = "SET_RESOURCE_LIST";
@@ -80,6 +81,14 @@ const BoxSearchReducer = (state, action) => {
         resource_list: [],
         isSearching: false,
         isLoading: false,
+        isError: false,
+        errorMessage: '',
+      };
+    case CLEAR_DATA_SEARCH_BEFORE:
+      return {
+        ...state,
+        summary_result: '',
+        resource_list: [],
         isError: false,
         errorMessage: '',
       };
@@ -161,6 +170,8 @@ function BoxSearchProvider({ children }) {
     let content = '';
     const { current_client_website } = state;
 
+    // Clear data
+    dispatch({ type: CLEAR_DATA_SEARCH_BEFORE });
     dispatch({ type: SET_IS_LOADING, payload: true });
     dispatch({ type: SET_IS_SEARCHING, payload: true });
 

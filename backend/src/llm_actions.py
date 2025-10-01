@@ -46,9 +46,15 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 			if not llm_config_dict:
 				return None
 			
+			llm_config_result = {}
+			
 			model_name = llm_config_dict.get('model_name')
 			system_prompt = llm_config_dict.get('system_prompt')
 			search_context_size = llm_config_dict.get('response_length_level', 'medium')
+
+			llm_config_result['model_name'] = model_name
+			llm_config_result['system_prompt'] = system_prompt
+			llm_config_result['search_context_size'] = search_context_size
 
 			enabled_domain_filter = llm_config_dict.get('enabled_domain_filter', False)
 			search_domain_filter = llm_config_dict.get('search_domain_filter', [])
@@ -58,18 +64,16 @@ class LLMActionAPI(Handler_Basic_Request, _BasePage):
 				search_domain_filter.append(self.client_website_domain)
 				search_domain_filter = list(set(search_domain_filter))  # Remove duplicates
 
-			# Add "-" prefix to excluded domains
-			if excluded_domain_filter:
-				excluded_domain_filter = ['-' + domain if not domain.startswith('-') else domain for domain in excluded_domain_filter]
-				search_domain_filter.extend(excluded_domain_filter)
-				search_domain_filter = list(set(search_domain_filter))  # Remove duplicates
+				# Add "-" prefix to excluded domains
+				if excluded_domain_filter:
+					excluded_domain_filter = ['-' + domain if not domain.startswith('-') else domain for domain in excluded_domain_filter]
+					search_domain_filter.extend(excluded_domain_filter)
+					search_domain_filter = list(set(search_domain_filter))  # Remove duplicates
 
-			return {
-				'model_name': model_name,
-				'system_message': system_prompt,
-				'search_context_size': search_context_size,
-				'search_domain_filter': search_domain_filter,
-			}
+				llm_config_result['search_domain_filter'] = search_domain_filter
+
+
+			return llm_config_result
 		
 		except Exception as e:
 			logging.exception('Error in get_llm_configuration: %s', str(e))
