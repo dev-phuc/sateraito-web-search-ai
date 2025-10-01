@@ -1,0 +1,28 @@
+:root{
+	--base-radius:8px;
+	--border-radius:4px;
+}
+
+.sidebar-main-left {
+	.sidebar-link:hover:after {
+		content: "";
+		background: #000;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		left: 0;
+		opacity: 0.05;
+		position: absolute;
+		border-radius: var(--border-radius);
+	}
+	.sidebar-link{
+		&.active{
+			&:after {
+				border-radius: var(--border-radius);
+			}
+			.mdi-view-dashboard-outline:before {
+				content: '\F056E';
+			}
+		}
+	}
+}

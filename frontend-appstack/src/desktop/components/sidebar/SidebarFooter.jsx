@@ -37,7 +37,7 @@ const SidebarFooter = () => {
         <div className="d-grid">
           <a
             href="https://themes.getbootstrap.com/product/appstack-react-admin-dashboard-template/"
-            className="btn btn-primary"
+            className="btn st-btn-material"
             target="_blank"
             rel="noreferrer"
           >

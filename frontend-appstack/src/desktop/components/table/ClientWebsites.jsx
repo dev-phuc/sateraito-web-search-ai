@@ -209,8 +209,8 @@ const ClientWebsitesTable = ({
             overlay={<Tooltip>{t('Edit Website')}</Tooltip>}
           >
             <Button
-              variant="outline-primary"
-              className="btn-icon"
+              variant=""
+              className="btn st-btn-material-ico"
               disabled={item.isEditing || item.isRemoving}
               onClick={() => onEditClientWebsite && onEditClientWebsite(item)}
             >
@@ -228,7 +228,7 @@ const ClientWebsitesTable = ({
           >
             <Button
               variant="outline-danger"
-              className="btn-icon"
+              className="btn st-btn-material-ico"
               disabled={item.isUpdating || item.isRemoving}
               onClick={() => onDeleteClientWebsite && onDeleteClientWebsite(item)}
             >
@@ -274,12 +274,13 @@ const ClientWebsitesTable = ({
                   </Button>
                 )}
                 <Button
-                  variant="primary"
+                  variant=""
                   type="button"
+                  className='btn st-btn-material'
                   disabled={isLoading}
                   onClick={() => onCreateClientWebsite && onCreateClientWebsite()}
                 >
-                  <i className="mdi mdi-plus"></i>
+                  <i className="mdi mdi-link-plus"></i>
                   {t('BTN_ADD_DOMAIN')}
                 </Button>
               </div>

@@ -227,7 +227,7 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
             <Button onClick={() => {
               navigator.clipboard.writeText(BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id));
               showNotice('success', t('NOTICE_COPIED_TO_CLIPBOARD'));
-            }} className="btn btn-sm btn-primary">
+            }} className="btn st-btn-material">
               <i className="mdi mdi-content-copy me-2"></i>{t('BUTTON_COPY_CODE')}
             </Button>
 

@@ -114,12 +114,12 @@ const SearchOperationLogForm = ({ tenant, app_id, onSearch, isLoading = false })
             </Form.Group>
 
             {/* Button submit */}
-            <Button type="submit" className="btn btn-primary ms-2" disabled={isLoading}>
+            <Button type="submit" className="btn st-btn-material ms-2" disabled={isLoading}>
               {isLoading ? (
                 <Spinner as="span" animation="border" role="status" aria-hidden="true" />
               ) : (
-                <div>
-                  <span className="icon mdi mdi-filter me-2"></span>
+                <div className='d-f-c'>
+                  <i className="icon mdi mdi-filter me-2"></i>
                   <span className="text">
                     {t('BTN_FILTER')}
                   </span>
