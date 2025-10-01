@@ -105,7 +105,7 @@ const ENGLISH_TRANSLATIONS = {
     BTN_GO_BACK: "Go Back",
     BTN_GO_HOME: "Go to Homepage",
     DESC_PAGE_404: "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.",
-    TITLE_PAGE_404: "404 - Page Not Found",
+    TITLE_PAGE_404: "Page Not Found",
 
     // =================== Dashboard ===================
     APP_ID: "App ID",
@@ -196,7 +196,7 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_SHADOW: "Shadow",
     LABEL_SHOW_BACKGROUND: "Show background",
     LABEL_SHOW_BOX_SEARCH: "Show search box",
-    LABEL_SHOW_HTML: "Show HTML/JS",
+    LABEL_SHOW_HTML: "Source Code",
     LABEL_THEME: "Theme",
     LABEL_TYPE: "Type",
     MODAL_TEXT_CONFIRM_RESET_BOX_SEARCH_CONFIG_TO_DEFAULTS: "This action will reset the Box Search configuration to default settings. This action cannot be undone. Are you sure you want to proceed?",
@@ -228,7 +228,7 @@ const ENGLISH_TRANSLATIONS = {
     LABEL_RESPONSE_HIGH: "High",
     LABEL_RESPONSE_LENGTH_LEVEL: "Response Length Level",
     LABEL_RESPONSE_MEDIUM: "Medium",
-    LABEL_RESPONSE_SHORT: "Short",
+    LABEL_RESPONSE_LOW: "Low",
     LABEL_SYSTEM_PROMPT: "System Prompt",
     LABEL_DOMAIN_FILTER_SETTINGS: "Domain Filter Settings",
     LABEL_ENABLED_DOMAIN_FILTER: "Enable Domain Filtering",

@@ -222,7 +222,7 @@ const VIETNAMESE_TRANSLATIONS = {
     LABEL_RESPONSE_HIGH: "Cao",
     LABEL_RESPONSE_LENGTH_LEVEL: "Mức độ dài phản hồi",
     LABEL_RESPONSE_MEDIUM: "Trung bình",
-    LABEL_RESPONSE_SHORT: "Ngắn",
+    LABEL_RESPONSE_LOW: "Thấp",
     LABEL_SYSTEM_PROMPT: "Lời nhắc hệ thống",
     MODAL_TEXT_CONFIRM_RESET_TO_DEFAULTS: "Hành động này sẽ đặt lại cấu hình LLM về cài đặt mặc định. Hành động này không thể hoàn tác. Bạn có chắc chắn muốn tiếp tục?",
     MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS: "Xác nhận đặt lại về mặc định",

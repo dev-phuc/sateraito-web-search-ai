@@ -6,6 +6,9 @@ import * as Yup from "yup";
 import { Formik } from "formik";
 import { Form, Button, InputGroup, Modal, Row, Col, Card } from "react-bootstrap";
 
+// Components
+import Loader from '@/desktop/components/Loader';
+
 // Hook components
 import useTheme from '@/hooks/useTheme'
 
@@ -121,7 +124,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
   };
 
   if (!boxSearchConfig) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   // Return the component
@@ -142,7 +145,10 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
           <Form onSubmit={handleSubmit} noValidate className=''>
             {/* Search Box Section */}
             <Card className='shadow-none mx-2 overflow-hidden'>
-              <Card.Title>{t('LABEL_SEARCH_BOX')}</Card.Title>
+              <Card.Title>
+                <i className="mdi mdi-magnify me-1"></i>
+                {t('LABEL_SEARCH_BOX')}
+              </Card.Title>
 
               <Form.Group className="mb-3">
                 <Form.Label>{t('LABEL_TYPE')}</Form.Label>
@@ -247,7 +253,10 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
               </Row>
 
               {/* Search Button Section */}
-              <Card.Title>{t('LABEL_SEARCH_BUTTON')}</Card.Title>
+              <Card.Title>
+                <i className="mdi mdi-gesture-tap-button me-1"></i>
+                {t('LABEL_SEARCH_BUTTON')}
+              </Card.Title>
               <Row>
                 <Col md={6} className="mb-3">
                   <Form.Group className="mb-3">

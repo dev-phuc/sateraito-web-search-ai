@@ -172,7 +172,10 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
               <Row>
                 <Col md={12} className="mb-3">
                   <Form.Group>
-                    <Form.Label>{t('LABEL_SYSTEM_PROMPT')}</Form.Label>
+                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
+                      <span className='me-2 mdi mdi-message-text'></span>
+                      {t('LABEL_SYSTEM_PROMPT')}
+                    </Form.Label>
                     <Form.Control
                       as="textarea"
                       rows={9}
@@ -185,7 +188,10 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                 </Col>
                 <Col md={6} className="mb-3">
                   <Form.Group>
-                    <Form.Label>{t('LABEL_MODEL_NAME')}</Form.Label>
+                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
+                      <span className='me-2 mdi mdi-chart-bubble'></span>
+                      {t('LABEL_MODEL_NAME')}
+                    </Form.Label>
                     <Form.Control
                       type="text"
                       name="model_name"
@@ -201,14 +207,17 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                 </Col>
                 <Col md={6} className="mb-3">
                   <Form.Group>
-                    <Form.Label>{t('LABEL_RESPONSE_LENGTH_LEVEL')}</Form.Label>
+                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
+                      <span className='me-2 mdi mdi-format-align-left'></span>
+                      {t('LABEL_RESPONSE_LENGTH_LEVEL')}
+                    </Form.Label>
                     <Form.Select
                       name="response_length_level"
                       value={values.response_length_level}
                       onChange={handleChange}
                       isInvalid={touched.response_length_level && !!errors.response_length_level}
                     >
-                      <option value="low">{t('LABEL_RESPONSE_SHORT')}</option>
+                      <option value="low">{t('LABEL_RESPONSE_LOW')}</option>
                       <option value="medium">{t('LABEL_RESPONSE_MEDIUM')}</option>
                       <option value="high">{t('LABEL_RESPONSE_HIGH')}</option>
                     </Form.Select>
@@ -217,7 +226,10 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                 </Col>
                 <Col md={12} className="mb-4">
                   <Form.Group>
-                    <Form.Label>{t('LABEL_DOMAIN_FILTER_SETTINGS')}</Form.Label>
+                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
+                      <span className='me-2 mdi mdi-filter'></span>
+                      {t('LABEL_DOMAIN_FILTER_SETTINGS')}
+                    </Form.Label>
                     <div className="d-flex align-items-center mb-2">
                       <Form.Check
                         type="checkbox"

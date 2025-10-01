@@ -222,7 +222,7 @@ const THAI_TRANSLATIONS = {
     LABEL_RESPONSE_HIGH: "สูง",
     LABEL_RESPONSE_LENGTH_LEVEL: "ระดับความยาวการตอบสนอง",
     LABEL_RESPONSE_MEDIUM: "กลาง",
-    LABEL_RESPONSE_SHORT: "สั้น",
+    LABEL_RESPONSE_LOW: "ต่ำ",
     LABEL_SYSTEM_PROMPT: "พรอมต์ระบบ",
     MODAL_TEXT_CONFIRM_RESET_TO_DEFAULTS: "การดำเนินการนี้จะรีเซ็ตการกำหนดค่า LLM เป็นค่าเริ่มต้น การดำเนินการนี้ไม่สามารถยกเลิกได้ คุณแน่ใจหรือไม่ว่าต้องการดำเนินการต่อ?",
     MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS: "ยืนยันการรีเซ็ตเป็นค่าเริ่มต้น",

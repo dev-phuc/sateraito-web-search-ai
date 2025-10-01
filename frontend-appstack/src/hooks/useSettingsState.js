@@ -20,42 +20,32 @@ function useSettingsState(key, initialValue) {
     // Replace stylesheet if dark theme gets toggled
     if (key === "theme") {
       console.log(key);
-      const theme = value === "dark" ? "dark" : "light";
+      console.log(value);
+      // const theme = value === "dark" ? "dark" : "light";
 
-      let stylesheet = document.querySelector(".js-stylesheet");
-      if (!stylesheet) {
-        stylesheet = document.createElement("link");
-        stylesheet.setAttribute("class", "js-stylesheet");
-      }
+      // let stylesheet = document.querySelector(".js-stylesheet");
+      // if (!stylesheet) {
+      //   stylesheet = document.createElement("link");
+      //   stylesheet.setAttribute("class", "js-stylesheet");
+      // }
       if (!device.isMobile()) {
-      if (import.meta.env.PROD) {
-        // Use precompiled css files while in production mode
-        stylesheet.setAttribute(
-          "href",
-          `${import.meta.env.VITE_BASE}/assets/${theme}.${
-            import.meta.env.VITE_VERSION_JS
-          }.css`
-        );
-      } else {
-        // Use sass files while in development mode, so we can watch changes while developing
-        stylesheet.setAttribute("href", `/src/assets/scss/${theme}.scss`);
-      }
-      } else {
-        if (import.meta.env.PROD) {
+        // if (import.meta.env.PROD) {
           // Use precompiled css files while in production mode
-          stylesheet.setAttribute(
-            "href",
-            `${import.meta.env.VITE_BASE}/assets/mobile_${theme}.${
-              import.meta.env.VITE_VERSION_JS
-            }.css`
-          );
-        } else {
+          // stylesheet.setAttribute("href", `${import.meta.env.VITE_BASE}/assets/${theme}.${import.meta.env.VITE_VERSION_JS}.css`);
+        // } else {
           // Use sass files while in development mode, so we can watch changes while developing
-          stylesheet.setAttribute(
-            "href",
-            `/src/assets/scss/mobile_${theme}.scss`
-          );
-        }
+          // stylesheet.setAttribute("href", `/src/assets/scss/${theme}.scss`);
+          // Set attribute theme to body for development mode
+          document.body.setAttribute("data-theme", value);
+        // }
+      } else {
+        // if (import.meta.env.PROD) {
+        //   // Use precompiled css files while in production mode
+        //   stylesheet.setAttribute("href", `${import.meta.env.VITE_BASE}/assets/mobile_${theme}.${import.meta.env.VITE_VERSION_JS}.css`);
+        // } else {
+        //   // Use sass files while in development mode, so we can watch changes while developing
+        //   stylesheet.setAttribute("href", `/src/assets/scss/mobile_${theme}.scss`);
+        // }
       }
 
       // if (!device.isMobile()) {
@@ -88,7 +78,7 @@ function useSettingsState(key, initialValue) {
       //     );
       //   }
       // }
-      document.head.appendChild(stylesheet);
+      // document.head.appendChild(stylesheet);
     }
   }, [value, key]);
 

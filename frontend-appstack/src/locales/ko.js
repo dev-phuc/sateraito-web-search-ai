@@ -224,7 +224,7 @@ const KOREAN_TRANSLATIONS = {
     LABEL_MODEL_NAME: "모델 이름",
     TXT_MODEL_NAME_PLACEHOLDER: "모델 이름은 읽기 전용이며 변경할 수 없습니다.",
     LABEL_RESPONSE_LENGTH_LEVEL: "응답 길이 수준",
-    LABEL_RESPONSE_SHORT: "짧음",
+    LABEL_RESPONSE_LOW: "낮음",
     LABEL_RESPONSE_MEDIUM: "중간",
     LABEL_RESPONSE_LONG: "길음",
     LABEL_RESPONSE_HIGH: "높음",

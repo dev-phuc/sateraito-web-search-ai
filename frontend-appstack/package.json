@@ -22,6 +22,7 @@
     "@fullcalendar/react": "6.1.4",
     "@fullcalendar/timegrid": "6.1.4",
     "@loadable/component": "5.15.3",
+    "@lottiefiles/dotlottie-react": "^0.17.2",
     "@mdi/font": "^7.4.47",
     "@reduxjs/toolkit": "1.9.3",
     "amazon-cognito-identity-js": "5.2.14",

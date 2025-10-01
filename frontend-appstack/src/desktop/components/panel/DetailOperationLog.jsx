@@ -127,7 +127,7 @@ const DetailOperationLogPanel = ({ data }) => {
                         </div>
                       )}
                     </div>
-                    <div><strong></strong> <Markdown>{item.snippet}</Markdown></div>
+                    <div><strong></strong>{item.snippet}</div>
                     <hr />
                   </li>
                 ))}

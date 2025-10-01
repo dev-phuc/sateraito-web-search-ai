@@ -201,7 +201,7 @@ export const LLM_CONFIGURATION_DEFAULT = {
 	"model_name": 'sonar',
 	"system_prompt": 'You are a helpful assistant.',
   'max_characters': 1000,
-	"response_length_level": 'medium', // short, medium, long
+	"response_length_level": 'medium', // low, medium, long
   "enabled_domain_filter": false,
   "search_domain_filter": [],
   "excluded_domain_filter": [],

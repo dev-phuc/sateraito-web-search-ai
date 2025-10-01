@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { useTranslation } from "react-i18next";
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 // Redux components
 
 // Hook components
@@ -24,11 +26,11 @@ const Page404 = () => {
     <Helmet title="404 Error" />
     <div className="page-404">
       <div className="page-404-container">
-        <div className="page-404-icon">
-          <span className="error-code">4</span>
-          <span className="error-code zero">0</span>
-          <span className="error-code">4</span>
-        </div>
+        <DotLottieReact
+          src="https://lottie.host/65f51614-779c-4abb-8b15-de71038f64c5/oAjpf8ZHGP.lottie"
+          loop
+          autoplay
+        />
         <h1 className="page-404-title">{t("TITLE_PAGE_404")}</h1>
         <p className="page-404-description">
           {t("DESC_PAGE_404")}

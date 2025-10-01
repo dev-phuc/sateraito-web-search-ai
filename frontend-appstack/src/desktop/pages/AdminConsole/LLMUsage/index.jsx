@@ -23,6 +23,7 @@ import { Container, Spinner } from "react-bootstrap";
 // Constant value
 
 // Components
+import Loader from "@/desktop/components/Loader";
 import OverviewUsageBoxPanel from "@/desktop/components/panel/OverviewUsageBox";
 
 // Define the component
@@ -159,7 +160,7 @@ const LLMUsageAdminConsolePage = () => {
   }, [chartType, llmUsage]);
 
   if (isLoading && !llmUsage) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   // Return component
@@ -238,7 +239,7 @@ const LLMUsageAdminConsolePage = () => {
                     <th>{t('LABEL_COMPLETION_LENGTH')}</th>
                     <th>{t('LABEL_TOTAL_LENGTH')}</th>
                     <th>{t('LABEL_TOTAL_REQUESTS')}</th>
-                    
+
                   </tr>
                 </thead>
                 <tbody>

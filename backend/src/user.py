@@ -89,10 +89,8 @@ class _GetUser(Handler_Basic_Request, _BasePage):
 			logging.warn('Gdata request timeout')
 			return
 			
-		# Set header
-		self.setResponseHeader('Content-Type', 'application/json')
 		# Export json data
-		return jsondata
+		return self.json_response(jsondata)
 
 class GetUser(_GetUser):
 
@@ -176,8 +174,8 @@ class _GetMe(Handler_Basic_Request, _BaseAPI):
 			photo_url = user_info_dict.get('photo_url', None)
 			language = user_info_dict.get('language')
 
-			if not language or language == '':
-				language = sateraito_inc.DEFAULT_LANGUAGE
+			# if not language or language == '':
+			# 	language = sateraito_inc.DEFAULT_LANGUAGE
 
 			if not family_name or not given_name or not photo_url:
 				user_info = self.fetch_google_data(google_apps_domain, self.viewer_email, return_by_object=True)
@@ -209,7 +207,7 @@ class _GetMe(Handler_Basic_Request, _BaseAPI):
       }
 
 			# Response data
-			return self.responseDataSuccess(data_res)
+			return self.json_response(data_res)
       
 		except Exception as e:
 			return self.responseDataError(f'Error during logout: {str(e)}')

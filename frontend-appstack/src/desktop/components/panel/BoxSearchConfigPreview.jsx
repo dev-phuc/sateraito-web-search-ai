@@ -4,7 +4,10 @@ import { useNavigate } from 'react-router-dom';
 
 // Library UI imports
 import { Formik } from 'formik';
-import { Button, Card, Form } from 'react-bootstrap';
+import { Button, Card, Form, Tab, Tabs } from 'react-bootstrap';
+
+// Components
+import Loader from '@/desktop/components/Loader';
 
 // Hook components
 import useTheme from '@/hooks/useTheme'
@@ -123,133 +126,104 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
   // Return the component
   return (
     <Card className="shadow-sm h-100">
-      <Card.Header className="bg-light">
-        <div className="d-flex justify-content-between align-items-center">
-          {/* Right */}
-          <div>
-            {!isShowHtml ?
-              <>
-                <h5 className="mb-0 text-primary"><i className="fas fa-eye me-2"></i>{t('LABEL_PREVIEW')}</h5>
-                <small className="text-muted">{t('TXT_PREVIEW_DESC')}</small>
-              </>
-              :
-              <>
-                <h5 className="mb-0 text-primary"><i className="fas fa-code me-2"></i>{t('LABEL_SHOW_HTML')}</h5>
-                <small className="text-muted">{t('TXT_SHOW_HTML_DESC')}</small>
-              </>
-            }
-          </div>
-
-          {/* Left */}
-          <div className="d-flex align-items-center gap-3">
-            {!isShowHtml && (
-              <>
-                <Form.Switch
-                  id="switch-show-box-search"
-                  label={t('LABEL_SHOW_BOX_SEARCH')}
-                  checked={isShowBox}
-                  onChange={() => setIsShowBox(!isShowBox)}
-                />
-                <Form.Switch
-                  id="switch-show-background"
-                  label={t('LABEL_SHOW_BACKGROUND')}
-                  checked={isShowBackground}
-                  onChange={() => setIsShowBackground(!isShowBackground)}
-                />
-              </>
-            )}
-            <Form.Switch
-              id="switch-show-html"
-              label={t('LABEL_SHOW_HTML')}
-              checked={isShowHtml}
-              onChange={() => setIsShowHtml(!isShowHtml)}
-            />
-          </div>
-        </div>
-      </Card.Header>
-      <Card.Body className="p-4">
-        {!isShowHtml ?
-          <div className={`preview-container ${config.search_box.type} ${isShowBox ? 'mark-show' : ''} ${isShowBackground ? 'show-background' : 'hide-background'}`}>
-
-            {/* Button right */}
-            <div className='d-flex justify-content-end'>
-              <button className={`button-search-box ${isShowBox ? 'show-icon-close' : ''}`} type="button" onClick={onClickButtonSearchBox} ref={buttonSearchBoxRef}>
-                {renderSearchIcon()}
-                <span className="icon-close mdi mdi-close"></span>
-              </button>
+      <Tabs
+        defaultActiveKey="preview"
+        className="mb-3"
+      >
+        <Tab eventKey="preview" title={t('LABEL_PREVIEW')}>
+          <Card.Body className="px-4">
+            <div className="d-flex align-items-center justify-content-end mb-3 gap-3">
+              <Form.Switch
+                id="switch-show-box-search"
+                label={t('LABEL_SHOW_BOX_SEARCH')}
+                checked={isShowBox}
+                onChange={() => setIsShowBox(!isShowBox)}
+              />
+              <Form.Switch
+                id="switch-show-background"
+                label={t('LABEL_SHOW_BACKGROUND')}
+                checked={isShowBackground}
+                onChange={() => setIsShowBackground(!isShowBackground)}
+              />
             </div>
 
-            <div className={`wrap-panel-box-search ${config.search_box.type} ${isShowBox ? 'show' : 'hide'}`}>
+            <div className={`preview-container ${config.search_box.type} ${isShowBox ? 'mark-show' : ''} ${isShowBackground ? 'show-background' : 'hide-background'}`}>
 
-              <div className={`panel-box-search ${config.search_box.type} ${isSearching ? 'has-result' : ''}`}>
-                <div className={`wrap-header`}>
-                  <span className="logo-app">
-                    <img src={logoApp} alt="" />
-                  </span>
-                  <span className="logo-app-full">
-                    <img src={logoAppFull} alt="" />
-                  </span>
-                  <div className="wrap-input-search">
-                    <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
-                      {({ handleSubmit, handleChange, values }) => (
-                        <Form onSubmit={handleSubmit}>
-                          <input type="text" name="query" className='input-search-box' style={{paddingRight: 30}} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
-                        </Form>
-                      )}
-                    </Formik>
+              {/* Button right */}
+              <div className='d-flex justify-content-end'>
+                <button className={`button-search-box ${isShowBox ? 'show-icon-close' : ''}`} type="button" onClick={onClickButtonSearchBox} ref={buttonSearchBoxRef}>
+                  {renderSearchIcon()}
+                  <span className="icon-close mdi mdi-close"></span>
+                </button>
+              </div>
+
+              <div className={`wrap-panel-box-search ${config.search_box.type} ${isShowBox ? 'show' : 'hide'}`}>
+
+                <div className={`panel-box-search ${config.search_box.type} ${isSearching ? 'has-result' : ''}`}>
+                  <div className={`wrap-header`}>
+                    <span className="logo-app">
+                      <img src={logoApp} alt="" />
+                    </span>
+                    <span className="logo-app-full">
+                      <img src={logoAppFull} alt="" />
+                    </span>
+                    <div className="wrap-input-search">
+                      <Formik initialValues={{ query: '' }} onSubmit={handlerOnSubmitSearch}>
+                        {({ handleSubmit, handleChange, values }) => (
+                          <Form onSubmit={handleSubmit}>
+                            <input type="text" name="query" className='input-search-box' style={{ paddingRight: 30 }} placeholder={t('PLACEHOLDER_SEARCH')} value={values.query} onChange={handleChange} />
+                          </Form>
+                        )}
+                      </Formik>
+                    </div>
+                  </div>
+
+                  {/* Result search */}
+                  <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
+                    {isLoading && (
+                      <Loader />
+                    )}
+                    <div className="result-search-summary">
+                      {summaryResult}
+                    </div>
+                    {resultTemp.map((item, index) => (
+                      <div key={index} className="result-search-item">
+                        <div className="result-search-item-header">
+                          {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
+                          <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
+                        </div>
+                        <div className="result-search-item-description">
+                          {item.description}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
-                {/* Result search */}
-                <div className={`result-search-container ${isLoading ? 'is-loading' : ''}`}>
-                  {isLoading && (
-                    <div className="loading-overlay">
-                      <div className="spinner-border text-primary" role="status">
-                        <span className="visually-hidden">Loading...</span>
-                      </div>
-                    </div>
-                  )}
-                  <div className="result-search-summary">
-                    {summaryResult}
-                  </div>
-                  {resultTemp.map((item, index) => (
-                    <div key={index} className="result-search-item">
-                      <div className="result-search-item-header">
-                        {item.favicon && <img src={item.favicon} alt="Favicon" className="result-search-favicon" />}
-                        <a href={item.url} target="_blank" rel="noopener noreferrer" className="result-search-title">{item.title}</a>
-                      </div>
-                      <div className="result-search-item-description">
-                        {item.description}
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
 
             </div>
+          </Card.Body>
+        </Tab>
+        <Tab eventKey="source_code" title={t('LABEL_SHOW_HTML')}>
+          <Card.Body className="p-4">
+            <pre>
+              <code>
+                {BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id)}
+              </code>
+            </pre>
 
-          </div>
-          :
-          <Card>
-            <Card.Body>
-              <pre>
-                <code>
-                  {BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id)}
-                </code>
-              </pre>
+            {/* Button copy code to clipboard */}
+            <Button onClick={() => {
+              navigator.clipboard.writeText(BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id));
+              showNotice('success', t('NOTICE_COPIED_TO_CLIPBOARD'));
+            }} className="btn btn-sm btn-primary">
+              <i className="mdi mdi-content-copy me-2"></i>{t('BUTTON_COPY_CODE')}
+            </Button>
 
-              {/* Button copy code to clipboard */}
-              <Button onClick={() => {
-                navigator.clipboard.writeText(BOX_SEARCH_TO_HTML_TEMPLATE.replaceAll('SERVER_URL', SERVER_URL).replaceAll('TENANT', tenant).replaceAll('APP_ID', app_id));
-                showNotice('success', t('NOTICE_COPIED_TO_CLIPBOARD'));
-              }} className="btn btn-sm btn-primary">
-                <i className="mdi mdi-content-copy me-2"></i>{t('BUTTON_COPY_CODE')}
-              </Button>
-
-            </Card.Body>
-          </Card>
-        }
-      </Card.Body>
+          </Card.Body>
+        </Tab>
+      </Tabs>
 
     </Card>
   );

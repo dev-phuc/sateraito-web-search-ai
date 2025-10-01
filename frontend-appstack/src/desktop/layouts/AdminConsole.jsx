@@ -3,6 +3,8 @@ import React, { Suspense, useState, useEffect } from "react";
 import { Outlet, useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+
 // Zustand
 import useAppStore from "@/store/app";
 
@@ -141,7 +143,7 @@ const AdminConsoleLayout = ({ children }) => {
   }, [navigate]);
 
   if (!isInitialized) {
-    return <>Loading...</>
+    return <Loader />;
   }
 
   // Component return

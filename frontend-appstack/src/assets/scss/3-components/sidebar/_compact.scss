@@ -10,6 +10,12 @@ body[data-sidebar-behavior=compact] {
     display: none;
   }
 
+  .sidebar-nav > .sidebar-item > .sidebar-link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .simplebar-vertical,
   .simplebar-horizontal {
     visibility: hidden !important;

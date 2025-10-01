@@ -222,7 +222,7 @@ const FRENCH_TRANSLATIONS = {
     LABEL_RESPONSE_HIGH: "Élevé",
     LABEL_RESPONSE_LENGTH_LEVEL: "Niveau de longueur de réponse",
     LABEL_RESPONSE_MEDIUM: "Moyen",
-    LABEL_RESPONSE_SHORT: "Court",
+    LABEL_RESPONSE_LOW: "Faible",
     LABEL_SYSTEM_PROMPT: "Invite système",
     MODAL_TEXT_CONFIRM_RESET_TO_DEFAULTS: "Cette action réinitialisera la configuration LLM aux paramètres par défaut. Cette action ne peut pas être annulée. Êtes-vous sûr de vouloir continuer ?",
     MODAL_TITLE_CONFIRM_RESET_TO_DEFAULTS: "Confirmer la réinitialisation aux valeurs par défaut",
