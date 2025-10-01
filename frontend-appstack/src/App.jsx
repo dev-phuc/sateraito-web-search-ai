@@ -16,6 +16,8 @@ import UserConfigProvider from "@/contexts/UserConfigProvider";
 
 import ChartJsDefaults from "@/utils/ChartJsDefaults";
 
+// TEST
+
 // define a new console
 if (import.meta.env.MODE === "production") {
   console.log = () => { };
