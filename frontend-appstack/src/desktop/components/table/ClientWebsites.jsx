@@ -109,19 +109,13 @@ const ClientWebsitesTable = ({
         />
       </td>
 
-      <td className="text-center" style={{ width: '60px' }}>
+      {/* <td className="text-center" style={{ width: '60px' }}>
         <div className="d-flex justify-content-center align-items-center">
           {item.favicon_url ? (
             <img
               src={item.favicon_url}
               alt={item.site_name || 'Website'}
-              className="rounded"
-              style={{
-                width: '32px',
-                height: '32px',
-                objectFit: 'cover',
-                border: '1px solid #e0e6ed'
-              }}
+              className="rounded url-favicon"
               onError={(e) => {
                 e.target.style.display = 'none';
                 e.target.nextSibling.style.display = 'flex';
@@ -139,24 +133,42 @@ const ClientWebsitesTable = ({
             <i className="mdi mdi-web text-muted"></i>
           </div>
         </div>
-      </td>
+      </td> */}
 
       <td>
-        <div className="d-flex flex-column">
+        <div className="d-flex  domain-url">
+          <div className="d-flex justify-content-center align-items-center">
+            {item.favicon_url ? (
+              <img
+                src={item.favicon_url}
+                alt={item.site_name || 'Website'}
+                className="rounded url-favicon"
+                onError={(e) => {
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+            ) : 
+              <div
+                className="default-favicon"
+              >
+                <i className="mdi mdi-web text-muted"></i>
+              </div>
+            }
+
+          </div>
           <a
             href={item.domain}
             target="_blank"
             rel="noopener noreferrer"
-            className="fw-semibold text-decoration-none mb-1"
-            style={{ fontSize: '0.95rem' }}
           >
             {truncateText(item.domain, 35)}
           </a>
-          {item.site_name && (
+          {/* {item.site_name && (
             <small className="text-muted">
               {truncateText(item.site_name, 30)}
             </small>
-          )}
+          )} */}
         </div>
       </td>
 
@@ -227,7 +239,7 @@ const ClientWebsitesTable = ({
             overlay={<Tooltip>{t('Delete Website')}</Tooltip>}
           >
             <Button
-              variant="outline-danger"
+              variant="red"
               className="btn st-btn-material-ico"
               disabled={item.isUpdating || item.isRemoving}
               onClick={() => onDeleteClientWebsite && onDeleteClientWebsite(item)}
@@ -265,7 +277,9 @@ const ClientWebsitesTable = ({
               <div className="d-flex gap-2">
                 {checkedList.length > 0 && (
                   <Button
-                    variant="outline-danger"
+                    variant="red"
+                    type="button"
+                    className='btn st-btn-material'
                     disabled={isLoading}
                     onClick={() => onDeleteSelectedWebsites && onDeleteSelectedWebsites()}
                   >
@@ -303,7 +317,7 @@ const ClientWebsitesTable = ({
                       onChange={(e) => onChangeSelectAllChecked && onChangeSelectAllChecked(e.target.checked)}
                     />
                   </th>
-                  <th className="text-center" style={{ width: '80px' }}></th>
+                  {/* <th className="text-center" style={{ width: '80px' }}></th> */}
                   <th>{t('NAME_COL_WEBSITE_NAME')}</th>
                   <th>{t('NAME_COL_WEBSITE_DESCRIPTION')}</th>
                   <th>{t('NAME_COL_WEBSITE_AI_ENABLED')}</th>

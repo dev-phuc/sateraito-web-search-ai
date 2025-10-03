@@ -52,7 +52,7 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
         <Form onSubmit={handleSubmit} noValidate className="">
           <div className="d-flex flex-wrap">
             {/* Site name */}
-            <Form.Group className="d-flex align-items-center justify-content-center">
+            {/* <Form.Group className="d-flex align-items-center justify-content-center">
               <Form.Label className="me-2 mb-0 text-nowrap">{t('LABEL_SITE_NAME')}</Form.Label>
               <Form.Control
                 type="text"
@@ -60,7 +60,7 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
                 value={values.site_name}
                 onChange={handleChange}
               />
-            </Form.Group>
+            </Form.Group> */}
 
             {/* Domain */}
             <Form.Group className="d-flex align-items-center justify-content-center ms-2">

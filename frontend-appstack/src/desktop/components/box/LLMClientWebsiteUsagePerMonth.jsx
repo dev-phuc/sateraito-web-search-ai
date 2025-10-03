@@ -32,7 +32,7 @@ const LLMClientWebsiteUsageStatisticsBox = ({ }) => {
   // Return the component
   return (
     <>
-      <div className="bg-light pb-1">
+      <div className=" pb-1">
         <div className="wrap-box">
           <div className="box-header d-flex align-items-center px-2 justify-content-between">
             <div className="box-header-left d-flex align-items-center justify-content-start">

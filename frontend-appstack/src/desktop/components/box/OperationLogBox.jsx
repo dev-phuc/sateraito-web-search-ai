@@ -32,12 +32,12 @@ const OperationLogBox = ({ }) => {
   // Return the component
   return (
     <>
-      <div className="bg-light pb-1">
+      <div className="card">
         <div className="wrap-box">
           <div className="box-header d-flex align-items-center px-2 justify-content-between">
             <div className="box-header-left d-flex align-items-center justify-content-start">
-              <span className="mdi mdi-file-document-outline me-2"></span>
-              <h5 className="mb-0">{t("TXT_OPERATIONS_LOGS")}</h5>
+              {/* <span className="mdi mdi-file-document-outline me-2"></span> */}
+              <h4 className="mb-0 fw-bold text-dark">{t("TXT_OPERATIONS_LOGS")}</h4>
             </div>
             {/* Menu */}
             <div>
@@ -55,7 +55,7 @@ const OperationLogBox = ({ }) => {
             </div>
           </div>
 
-          <div className="box-content px-4">
+          <div className="box-content ">
             <OperationLogsMiniTable />
           </div>
         </div>

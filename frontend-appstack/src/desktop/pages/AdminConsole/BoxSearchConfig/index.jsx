@@ -20,7 +20,7 @@ import useTheme from "@/hooks/useTheme";
 // Constant value
 
 // Components
-import BoxSearchConfigForm from '@/desktop/components/form/BoxSearchConfig';
+import BoxSearchConfigForm from '@/desktop/components/form/BoxSearchConfigNew';
 import BoxSearchConfigPreview from '@/desktop/components/panel/BoxSearchConfigPreview';
 
 // Define the component

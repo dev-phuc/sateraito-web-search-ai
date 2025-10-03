@@ -27,7 +27,7 @@ const TenantInformationBox = ({ }) => {
   // Return the component
   return (
     <>
-      <div className="bg-light">
+      <div className="">
         <div className="wrap-box">
           <div className="box-header d-flex align-items-center px-2 justify-content-between">
             <div className="box-header-left d-flex align-items-center justify-content-start">

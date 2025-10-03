@@ -22,7 +22,7 @@ import { Container } from "react-bootstrap";
 import TenantInformationBox from "@/desktop/components/box/TenantInformation";
 import ContractInformationBox from "@/desktop/components/box/ContractInformation";
 import LLMConfigurationBox from "@/desktop/components/box/LLMConfiguration";
-import LLMUsageBox from "@/desktop/components/box/OverviewUsageBox";
+import LLMUsageBox from "@/desktop/components/box/OverviewUsageBoxNew";
 import LLMUsageStatisticsBox from "@/desktop/components/box/LLMUsageStatistics";
 import LLMClientWebsiteUsageStatisticsBox from "@/desktop/components/box/LLMClientWebsiteUsagePerMonth";
 import OperationLogBox from "@/desktop/components/box/OperationLogBox";
@@ -65,35 +65,43 @@ const DashboardAdminConsolePage = () => {
       <Container fluid className="p-0">
         {/* Grid flexible layout - 3 columns */}
         <div className="row g-3">
+          <div className="col-12">
+            <div className="d-flex">
+              <div className="col-8">
+                <LLMUsageBox />
+                <div className="wrap-box-dashboard ">
+                  <LLMConfigurationBox />
+                </div>
+              </div>
+              <div className="col-4">
+                <div className="wrap-box-dashboard circle-bg mb-3">
+                  <TenantInformationBox />
+                </div>
+
+                <div className="wrap-box-dashboard circle-bg mb-3">
+                  <ContractInformationBox />
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+          {/* <div className="col-4">
+              <div className="wrap-box-dashboard mb-3">
+                <LLMUsageStatisticsBox />
+              </div>
+
+              <div className="wrap-box-dashboard mb-3">
+                <LLMClientWebsiteUsageStatisticsBox />
+              </div>
+            </div> */}
           <div className="col-4">
-            <div className="wrap-box-dashboard circle-bg mb-3">
-              <TenantInformationBox />
-            </div>
 
-            <div className="wrap-box-dashboard circle-bg mb-3">
-              <ContractInformationBox />
-            </div>
-
-            <div className="wrap-box-dashboard circle-bg mb-3">
-              <LLMConfigurationBox />
-            </div>
           </div>
 
-          <div className="col-4">
-            <div className="wrap-box-dashboard mb-3">
-              <LLMUsageStatisticsBox />
-            </div>
 
-            <div className="wrap-box-dashboard mb-3">
-              <LLMClientWebsiteUsageStatisticsBox />
-            </div>
-          </div>
 
-          <div className="col-4">
-            <div className="mb-3">
-              <LLMUsageBox />
-            </div>
-
+          <div className="col-12">
             <div className="wrap-box-dashboard mb-3">
               <OperationLogBox />
             </div>

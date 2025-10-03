@@ -64,61 +64,135 @@ const LLMConfigurationBox = ({ }) => {
   // Return the component
   return (
     <>
-      <div className="bg-light pb-1">
-        <div className="wrap-box">
-
-          <div className="box-header d-flex align-items-center px-2 justify-content-between">
-            <div className="box-header-left d-flex align-items-center justify-content-start">
-              <span className="mdi mdi-robot-outline mdi-24px me-2"></span>
-              <h5 className="mb-0">{t("LABEL_LLM_CONFIGURATION")}</h5>
-            </div>
-            {/* Menu */}
-            <div>
+      <div className="llm-configuration-box ">
+        {/* Modern Card Container */}
+        <div className="card ">
+          
+          {/* Header Section */}
+          <div className="card-header border-0 ">
+            <div className="d-flex align-items-center justify-content-between flex-wrap">
+              {/* Header Left */}
+              <div className="d-flex align-items-center mb-2 mb-lg-0">
+                {/* <div className="me-3 p-2 rounded-circle" style={{
+                  background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                  color: 'white', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                }}>
+                  <i className="mdi mdi-robot-outline" style={{ fontSize: '24px' }}></i>
+                </div> */}
+                <div>
+                  <h4 className="mb-0 fw-bold text-dark">{t("LABEL_LLM_CONFIGURATION")}</h4>
+                  {llmConfiguration ? (
+                    <div className="d-flex align-items-center gap-2 mt-1">
+                      <span className="badge bg-primary px-2 py-1 rounded-pill small">
+                        <i className="mdi mdi-robot me-1"></i>
+                        {llmConfiguration.model_name}
+                      </span>
+                      <span className={`badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)} px-2 py-1 rounded-pill small`}>
+                        <i className="mdi mdi-gauge me-1"></i>
+                        {llmConfiguration?.response_length_level ? t(`LABEL_RESPONSE_${llmConfiguration.response_length_level.toUpperCase()}`) : t("TXT_NOT_SET")}
+                      </span>
+                    </div>
+                  ) : (
+                    <small className="text-muted">AI Model Settings & Configuration</small>
+                  )}
+                </div>
+              </div>
+              
+              {/* Action Menu */}
               <Dropdown>
-                <Dropdown.Toggle className="btn btn-sm btn-light rounded-circle">
-                  <span className="mdi mdi-dots-vertical"></span>
+                <Dropdown.Toggle 
+                  className="btn st-btn-material-outline"
+                  variant=''
+                >
+                  <i className="mdi mdi-cog-outline me-1"></i>
+                  Actions
                 </Dropdown.Toggle>
-                <Dropdown.Menu align="end">
-                  <Dropdown.Item onClick={handlerOnClickEdit}>
-                    <span className="mdi mdi-pencil-outline me-2"></span>
-                    {t("BTN_EDIT")}
+                <Dropdown.Menu align="end" className="shadow border-0">
+                  <Dropdown.Item onClick={handlerOnClickEdit} className="d-flex align-items-center">
+                    <i className="mdi mdi-pencil-outline me-2 text-primary"></i>
+                    <span>{t("BTN_EDIT")}</span>
                   </Dropdown.Item>
                 </Dropdown.Menu>
               </Dropdown>
             </div>
           </div>
 
-          <div className="box-content box-content px-4">
+          {/* Content Section */}
+          <div className="card-body " >
             {llmConfiguration && (
               <>
-                <div>
-                  <p className='mb-2'>
-                    <strong>{t("LABEL_MODEL_NAME")}:</strong> <span className="ms-2 badge bg-info">{llmConfiguration?.model_name}</span>
-                  </p>
-                  <p className='mb-2'>
-                    <strong>{t("LABEL_RESPONSE_LENGTH_LEVEL")}:</strong>
-                    <span className={`ms-2 badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)}`}>
-                      {llmConfiguration?.response_length_level ? t(`LABEL_RESPONSE_${llmConfiguration.response_length_level.toUpperCase()}`) : t("TXT_NOT_SET")}
-                    </span>
-                  </p>
-                  {llmConfiguration && llmConfiguration.system_prompt && (
-                    <div className='mb-2'>
-                      <strong>{t("LABEL_SYSTEM_PROMPT")}:</strong>
-
-                      <div className='bg-white p-2 border rounded'>
-                        <Markdown>
-                          {llmConfiguration.system_prompt}
-                        </Markdown>
-                      </div>
+                {/* System Prompt Section */}
+                {llmConfiguration && llmConfiguration.system_prompt && (
+                  <div>
+                    <div className="d-flex align-items-center d-none">
+                      <i className="mdi mdi-message-text-outline text-success me-2" style={{ fontSize: '20px' }}></i>
+                      <h6 className="mb-0 fw-bold text-dark">{t("LABEL_SYSTEM_PROMPT")}</h6>
                     </div>
-                  )}
-                </div>
+                    
+                    <div className="position-relative">
+                      <div 
+                        className="p-4 rounded-3 shadow-sm"
+                        style={{
+                          background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                          border: '1px solid #dee2e6',
+                          maxHeight: '300px',
+                          overflowY: 'auto'
+                        }}
+                      >
+                        <div style={{
+                          fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+                          fontSize: '0.875rem',
+                          lineHeight: '1.6',
+                          color: '#495057'
+                        }}>
+                          <Markdown
+                            components={{
+                              p: ({children}) => <p className="mb-2">{children}</p>,
+                              h1: ({children}) => <h5 className="fw-bold text-primary mb-2">{children}</h5>,
+                              h2: ({children}) => <h6 className="fw-bold text-secondary mb-2">{children}</h6>,
+                              ul: ({children}) => <ul className="ps-3 mb-2">{children}</ul>,
+                              ol: ({children}) => <ol className="ps-3 mb-2">{children}</ol>,
+                              li: ({children}) => <li className="mb-1">{children}</li>,
+                              code: ({children}) => <code className="bg-light px-1 rounded text-danger">{children}</code>
+                            }}
+                          >
+                            {llmConfiguration.system_prompt}
+                          </Markdown>
+                        </div>
+                      </div>
+                      
+                    </div>
+                  </div>
+                )}
               </>
             )}
 
-            {isLoading && <MakerLoading opacity="10" />}
-          </div>
+            {/* Loading State */}
+            {isLoading && (
+              <div className="d-flex flex-column align-items-center justify-content-center py-5">
+                <div className="spinner-border text-primary mb-3" role="status">
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+                <p className="text-muted mb-0">Loading configuration...</p>
+              </div>
+            )}
 
+            {/* Empty State */}
+            {!isLoading && !llmConfiguration && (
+              <div className="text-center py-5">
+                <i className="mdi mdi-robot-dead-outline text-muted mb-3" style={{ fontSize: '4rem' }}></i>
+                <h6 className="text-muted mb-2">No Configuration Found</h6>
+                <p className="text-muted small">Please set up your LLM configuration to get started.</p>
+                <button 
+                  className="btn btn-primary btn-sm rounded-pill px-4"
+                  onClick={handlerOnClickEdit}
+                >
+                  <i className="mdi mdi-plus me-1"></i>
+                  Setup Configuration
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>

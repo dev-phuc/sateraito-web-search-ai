@@ -58,7 +58,7 @@ const ContractInformationBox = ({ }) => {
   // Return the component
   return (
     <>
-      <div className="bg-light pb-1">
+      <div className=" pb-1">
         <div className="wrap-box">
 
           <div className="box-header d-flex align-items-center px-2 justify-content-between">
