@@ -148,10 +148,20 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
               <div className="section-header">
                 <i className="mdi mdi-view-dashboard section-icon"></i>
                 <h5 className="section-title">{t('LABEL_SEARCH_BOX')} {t('LABEL_LAYOUT')}</h5>
+                <div className="switch-wrapper">
+                  <label className="switch-label">{t('LABEL_SHADOW')}</label>
+                  <Form.Check
+                    type="switch"
+                    name="search_box.options.shadow"
+                    checked={values.search_box.options.shadow}
+                    onChange={(e) => setFieldValue('search_box.options.shadow', e.target.checked)}
+                  />
+                </div>
+                {/* <Form.Text>{t('TXT_ENABLE_SHADOW')}</Form.Text> */}
               </div>
 
               <div className="form-group-compact">
-                <Form.Label className="mb-2">{t('LABEL_TYPE')}</Form.Label>
+                {/* <Form.Label className="mb-2">{t('LABEL_TYPE')}</Form.Label> */}
                 <div className="radio-group-modern">
                   <Form.Check
                     type="radio"
@@ -185,141 +195,110 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                   />
                 </div>
                 <Form.Control.Feedback type="invalid">{touched.search_box?.type && errors.search_box?.type}</Form.Control.Feedback>
-                <Form.Text>{t('TXT_CHOOSE_SEARCH_UI')}</Form.Text>
-              </div>
-            </div>
-
-            {/* Appearance & Colors Section */}
-            <div className="config-section">
-              <div className="section-header">
-                <i className="mdi mdi-palette section-icon"></i>
-                <h5 className="section-title">{t('LABEL_APPEARANCE')} & {t('LABEL_COLOR')}</h5>
-              </div>
-
-              <Row>
-                <Col lg={6} className="mb-3">
-                  <Form.Label>{t('LABEL_COLOR')} ({t('LABEL_TEXT')})</Form.Label>
-                  <div className="color-input-wrapper">
-                    <Form.Control 
-                      type="color" 
-                      name="theme.color" 
-                      value={values.theme.color} 
-                      onChange={(e) => setFieldValue('theme.color', e.target.value)} 
-                    />
-                    <div className="color-preview" style={{ backgroundColor: values.theme.color }}></div>
-                  </div>
-                  <Form.Text>{t('TXT_TEXT_COLOR')}</Form.Text>
-                </Col>
-
-                <Col lg={6} className="mb-3">
-                  <Form.Label>{t('LABEL_BACKGROUND_COLOR')}</Form.Label>
-                  <div className="color-input-wrapper">
-                    <Form.Control 
-                      type="color" 
-                      name="search_box.options.background_color" 
-                      value={values.search_box.options.background_color} 
-                      onChange={(e) => setFieldValue('search_box.options.background_color', e.target.value)} 
-                      isInvalid={touched.search_box?.options?.background_color && !!errors.search_box?.options?.background_color} 
-                    />
-                    <div className="color-preview" style={{ backgroundColor: values.search_box.options.background_color }}></div>
-                  </div>
-                  <Form.Control.Feedback type="invalid">{touched.search_box?.options?.background_color && errors.search_box?.options?.background_color}</Form.Control.Feedback>
-                  <Form.Text>{t('TXT_PICK_BACKGROUND_COLOR')}</Form.Text>
-                </Col>
-
-                <Col lg={12} className="mb-3">
-                  <Form.Label>{t('LABEL_FONT')}</Form.Label>
-                  <Form.Control 
-                    type="text" 
-                    name="theme.font" 
-                    value={values.theme.font} 
-                    onChange={(e) => setFieldValue('theme.font', e.target.value)} 
-                    placeholder={t('TXT_FONT_PLACEHOLDER')} 
-                  />
-                  <Form.Text>{t('TXT_FONT_DESC')}</Form.Text>
-                </Col>
-
-                <Col lg={12}>
-                  <div className="switch-wrapper">
-                    <label className="switch-label">{t('LABEL_SHADOW')}</label>
-                    <Form.Check 
-                      type="switch" 
-                      name="search_box.options.shadow" 
-                      checked={values.search_box.options.shadow} 
-                      onChange={(e) => setFieldValue('search_box.options.shadow', e.target.checked)} 
-                    />
-                  </div>
-                  <Form.Text>{t('TXT_ENABLE_SHADOW')}</Form.Text>
-                </Col>
-              </Row>
-            </div>
-
-            {/* Dimensions & Spacing Section */}
-            <div className="config-section">
-              <div className="section-header">
-                <i className="mdi mdi-resize section-icon"></i>
-                <h5 className="section-title">{t('LABEL_DIMENSIONS')} & {t('LABEL_SPACING')}</h5>
-              </div>
-
-              <Row>
-                <Col lg={4} className="mb-3">
-                  <Form.Label>{t('LABEL_BORDER_RADIUS')}</Form.Label>
-                  <div className="number-input-group">
-                    <InputGroup>
-                      <Form.Control 
-                        type="number" 
-                        name="search_box.options.border_radius" 
-                        value={values.search_box.options.border_radius} 
-                        onChange={(e) => setFieldValue('search_box.options.border_radius', Number(e.target.value || 0))} 
-                        isInvalid={touched.search_box?.options?.border_radius && !!errors.search_box?.options?.border_radius} 
+                <Row className='search-layout-appearance-options'>
+                    <Col lg={4} md={3} className="mb-3">
+                      <Form.Label>{t('LABEL_COLOR')} ({t('LABEL_TEXT')})</Form.Label>
+                      <div className="color-input-wrapper">
+                        <Form.Control 
+                          type="color" 
+                          name="theme.color" 
+                          value={values.theme.color} 
+                          onChange={(e) => setFieldValue('theme.color', e.target.value)} 
+                        />
+                        {/* <div className="color-preview" style={{ backgroundColor: values.theme.color }}></div> */}
+                      </div>
+                      {/* <Form.Text>{t('TXT_TEXT_COLOR')}</Form.Text> */}
+                    </Col>
+                    <Col lg={4} md={4} className="mb-3">
+                      <Form.Label>{t('LABEL_FONT')}</Form.Label>
+                      <Form.Control
+                        type="text"
+                        name="theme.font"
+                        value={values.theme.font}
+                        onChange={(e) => setFieldValue('theme.font', e.target.value)}
+                        placeholder={t('TXT_FONT_PLACEHOLDER')}
                       />
-                      <InputGroup.Text>px</InputGroup.Text>
-                    </InputGroup>
-                  </div>
-                  <Form.Control.Feedback type="invalid">{touched.search_box?.options?.border_radius && errors.search_box?.options?.border_radius}</Form.Control.Feedback>
-                  <Form.Text>{t('TXT_CORNER_RADIUS')}</Form.Text>
-                </Col>
+                      {/* <Form.Text>{t('TXT_FONT_DESC')}</Form.Text> */}
+                    </Col>
+                    <Col lg={4} md={4} className="mb-3">
+                      <Form.Label>{t('LABEL_FONT_SIZE')}</Form.Label>
+                      <div className="number-input-group">
+                        <InputGroup className="form-group-number-short">
+                          <Form.Control
+                            type="number"
+                            name="search_box.options.font-size"
+                            value={values.search_box.options['font-size']}
+                            onChange={(e) => setFieldValue('search_box.options["font-size"]', Number(e.target.value || 0))}
+                            isInvalid={touched.search_box?.options && !!errors.search_box?.options?.['font-size']}
 
-                <Col lg={4} className="mb-3">
-                  <Form.Label>{t('LABEL_FONT_SIZE')}</Form.Label>
-                  <div className="number-input-group">
-                    <InputGroup>
-                      <Form.Control 
-                        type="number" 
-                        name="search_box.options.font-size" 
-                        value={values.search_box.options['font-size']} 
-                        onChange={(e) => setFieldValue('search_box.options["font-size"]', Number(e.target.value || 0))} 
-                        isInvalid={touched.search_box?.options && !!errors.search_box?.options?.['font-size']} 
-                      />
-                      <InputGroup.Text>px</InputGroup.Text>
-                    </InputGroup>
-                  </div>
-                  <Form.Control.Feedback type="invalid">{touched.search_box?.options && errors.search_box?.options?.['font-size']}</Form.Control.Feedback>
-                  <Form.Text>{t('TXT_ADJUST_FONT_SIZE')}</Form.Text>
-                </Col>
+                          />
+                          <InputGroup.Text>px</InputGroup.Text>
+                        </InputGroup>
+                      </div>
+                      <Form.Control.Feedback type="invalid">{touched.search_box?.options && errors.search_box?.options?.['font-size']}</Form.Control.Feedback>
+                      {/* <Form.Text>{t('TXT_ADJUST_FONT_SIZE')}</Form.Text> */}
+                    </Col>
+                </Row>
 
-                <Col lg={4} className="mb-3">
-                  <Form.Label>{t('LABEL_PADDING')}</Form.Label>
-                  <div className="number-input-group">
-                    <InputGroup>
-                      <Form.Control 
-                        type="number" 
-                        name="search_box.options.padding" 
-                        value={values.search_box.options.padding} 
-                        onChange={(e) => setFieldValue('search_box.options.padding', Number(e.target.value || 0))} 
-                        isInvalid={touched.search_box?.options?.padding && !!errors.search_box?.options?.padding} 
-                      />
-                      <InputGroup.Text>px</InputGroup.Text>
-                    </InputGroup>
-                  </div>
-                  <Form.Control.Feedback type="invalid">{touched.search_box?.options?.padding && errors.search_box?.options?.padding}</Form.Control.Feedback>
-                  <Form.Text>{t('TXT_INNER_SPACING')}</Form.Text>
-                </Col>
-              </Row>
+                {values.search_box.type !== 'fullscreen_blur'  && (
+                  <Row className='box-search-layout-options'>
+                    <Col lg={4} className="mb-3 col-4">
+                      <Form.Label>{t('LABEL_BACKGROUND_COLOR')}</Form.Label>
+                      <div className="color-input-wrapper">
+                        <Form.Control
+                          type="color"
+                          name="search_box.options.background_color"
+                          value={values.search_box.options.background_color}
+                          onChange={(e) => setFieldValue('search_box.options.background_color', e.target.value)}
+                          isInvalid={touched.search_box?.options?.background_color && !!errors.search_box?.options?.background_color}
+                        />
+                        <div className="color-preview" style={{ backgroundColor: values.search_box.options.background_color }}></div>
+                      </div>
+                      <Form.Control.Feedback type="invalid">{touched.search_box?.options?.background_color && errors.search_box?.options?.background_color}</Form.Control.Feedback>
+                      {/* <Form.Text>{t('TXT_PICK_BACKGROUND_COLOR')}</Form.Text> */}
+                    </Col>
+                    <Col lg={4} md={4} className="mb-3 ">
+                      <Form.Label>{t('LABEL_BORDER_RADIUS')}</Form.Label>
+                      <div className="number-input-group">
+                        <InputGroup className="form-group-number-short">
+                          <Form.Control
+                            type="number"
+                            name="search_box.options.border_radius"
+                            value={values.search_box.options.border_radius}
+                            onChange={(e) => setFieldValue('search_box.options.border_radius', Number(e.target.value || 0))}
+                            isInvalid={touched.search_box?.options?.border_radius && !!errors.search_box?.options?.border_radius}
+                          />
+                          <InputGroup.Text>px</InputGroup.Text>
+                        </InputGroup>
+                      </div>
+                      <Form.Control.Feedback type="invalid">{touched.search_box?.options?.border_radius && errors.search_box?.options?.border_radius}</Form.Control.Feedback>
+                      {/* <Form.Text>{t('TXT_CORNER_RADIUS')}</Form.Text> */}
+                    </Col>
+                    <Col lg={4} md={4} className="mb-3">
+                      <Form.Label>{t('LABEL_PADDING')}</Form.Label>
+                      <div className="number-input-group">
+                        <InputGroup className="form-group-number-short">
+                          <Form.Control
+                            type="number"
+                            name="search_box.options.padding"
+                            value={values.search_box.options.padding}
+                            onChange={(e) => setFieldValue('search_box.options.padding', Number(e.target.value || 0))}
+                            isInvalid={touched.search_box?.options?.padding && !!errors.search_box?.options?.padding}
+                          />
+                          <InputGroup.Text>px</InputGroup.Text>
+                        </InputGroup>
+                      </div>
+                      <Form.Control.Feedback type="invalid">{touched.search_box?.options?.padding && errors.search_box?.options?.padding}</Form.Control.Feedback>
+                      {/* <Form.Text>{t('TXT_INNER_SPACING')}</Form.Text> */}
+                    </Col>
+                  </Row>
+                )}
+                {/* <Form.Text>{t('TXT_CHOOSE_SEARCH_UI')}</Form.Text> */}
+              </div>
             </div>
 
             {/* Search Button Section */}
-            <div className="config-section">
+            <div className="config-section section-button-style">
               <div className="section-header">
                 <i className="mdi mdi-gesture-tap-button section-icon"></i>
                 <h5 className="section-title">{t('LABEL_SEARCH_BUTTON')}</h5>
@@ -327,7 +306,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
 
               <Row>
                 <Col lg={6} className="mb-3">
-                  <Form.Label>{t('LABEL_ICON')}</Form.Label>
+                  <Form.Label>{t('LABEL_ICON')} : <small style={{ fontWeight: 'normal' }}>(mdi class or Url)</small></Form.Label>
                   <Form.Control 
                     type="text" 
                     name="search_button.icon" 
@@ -335,13 +314,13 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                     onChange={(e) => setFieldValue('search_button.icon', e.target.value)} 
                     placeholder={t('TXT_ICON_PLACEHOLDER')} 
                   />
-                  <Form.Text>{t('TXT_ICON_DESC')}</Form.Text>
+                  {/* <Form.Text>{t('TXT_ICON_DESC')}</Form.Text> */}
                 </Col>
 
                 <Col lg={6} className="mb-3">
                   <Form.Label>{t('LABEL_BUTTON_BORDER_RADIUS')}</Form.Label>
                   <div className="number-input-group">
-                    <InputGroup>
+                    <InputGroup className="form-group-number-short">
                       <Form.Control 
                         type="number" 
                         name="search_button.border_radius" 
@@ -351,7 +330,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                       <InputGroup.Text>px</InputGroup.Text>
                     </InputGroup>
                   </div>
-                  <Form.Text>{t('TXT_BUTTON_CORNER_RADIUS')}</Form.Text>
+                  {/* <Form.Text>{t('TXT_BUTTON_CORNER_RADIUS')}</Form.Text> */}
                 </Col>
 
                 <Col lg={6} className="mb-3">
@@ -365,7 +344,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                     />
                     <div className="color-preview" style={{ backgroundColor: values.search_button.color }}></div>
                   </div>
-                  <Form.Text>{t('TXT_BUTTON_ICON_COLOR')}</Form.Text>
+                  {/* <Form.Text>{t('TXT_BUTTON_ICON_COLOR')}</Form.Text> */}
                 </Col>
 
                 <Col lg={6} className="mb-3">
@@ -379,7 +358,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                     />
                     <div className="color-preview" style={{ backgroundColor: values.search_button.background_color }}></div>
                   </div>
-                  <Form.Text>{t('TXT_BUTTON_BG_COLOR')}</Form.Text>
+                  {/* <Form.Text>{t('TXT_BUTTON_BG_COLOR')}</Form.Text> */}
                 </Col>
               </Row>
             </div>
@@ -387,8 +366,8 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
             {/* Action Buttons Section */}
             <div className="action-buttons">
               <Row>
-                <Col lg="7">
-                  <Button type="submit" disabled={loading.submitting || !isValid || (!dirty && !isSubmitting)} aria-busy={loading.submitting}>
+                <Col lg="7" className="d-flex align-items-center gap-1">
+                  <Button className="btn st-btn-material" variant='' type="submit" disabled={loading.submitting || !isValid || (!dirty && !isSubmitting)} aria-busy={loading.submitting}>
                     {loading.submitting ? (
                       <>
                         <i className="mdi mdi-spin mdi-loading"></i>
@@ -397,21 +376,21 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                     ) :
                       <>
                         <i className="mdi mdi-content-save"></i>
-                        <span className="ms-2">{t('BTN_SUBMIT')}</span>
+                        <span >{t('BTN_SUBMIT')}</span>
                       </>
                     }
                   </Button>
                   {onCancel && <Button variant="secondary" onClick={onCancel} className="ms-2">{t('BTN_CANCEL')}</Button>}
-                  <Button variant="outline-secondary" disabled={loading.submitting} onClick={() => resetForm()} className="ms-2">
+                  <Button className="btn st-btn-material-outline" variant="" disabled={loading.submitting} onClick={() => resetForm()} >
                     <i className="mdi mdi-restore"></i>
-                    <span className="ms-2">{t('BTN_RESET')}</span>
+                    <span >{t('BTN_RESET')}</span>
                   </Button>
                 </Col>
                 <Col lg="5">
                   <div className="d-flex justify-content-end">
-                    <Button variant="outline-danger" onClick={() => setShowConfirmResetDefaults(true)} disabled={loading.submitting || showConfirmResetDefaults}>
+                    <Button className="btn st-btn-material-outline" variant="" onClick={() => setShowConfirmResetDefaults(true)} disabled={loading.submitting || showConfirmResetDefaults}>
                       <i className="mdi mdi-backup-restore"></i>
-                      <span className="ms-2">{t('BTN_RESET_TO_DEFAULTS')}</span>
+                      <span >{t('BTN_RESET_TO_DEFAULTS')}</span>
                     </Button>
                   </div>
                 </Col>

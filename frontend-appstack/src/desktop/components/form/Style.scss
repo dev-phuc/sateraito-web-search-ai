@@ -3,10 +3,10 @@
   .config-section {
 		background: #ffffff;
 		border: 1px solid #f1f3f4;
-		border-radius: 12px;
+		border-radius: 8px;
 		padding: 10px;
-		margin-bottom: 1.5rem;
-		box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+		margin-bottom: 10px;
+		// box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 		transition: all 0.2s ease;
 
     &:hover {
@@ -16,27 +16,25 @@
     .section-header {
       display: flex;
       align-items: center;
-      margin-bottom: 1.25rem;
+      margin-bottom: 10px;
       padding-bottom: 5px;
       border-bottom: 1px solid #f0f4f8;
 
       .section-icon {
         font-size: 1.2rem;
-        color: #6c757d;
+        color: var(--base-color);
         margin-right: 0.5rem;
       }
 
       .section-title {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: #2c3e50;
-        margin: 0;
-				padding-bottom: 0;
-      }
-    }
+          font-size: 16px;
+          font-weight: 500;
+          color: var(--base-color);
+          margin: 0;
+          padding-bottom: 0;
+          flex: 1;
 
-    .form-group-compact {
-      margin-bottom: 1rem;
+      }
     }
 
     .color-input-wrapper {
@@ -52,10 +50,11 @@
         border-radius: 6px;
         border: 2px solid #e9ecef;
         pointer-events: none;
+        display: none;
       }
 
       .form-control[type="color"] {
-        height: 40px;
+        height: 32px;
         padding: 2px;
         border-radius: 8px;
         border: 1px solid #ced4da;
@@ -76,11 +75,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0.75rem 1rem;
-      background: #f8f9fa;
-      border-radius: 8px;
-      margin-bottom: 0.5rem;
-
+      gap: 5px;
       .switch-label {
         font-weight: 500;
         color: #495057;
@@ -96,7 +91,7 @@
       display: flex;
       gap: 0.75rem;
       flex-wrap: wrap;
-
+      margin-bottom: 10px;
       .form-check {
         background: #f8f9fa;
         border: 1px solid #e9ecef;
@@ -113,18 +108,18 @@
         }
 
         .form-check-input:checked ~ .form-check-label {
-          color: #0d6efd;
+          color: var(--base-color);
           font-weight: 600;
         }
 
         .form-check-input:checked {
-          background-color: #0d6efd;
-          border-color: #0d6efd;
+          background-color: var(--base-color);
+          border-color: var(--base-color);
         }
 
         &:has(.form-check-input:checked) {
-          background: #e7f1ff;
-          border-color: #0d6efd;
+          // background: #e7f1ff;
+          border-color: var(--base-color);
         }
 
         .form-check-label {
@@ -157,8 +152,8 @@
       transition: all 0.2s ease;
       
       &:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+        // border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgb(196 196 196 / 25%);
       }
     }
 
@@ -181,23 +176,13 @@
   .action-buttons {
     background: #ffffff;
     border: 1px solid #e8ecef;
-    border-radius: 12px;
-    padding: 1.5rem;
+    border-radius: 4px;
+    padding: 10px;
     margin-top: 1.5rem;
 
     .btn {
-      border-radius: 8px;
-      font-weight: 500;
-      padding: 0.6rem 1.25rem;
+      min-height: 32px;
       
-      &.btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none;
-        
-        &:hover {
-          background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-        }
-      }
 
       &.btn-outline-danger {
         border-width: 2px;
@@ -276,5 +261,26 @@
       align-items: flex-start;
       gap: 0.5rem;
     }
+  }
+}
+.form-group-number-short {
+  width: 100px;
+}
+.search-layout-appearance-options,
+.box-search-layout-options {
+    padding: 0;
+    width: 100%;
+    padding-left: 10px;
+    transition: all 0.2s ease;
+}
+.form-check-input[type="checkbox"]:checked {
+  background-color: var(--base-color);
+  border-color: var(--base-color) !important;
+}
+.box-search-config {
+  display: flex;
+  flex-direction: column;
+  .section-button-style {
+   order: -1;
   }
 }

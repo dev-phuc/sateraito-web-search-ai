@@ -60,12 +60,10 @@ const BoxSearchConfigAdminConsolePage = () => {
         <title>{t("PAGE_TITLE_BOX_SEARCH_CONFIG")}</title>
       </Helmet>
 
-      <Container fluid className="p-0">
-        <div className="d-flex flex-row h-100">
+      <Container fluid className="p-0 search-config-container">
+        <div className="d-flex flex-row h-100 gap-1 ">
           {/* Form config - Left */}
-          <div className="flex-grow-1 h-100 overflow-auto" style={{
-            maxWidth: "600px",
-          }}
+          <div className="flex-grow-1 h-100 search-config-left" 
           >
             <BoxSearchConfigForm
               tenant={tenant}
@@ -76,7 +74,7 @@ const BoxSearchConfigAdminConsolePage = () => {
           </div>
 
           {/* Panel preview - Right */}
-          <div className="flex-grow-1 p-3 border-start" style={{ background: "#fafbfc" }}>
+          <div className="flex-grow-1  search-config-right" >
             <BoxSearchConfigPreview
               tenant={tenant}
               app_id={app_id}

@@ -16,6 +16,7 @@
 		border-radius: var(--border-radius);
 	}
 	.sidebar-link{
+		height: 48px;
 		&.active{
 			&:after {
 				border-radius: var(--border-radius);
@@ -321,5 +322,10 @@ th {
 	&::after {
 			background-color: var(--base-color) !important;
 		opacity: 0.1!important;
+	}
+}
+.search-config-container{
+	.search-config-left{
+		max-width: 600px;
 	}
 }
