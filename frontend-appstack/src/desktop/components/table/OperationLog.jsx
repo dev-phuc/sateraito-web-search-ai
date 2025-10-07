@@ -64,7 +64,7 @@ const OperationLogsTable = ({
           whiteSpace: 'normal',
           textAlign: 'center'
         }}>
-          <span className='badge ai-model  chip'><i class="mdi mdi-robot "></i>{displayValue}</span>
+          <span className='badge ai-model  chip'><i className="mdi mdi-robot "></i>{displayValue}</span>
         </div>;
       }
 

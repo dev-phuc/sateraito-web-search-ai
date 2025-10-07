@@ -131,13 +131,7 @@ const LLMConfigurationBox = ({ }) => {
                     
                     <div className="position-relative">
                       <div 
-                        className="p-4 rounded-3 shadow-sm"
-                        style={{
-                          background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                          border: '1px solid #dee2e6',
-                          maxHeight: '300px',
-                          overflowY: 'auto'
-                        }}
+                        className="p-4 rounded-3 shadow-sm dashboard-promt"
                       >
                         <div style={{
                           fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',

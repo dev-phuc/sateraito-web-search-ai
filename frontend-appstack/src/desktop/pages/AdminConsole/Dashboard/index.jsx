@@ -86,21 +86,15 @@ const DashboardAdminConsolePage = () => {
             </div>
 
           </div>
-          {/* <div className="col-4">
-              <div className="wrap-box-dashboard mb-3">
+          <div className="col-12">
+              <div className="wrap-box-dashboard ">
                 <LLMUsageStatisticsBox />
               </div>
 
-              <div className="wrap-box-dashboard mb-3">
+              {/* <div className="wrap-box-dashboard mb-3">
                 <LLMClientWebsiteUsageStatisticsBox />
-              </div>
-            </div> */}
-          <div className="col-4">
-
+              </div> */}
           </div>
-
-
-
           <div className="col-12">
             <div className="wrap-box-dashboard mb-3">
               <OperationLogBox />

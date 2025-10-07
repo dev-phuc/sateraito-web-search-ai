@@ -480,6 +480,8 @@ a.active.dropdown-item:before {
 		box-shadow: none!important;
 		color: var(--base-text-color) !important;
 		border: 1px solid #f1f3f4;
+		min-height: 32px;
+		border-radius: 4px;
 		&:hover, &:active, &:focus {
 			background: transparent !important;
 			box-shadow: none !important;
