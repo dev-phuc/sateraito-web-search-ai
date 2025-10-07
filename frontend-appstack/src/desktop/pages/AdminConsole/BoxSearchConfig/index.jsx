@@ -74,7 +74,7 @@ const BoxSearchConfigAdminConsolePage = () => {
           </div>
 
           {/* Panel preview - Right */}
-          <div className="flex-grow-1  search-config-right" >
+          <div className="  search-config-right" >
             <BoxSearchConfigPreview
               tenant={tenant}
               app_id={app_id}

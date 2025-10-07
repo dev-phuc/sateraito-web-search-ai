@@ -305,8 +305,8 @@ const ClientWebsitesTable = ({
         {/* Table Body */}
         <Card.Body className="p-0">
           <div className="table-responsive">
-            <Table className="mb-0" hover>
-              <thead className="table-light">
+            <Table className="mb-0" hover borderless striped>
+              <thead >
                 <tr>
                   <th className="text-center" style={{ width: '40px' }}>
                     <input
@@ -320,10 +320,10 @@ const ClientWebsitesTable = ({
                   {/* <th className="text-center" style={{ width: '80px' }}></th> */}
                   <th>{t('NAME_COL_WEBSITE_NAME')}</th>
                   <th>{t('NAME_COL_WEBSITE_DESCRIPTION')}</th>
-                  <th>{t('NAME_COL_WEBSITE_AI_ENABLED')}</th>
+                  <th className="text-center" style={{ width: '100px' }}>{t('NAME_COL_WEBSITE_AI_ENABLED')}</th>
                   <th className="text-center" style={{ width: '80px' }}>{t('NAME_COL_STATUS')}</th>
-                  <th>{t('NAME_COL_CREATED_DATE')}</th>
-                  <th>{t('NAME_COL_UPDATED_DATE')}</th>
+                  <th className="text-center" style={{ width: '100px' }}>{t('NAME_COL_CREATED_DATE')}</th>
+                  <th className="text-center" style={{ width: '100px' }}>{t('NAME_COL_UPDATED_DATE')}</th>
                   <th className="text-center" style={{ width: '100px' }}>{t('NAME_COL_ACTIONS')}</th>
                 </tr>
               </thead>

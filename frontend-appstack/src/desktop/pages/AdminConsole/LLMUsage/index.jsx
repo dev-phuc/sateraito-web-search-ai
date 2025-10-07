@@ -18,13 +18,13 @@ import useTheme from "@/hooks/useTheme";
 // Library imports
 // Library IU imports
 import ApexCharts from "apexcharts";
-import { Container, Spinner } from "react-bootstrap";
+import { Row, Col, Container, Spinner } from "react-bootstrap";
 
 // Constant value
 
 // Components
 import Loader from "@/desktop/components/Loader";
-import OverviewUsageBoxPanel from "@/desktop/components/panel/OverviewUsageBox";
+import OverviewUsageBoxPanel from "@/desktop/components/box/OverviewUsageBoxNew";
 
 // Define the component
 const LLMUsageAdminConsolePage = () => {
@@ -195,73 +195,217 @@ const LLMUsageAdminConsolePage = () => {
               </div>
             </div>
           </div>
+          <Row>
+            <Col className="col-md-6 mb-4 mb-md-0">
+              <div className="wrap-chart position-relative">
+                <div id="chart-llm-usage">
+                  {/* Chart will be rendered here by ApexCharts */}
+                </div>
+                {/* Empty */}
+                {(dataTableShow.length === 0) && !isLoading && (
+                  <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
+                    <div className="text-center">
+                      <div className="h1 mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</div>
+                    </div>
+                  </div>
+                )}
+                {/* Marker loading */}
+                {isLoading && (
+                  <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75">
+                    <div className="text-center">
+                      <Spinner animation="border" variant="primary" />
+                      <div className="mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_LOADING')}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </Col>
+            {dataTableShow.length > 0 && (
+              <Col className="col-md-6">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <div className="card border-0 shadow-sm static-card" style={{ backgroundColor: '#f8f9ff' }}>
+                      <div className="card-body text-center p-3">
+                        <div >
+                          <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                            style={{ width: '48px', height: '48px', backgroundColor: '#e3f2fd' }}>
+                            <i className="mdi mdi-pencil-outline text-primary mdi-24px"></i>
+                          </div>
+                        </div>
+                        <small className="text-muted fw-medium d-block mb-2">{t('LABEL_TOTAL_PROMPT_TOKENS') || 'Prompt Tokens'}</small>
+                        <div className="h5 mb-0 fw-bold text-primary">
+                          {dataTableShow.reduce((sum, item) => sum + item.prompt_length, 0).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="card border-0 shadow-sm static-card" style={{ backgroundColor: '#fff8f0' }}>
+                      <div className="card-body text-center p-3">
+                        <div>
+                          <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                            style={{ width: '48px', height: '48px', backgroundColor: '#fff3e0' }}>
+                            <i className="mdi mdi-robot-outline text-warning mdi-24px"></i>
+                          </div>
+                        </div>
+                        <small className="text-muted fw-medium d-block mb-2">{t('LABEL_TOTAL_COMPLETION_TOKENS') || 'Completion Tokens'}</small>
+                        <div className="h5 mb-0 fw-bold text-warning">
+                          {dataTableShow.reduce((sum, item) => sum + item.completion_length, 0).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="card border-0 shadow-sm static-card" style={{ backgroundColor: '#f0fff4' }}>
+                      <div className="card-body text-center p-3">
+                        <div >
+                          <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                            style={{ width: '48px', height: '48px', backgroundColor: '#e8f5e8' }}>
+                            <i className="mdi mdi-chart-line text-success mdi-24px"></i>
+                          </div>
+                        </div>
+                        <small className="text-muted fw-medium d-block mb-2">{t('LABEL_GRAND_TOTAL_TOKENS') || 'Total Tokens'}</small>
+                        <div className="h5 mb-0 fw-bold text-success">
+                          {dataTableShow.reduce((sum, item) => sum + item.total_length, 0).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="card border-0 shadow-sm static-card" style={{ backgroundColor: '#fff5f5' }}>
+                      <div className="card-body text-center p-3">
+                        <div >
+                          <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-2"
+                            style={{ width: '48px', height: '48px', backgroundColor: '#ffebee' }}>
+                            <i className="mdi mdi-flash text-danger mdi-24px"></i>
+                          </div>
+                        </div>
+                        <small className="text-muted fw-medium d-block mb-2">{t('LABEL_TOTAL_API_CALLS') || 'API Calls'}</small>
+                        <div className="h5 mb-0 fw-bold text-danger">
+                          {dataTableShow.reduce((sum, item) => sum + (item.request_count || 1), 0).toLocaleString()}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Col>
+            )}
 
-          <div className="wrap-chart position-relative">
-            <div id="chart-llm-usage">
-              {/* Chart will be rendered here by ApexCharts */}
-            </div>
-            {/* Empty */}
-            {(dataTableShow.length === 0) && !isLoading && (
-              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-                <div className="text-center">
-                  <div className="h1 mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</div>
-                </div>
-              </div>
-            )}
-            {/* Marker loading */}
-            {isLoading && (
-              <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center bg-white bg-opacity-75">
-                <div className="text-center">
-                  <Spinner animation="border" variant="primary" />
-                  <div className="mt-2 text-muted small">{t('MSG_DATA_LLM_USAGE_LOADING')}</div>
-                </div>
-              </div>
-            )}
-          </div>
+          </Row>
+
         </div>
 
         {/* Usage breakdown */}
-        <Container fluid className="p-0 mt-4">
-          <div className="box p-3 bg-white rounded">
-            <div className="mb-3">
-              <h5 className="">{t('LABEL_LLM_USAGE_BREAKDOWN')}</h5>
-              <p>{t('MSG_LLM_USAGE_BREAKDOWN_INFO')}</p>
+        <Container fluid className="p-0 mt-4 usage-breakdown-container">
+          <div className=" card-custom  p-2">
+            {/* Header Section */}
+            <div className="bg-gradient-primary rounded-top">
+              <div className="d-flex align-items-center justify-content-between">
+                <div>
+                  <h4 className="mb-0 fw-bold text-dark">{t('LABEL_LLM_USAGE_BREAKDOWN')}</h4>
+                  <p className="mb-0 opacity-75 small">{t('MSG_LLM_USAGE_BREAKDOWN_INFO')}</p>
+                </div>
+                <div className="text-end">
+                  <div className="bg-white bg-opacity-20 rounded px-3 py-2">
+                    <div className="small opacity-75">{t('LABEL_TOTAL_RECORDS')}</div>
+                    <div className="h6 mb-0 fw-bold">{dataTableShow.length}</div>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* Table of dataTableShow */}
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover">
-                <thead>
-                  <tr>
-                    <th>{t('LABEL_TIMESTAMP')}</th>
-                    <th>{t('LABEL_MODEL_NAME')}</th>
-                    <th>{t('LABEL_PROMPT_LENGTH')}</th>
-                    <th>{t('LABEL_COMPLETION_LENGTH')}</th>
-                    <th>{t('LABEL_TOTAL_LENGTH')}</th>
-                    <th>{t('LABEL_TOTAL_REQUESTS')}</th>
-
-                  </tr>
-                </thead>
-                <tbody>
-                  {dataTableShow.length > 0 ? (
-                    dataTableShow.map((item, index) => (
-                      <tr key={index}>
-                        <td>{moment(item.timestamp).format('YYYY-MM-DD HH:mm:ss')}</td>
-                        <td>{item.model_name.join(', ')}</td>
-                        <td>{item.prompt_length}</td>
-                        <td>{item.completion_length}</td>
-                        <td>{item.total_length}</td>
-                        <td>{item.request_count || 1}</td>
-                      </tr>
-                    ))
-                  ) : (
+            {/* Table Section */}
+            <Row>
+              {/* Table Footer with Statistics */}
+              <Col className="table-responsive col-md-12">
+                <table className="table table-striped table-hover mb-0 ">
+                  <thead >
                     <tr>
-                      <td colSpan="6" className="text-center">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</td>
+                      <th className="border-0 py-3">
+                        <i className="mdi mdi-clock-outline me-2"></i>
+                        {t('LABEL_TIMESTAMP')}
+                      </th>
+                      <th className="border-0 py-3">
+                        <i className="mdi mdi-robot-outline me-2"></i>
+                        {t('LABEL_MODEL_NAME')}
+                      </th>
+                      <th className="border-0 py-3 text-center">
+                        <i className="mdi mdi-message-text-outline me-2"></i>
+                        {t('LABEL_PROMPT_LENGTH')}
+                      </th>
+                      <th className="border-0 py-3 text-center">
+                        <i className="mdi mdi-reply-outline me-2"></i>
+                        {t('LABEL_COMPLETION_LENGTH')}
+                      </th>
+                      <th className="border-0 py-3 text-center">
+                        <i className="mdi mdi-calculator me-2"></i>
+                        {t('LABEL_TOTAL_LENGTH')}
+                      </th>
+                      <th className="border-0 py-3 text-center">
+                        <i className="mdi mdi-send-outline me-2"></i>
+                        {t('LABEL_TOTAL_REQUESTS')}
+                      </th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {dataTableShow.length > 0 ? (
+                      dataTableShow.map((item, index) => (
+                        <tr key={index} className="align-middle">
+                          <td className="py-3">
+                            <div className="d-flex ">
+                              <span className="fw-medium">{moment(item.timestamp).format('YYYY-MM-DD')} {moment(item.timestamp).format('HH:mm:ss')}</span>
+                            </div>
+                          </td>
+                          <td className="py-3">
+                            <div className="d-flex flex-wrap gap-1">
+                              {item.model_name.map((model, idx) => (
+                                // <span key={idx} className="badge bg-secondary bg-opacity-10 text-dark border">
+                                //   {model}
+                                // </span>
+                                <span key={idx} className='badge ai-model chip'><i class="mdi mdi-robot "></i>{model}</span>
+
+                              ))}
+                            </div>
+                          </td>
+                          <td className="py-3 text-left">
+                            <span className="badge text-info bg-opacity-20  px-3 py-2 rounded-pill">
+                              {item.prompt_length.toLocaleString()}
+                            </span>
+                          </td>
+                          <td className="py-3 text-center">
+                            <span className="badge bg-white text-success bg-opacity-20 px-3 py-2 rounded-pill">
+                              {item.completion_length.toLocaleString()}
+                            </span>
+                          </td>
+                          <td className="py-3 text-center">
+                            <span className="badge bg-white text-primary bg-opacity-20 px-3 py-2 rounded-pill fw-bold">
+                              {item.total_length.toLocaleString()}
+                            </span>
+                          </td>
+                          <td className="py-3 text-center">
+                            <span className="badge bg-white text-warning bg-opacity-20  px-3 py-2 rounded-pill">
+                              {(item.request_count || 1).toLocaleString()}
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6" className="text-center py-5">
+                          <div className="d-flex flex-column align-items-center justify-content-center">
+                            <i className="mdi mdi-chart-bar mdi-48px text-muted mb-3 opacity-50"></i>
+                            <h6 className="text-muted mb-2">{t('MSG_DATA_LLM_USAGE_NO_DATA')}</h6>
+                            <small className="text-muted opacity-75">
+                              {t('MSG_TRY_DIFFERENT_TIME_FRAME') || 'Try selecting a different time frame'}
+                            </small>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </Col>
+            </Row>
           </div>
         </Container>
 

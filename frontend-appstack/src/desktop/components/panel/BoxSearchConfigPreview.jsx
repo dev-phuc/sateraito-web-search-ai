@@ -127,7 +127,9 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
 
   // Return the component
   return (
-    <Card className="shadow-sm h-100">
+    <Card className="shadow-none h-100">
+      <div className="tab">
+
       <Tabs
         defaultActiveKey="preview"
         className="mb-3"
@@ -234,6 +236,7 @@ const BoxSearchConfigPreviewPanel = ({ tenant, app_id }) => {
           </Card.Body>
         </Tab>
       </Tabs>
+      </div>
     </Card>
   );
 };

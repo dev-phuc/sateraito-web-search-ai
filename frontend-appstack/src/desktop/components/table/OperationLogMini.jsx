@@ -30,7 +30,7 @@ const OperationLogsMiniTable = ({ }) => {
     // { key: 'tenant', width: '150px', label: t('NAME_COL_TENANT') },
     // { key: 'app_id', width: '100px', label: t('NAME_COL_APP_ID') },
     {
-      key: 'client_domain', width: '170px', label: t('NAME_COL_CLIENT_DOMAIN'),
+      key: 'client_domain',label: t('NAME_COL_CLIENT_DOMAIN'),
       render: (value) => (<div style={{
         display: '-webkit-box',
         WebkitLineClamp: 1,
@@ -57,7 +57,7 @@ const OperationLogsMiniTable = ({ }) => {
           whiteSpace: 'normal',
           textAlign: 'center'
         }}>
-          <span className='badge bg-info'>{displayValue}</span>
+          <span className='badge ai-model chip'><i class="mdi mdi-robot "></i>{displayValue}</span>
         </div>;
       }
     },
@@ -66,14 +66,33 @@ const OperationLogsMiniTable = ({ }) => {
       render: (value) => {
         let className = 'bg-secondary';
         let text = value || '-';
+        let icon = 'mdi-help-circle';
 
-        if (value === 'completed') { className = 'bg-success'; text = t('STATUS_COMPLETED'); }
-        else if (value === 'failed') { className = 'bg-danger'; text = t('STATUS_FAILED'); }
-        else if (value === 'pending') { className = 'bg-warning text-dark'; text = t('STATUS_PENDING'); }
-        else if (value === 'processing') { className = 'bg-info text-dark'; text = t('STATUS_PROCESSING'); }
+        if (value === 'completed') { 
+          className = 'bg-success'; 
+          text = t('STATUS_COMPLETED'); 
+          icon = 'mdi-check-circle';
+        }
+        else if (value === 'failed') { 
+          className = 'bg-danger'; 
+          text = t('STATUS_FAILED'); 
+          icon = 'mdi-close-circle';
+        }
+        else if (value === 'pending') { 
+          className = 'bg-warning text-dark'; 
+          text = t('STATUS_PENDING'); 
+          icon = 'mdi-clock-outline';
+        }
+        else if (value === 'processing') { 
+          className = 'bg-info text-dark'; 
+          text = t('STATUS_PROCESSING'); 
+          icon = 'mdi-cog';
+        }
 
         return <div className='text-center'>
-          <span className={`badge ${className}`}>{text}</span>
+          <span className={`chip badge ${className}`}>
+            <i className={`mdi ${icon} `}></i>{text}
+          </span>
         </div>;
       }
     },
@@ -170,11 +189,11 @@ const OperationLogsMiniTable = ({ }) => {
         {/* Table Body */}
         <Card.Body className="p-0" >
           <div className="table-responsive">
-            <Table className="mb-0" hover>
-              <thead className="table-light">
+            <Table  hover className="mb-0" borderless striped>
+              <thead className="">
                 <tr>
                   {columnsTable.map((col) => (
-                    <th key={col.key}>{col.label}</th>
+                    <th style={col.width ? { width: col.width ,textAlign: 'center' } : {}} key={col.key}>{col.label}</th>
                   ))}
                 </tr>
               </thead>
@@ -213,6 +232,7 @@ const OperationLogsMiniTable = ({ }) => {
         onHide={() => setShowDetailLog(false)}
         size="lg"
         centered
+        className='modal-detail-log'
       >
         <Modal.Header closeButton>
           <Modal.Title>{t('TITLE_DETAIL_OPERATION_LOG')}</Modal.Title>

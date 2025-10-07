@@ -83,12 +83,12 @@ const LLMConfigurationBox = ({ }) => {
                   <h4 className="mb-0 fw-bold text-dark">{t("LABEL_LLM_CONFIGURATION")}</h4>
                   {llmConfiguration ? (
                     <div className="d-flex align-items-center gap-2 mt-1">
-                      <span className="badge bg-primary px-2 py-1 rounded-pill small">
-                        <i className="mdi mdi-robot me-1"></i>
+                      <span className="badge ai-model px-2 py-1 rounded-pill small chip">
+                        <i className="mdi mdi-robot "></i>
                         {llmConfiguration.model_name}
                       </span>
-                      <span className={`badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)} px-2 py-1 rounded-pill small`}>
-                        <i className="mdi mdi-gauge me-1"></i>
+                      <span className={`badge bg-${getBadgeVariant(llmConfiguration?.response_length_level)} px-2 py-1 rounded-pill small chip`}>
+                        <i className="mdi mdi-gauge "></i>
                         {llmConfiguration?.response_length_level ? t(`LABEL_RESPONSE_${llmConfiguration.response_length_level.toUpperCase()}`) : t("TXT_NOT_SET")}
                       </span>
                     </div>

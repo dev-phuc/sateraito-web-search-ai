@@ -36,7 +36,6 @@ const OperationLogsTable = ({
     { key: 'tenant', width: '150px', label: t('NAME_COL_TENANT') },
     { key: 'app_id', width: '100px', label: t('NAME_COL_APP_ID') },
     { key: 'client_domain', label: t('NAME_COL_CLIENT_DOMAIN') },
-    { key: 'model_name', width: '120px', label: t('NAME_COL_MODEL_NAME') },
     {
       key: 'prompt', label: t('NAME_COL_PROMPT'),
       render: (value) => (<div style={{
@@ -49,11 +48,54 @@ const OperationLogsTable = ({
       }}>{value || '-'}</div>)
     },
     {
+      key: 'model_name', alignItem: 'center', width: '120px', label: t('NAME_COL_MODEL_NAME'),
+      render: (value) => {
+        let displayValue = value || '-';
+        if (value && value.length > 15) {
+          displayValue = value.substring(0, 15) + '...';
+        }
+
+        return <div style={{
+          display: '-webkit-box',
+          WebkitLineClamp: 1,
+          WebkitBoxOrient: 'vertical',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'normal',
+          textAlign: 'center'
+        }}>
+          <span className='badge ai-model  chip'><i class="mdi mdi-robot "></i>{displayValue}</span>
+        </div>;
+      }
+
+     },
+
+    {
       key: 'status', width: '120px', label: t('NAME_COL_STATUS'),
       render: (value) => {
-        if (value === 'completed') { return <span className="badge bg-success">{t('STATUS_COMPLETED')}</span>; }
-        if (value === 'failed') { return <span className="badge bg-danger">{t('STATUS_FAILED')}</span>; }
-        return <span className="badge bg-secondary">{value || '-'}</span>;
+        if (value === 'completed') { 
+          return <span className="badge bg-success chip">
+            <i className="mdi mdi-check-circle "></i>{t('STATUS_COMPLETED')}
+          </span>; 
+        }
+        if (value === 'failed') { 
+          return <span className="badge bg-danger chip">
+            <i className="mdi mdi-close-circle "></i>{t('STATUS_FAILED')}
+          </span>; 
+        }
+        if (value === 'pending') { 
+          return <span className="badge bg-warning text-dark chip">
+            <i className="mdi mdi-clock-outline"></i>{t('STATUS_PENDING')}
+          </span>; 
+        }
+        if (value === 'processing') { 
+          return <span className="badge bg-info text-dark chip">
+            <i className="mdi mdi-cog "></i>{t('STATUS_PROCESSING')}
+          </span>; 
+        }
+        return <span className="badge bg-secondary chip">
+          <i className="mdi mdi-help-circle"></i>{value || '-'}
+        </span>;
       }
     },
     { key: 'created_date', label: t('NAME_COL_CREATED_AT'), width: '180px' },
@@ -177,8 +219,8 @@ const OperationLogsTable = ({
         {/* Table Body */}
         <Card.Body className="p-0" >
           <div className="table-responsive">
-            <Table className="mb-0" hover>
-              <thead className="table-light">
+            <Table  hover className="mb-0" borderless striped>
+              <thead >
                 <tr>
                   {columnsTable.map((col) => (
                     <th key={col.key}>{col.label}</th>
@@ -226,7 +268,7 @@ const OperationLogsTable = ({
               </>
             )}
           </div>
-          <div>
+          <div className="d-f-c">
             {/* Options limit */}
             <select className="form-select form-select-sm d-inline-block w-auto me-3" value={limit} onChange={(e) => {
               const newLimit = parseInt(e.target.value, 10);
@@ -239,11 +281,12 @@ const OperationLogsTable = ({
             </select>
 
             {/* Previous buttons */}
-            <button className="btn btn-outline-primary me-2" disabled={page <= 1 || isLoading} onClick={() => {
+            <button variant="" className="btn st-btn-material-outline me-2" disabled={page <= 1 || isLoading} onClick={() => {
               if (page > 1) {
                 setPage(page - 1);
               }
             }}>
+              <i className="mdi mdi-chevron-left"></i>
               {t('BTN_PREVIOUS')}
             </button>
 
@@ -251,7 +294,8 @@ const OperationLogsTable = ({
             {listPages.map((p, index) => (
               <button
                 key={index}
-                className={`btn me-1 ${p === page ? 'btn-primary' : 'btn-outline-primary'}`}
+                variant="" 
+                className={`btn me-1 ${p === page ? 'st-btn-material' : 'st-btn-material-outline'}`}
                 disabled={p === '...' || p === page || isLoading}
                 onClick={() => {
                   if (p !== '...' && p !== page) {
@@ -264,12 +308,13 @@ const OperationLogsTable = ({
             ))}
 
             {/* Next buttons */}
-            <button className="btn btn-outline-primary" disabled={!isHaveMore || isLoading} onClick={() => {
+            <button variant="" className="btn st-btn-material-outline" disabled={!isHaveMore || isLoading} onClick={() => {
               if (isHaveMore) {
                 const nextPage = page + 1;
                 setPage(nextPage);
               }
             }}>
+              <i className="mdi mdi-chevron-right"></i>
               {t('BTN_NEXT_PAGE')}
             </button>
           </div>
@@ -282,6 +327,7 @@ const OperationLogsTable = ({
         onHide={() => setShowDetailLog(false)}
         size="lg"
         centered
+        className='modal-detail-log'
       >
         <Modal.Header closeButton>
           <Modal.Title>{t('TITLE_DETAIL_OPERATION_LOG')}</Modal.Title>
