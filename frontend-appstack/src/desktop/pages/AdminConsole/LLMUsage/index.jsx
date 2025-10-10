@@ -243,7 +243,7 @@ const LLMUsageAdminConsolePage = () => {
                   {/* Time Frame Filter Chips */}
                   <div className="d-flex align-items-center flex-wrap gap-2">
                     <div className="d-flex align-items-center me-2">
-                      <i className="mdi mdi-calendar-range me-1 text-primary" style={{ fontSize: '0.9rem' }}></i>
+                      <i className="mdi mdi-calendar-range me-1 text-primary" style={{ fontSize: '18px' }}></i>
                       <span className="text-dark fw-medium" style={{ fontSize: '0.85rem' }}>{t('LABEL_TIME_FRAME')}:</span>
                     </div>
                     {TIME_FRAME_LIST.map((frame) => (
@@ -295,7 +295,7 @@ const LLMUsageAdminConsolePage = () => {
                   {/* Chart Type Filter Chips */}
                   <div className="d-flex align-items-center flex-wrap gap-2">
                     <div className="d-flex align-items-center me-2">
-                      <i className="mdi mdi-chart-bar me-1 text-success" style={{ fontSize: '0.9rem' }}></i>
+                      <i className="mdi mdi-chart-bar me-1 text-success" style={{ fontSize: '18px' }}></i>
                       <span className="text-dark fw-medium" style={{ fontSize: '0.85rem' }}>{t('LABEL_CHART_TYPE')}:</span>
                     </div>
                     {CHART_TYPE.map((type) => (

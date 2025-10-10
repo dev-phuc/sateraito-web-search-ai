@@ -41,7 +41,9 @@ body{
 ::-webkit-scrollbar-track {
 	background: #f1f1f1
 }
-
+  .text-base {
+  	color: var(--base-color);
+  }
 .form-check-input{
 	width: 14px;
 	height: 14px;
@@ -672,5 +674,6 @@ i.notyf__icon--success{
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 .btn-red{
-	--base-color:red;
+	    --base-color: #F44336;
+	    color: var(--base-color) !important;
 }

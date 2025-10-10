@@ -9,6 +9,9 @@ import { Form, Button, Modal, Spinner, Row, Col, Card } from "react-bootstrap";
 // Hook components
 import useTheme from '@/hooks/useTheme'
 
+// Components
+import DomainFilter from './DomainFilter';
+
 // Zustand
 import useStoreLLMConfiguration from '@/store/llm_configuration';
 
@@ -16,72 +19,30 @@ import useStoreLLMConfiguration from '@/store/llm_configuration';
 import { LLM_CONFIGURATION_DEFAULT } from '@/constants';
 import { faHandsAslInterpreting } from '@fortawesome/free-solid-svg-icons';
 
-// Utils
-import { validateDomainOrUrl } from '@/utils';
-
 const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
   // Default hooks
   const { t } = useTranslation();
   const { showNotice } = useTheme();
-
+  const RESPONSE_LIST = [
+    { value: 'low', label: t('LABEL_RESPONSE_LOW'), icon: 'mdi mdi-speedometer-slow' },
+    { value: 'medium', label: t('LABEL_RESPONSE_MEDIUM'), icon: 'mdi mdi-speedometer-medium' },
+    { value: 'high', label: t('LABEL_RESPONSE_HIGH'), icon: 'mdi mdi-speedometer' },
+  ];
   // State
   const [loading, setLoading] = useState({ submitting: false });
   const submittingRef = useRef(false);
   const [showConfirmResetDefaults, setShowConfirmResetDefaults] = useState(false);
-  const [currentSearchDomain, setCurrentSearchDomain] = useState('');
-  const [currentExcludedDomain, setCurrentExcludedDomain] = useState('');
+  const [responseState, setResponseState] = useState('low');
 
   // Zustand stores
   const { llmConfiguration, editLLMConfiguration } = useStoreLLMConfiguration();
 
-  // Domain array handlers
-  const addSearchDomain = (setFieldValue, values) => {
-    const trimmedDomain = currentSearchDomain.trim().toLowerCase();
-    if (trimmedDomain) {
-      if (!validateDomainOrUrl(trimmedDomain)) {
-        showNotice('error', t('MSG_ERROR_DOMAIN_INVALID'));
-        return;
-      }
-      const currentDomains = values.search_domain_filter || [];
-      if (currentDomains.includes(trimmedDomain)) {
-        showNotice('warning', t('MSG_WARNING_DOMAIN_ALREADY_EXISTS'));
-        return;
-      }
-      setFieldValue('search_domain_filter', [...currentDomains, trimmedDomain]);
-      setCurrentSearchDomain('');
-      // showNotice('success', t('MSG_SUCCESS_DOMAIN_ADDED'));
+  // Sync responseState with form values
+  useEffect(() => {
+    if (llmConfiguration?.response_length_level) {
+      setResponseState(llmConfiguration.response_length_level);
     }
-  };
-
-  const removeSearchDomain = (setFieldValue, values, indexToRemove) => {
-    const currentDomains = values.search_domain_filter || [];
-    setFieldValue('search_domain_filter', currentDomains.filter((_, index) => index !== indexToRemove));
-    // showNotice('success', t('MSG_INFO_DOMAIN_REMOVED'));
-  };
-
-  const addExcludedDomain = (setFieldValue, values) => {
-    const trimmedDomain = currentExcludedDomain.trim().toLowerCase();
-    if (trimmedDomain) {
-      if (!validateDomainOrUrl(trimmedDomain)) {
-        showNotice('error', t('MSG_ERROR_DOMAIN_INVALID'));
-        return;
-      }
-      const currentDomains = values.excluded_domain_filter || [];
-      if (currentDomains.includes(trimmedDomain)) {
-        showNotice('warning', t('MSG_WARNING_DOMAIN_ALREADY_EXISTS'));
-        return;
-      }
-      setFieldValue('excluded_domain_filter', [...currentDomains, trimmedDomain]);
-      setCurrentExcludedDomain('');
-      // showNotice('success', t('MSG_SUCCESS_DOMAIN_ADDED'));
-    }
-  };
-
-  const removeExcludedDomain = (setFieldValue, values, indexToRemove) => {
-    const currentDomains = values.excluded_domain_filter || [];
-    setFieldValue('excluded_domain_filter', currentDomains.filter((_, index) => index !== indexToRemove));
-    // showNotice('success', t('MSG_INFO_DOMAIN_REMOVED'));
-  };
+  }, [llmConfiguration]);
 
   const validationSchema = Yup.object().shape({
     model_name: Yup.string().required(t('MSG_ERROR_MODEL_NAME_REQUIRED')),
@@ -170,24 +131,18 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
           <Form onSubmit={handleSubmit} noValidate className=''>
             <Card className='shadow-none mx-2 mt-2 mb-3'>
               <Row>
-                <Col md={12} className="mb-3">
-                  <Form.Group>
-                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
-                      <span className='me-2 mdi mdi-message-text'></span>
-                      {t('LABEL_SYSTEM_PROMPT')}
-                    </Form.Label>
-                    <Form.Control
-                      as="textarea"
-                      rows={9}
-                      name="system_prompt"
-                      value={values.system_prompt || ''}
-                      onChange={handleChange}
-                      placeholder={t('TXT_SYSTEM_PROMPT_PLACEHOLDER')}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6} className="mb-3">
-                  <Form.Group>
+                <div className="model-intro p-3 mb-3 bg-gradient-light rounded-3 border border-primary border-opacity-25 d-flex align-items-center justify-content-between flex-wrap gap-3">
+                  <div className="d-flex align-items-center gap-3">
+                    <div className="d-flex align-items-center gap-2">
+                      <span className="fw-semibold text-primary">{t('LABEL_MODEL_NAME')}</span>
+                    </div>
+                    <span className="badge ai-model px-2 py-1 rounded-pill small chip">
+                      <i className="mdi mdi-robot me-2"></i>
+                      <span className="fw-semibold">{values.model_name}</span>
+                    </span>
+                  </div>
+
+                  {/* <Form.Group>
                     <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
                       <span className='me-2 mdi mdi-chart-bubble'></span>
                       {t('LABEL_MODEL_NAME')}
@@ -201,234 +156,79 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                       placeholder={t('TXT_MODEL_NAME_PLACEHOLDER')}
                       readOnly
                       disabled
+                      className="d-none"
                     />
                     <Form.Control.Feedback type="invalid">{touched.model_name && errors.model_name}</Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col md={6} className="mb-3">
-                  <Form.Group>
-                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
-                      <span className='me-2 mdi mdi-format-align-left'></span>
-                      {t('LABEL_RESPONSE_LENGTH_LEVEL')}
-                    </Form.Label>
-                    <Form.Select
-                      name="response_length_level"
-                      value={values.response_length_level}
-                      onChange={handleChange}
-                      isInvalid={touched.response_length_level && !!errors.response_length_level}
-                    >
-                      <option value="low">{t('LABEL_RESPONSE_LOW')}</option>
-                      <option value="medium">{t('LABEL_RESPONSE_MEDIUM')}</option>
-                      <option value="high">{t('LABEL_RESPONSE_HIGH')}</option>
-                    </Form.Select>
-                    <Form.Control.Feedback type="invalid">{touched.response_length_level && errors.response_length_level}</Form.Control.Feedback>
-                  </Form.Group>
-                </Col>
-                <Col md={12} className="mb-4">
-                  <Form.Group>
-                    <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
-                      <span className='me-2 mdi mdi-filter'></span>
-                      {t('LABEL_DOMAIN_FILTER_SETTINGS')}
-                    </Form.Label>
-                    <div className="d-flex align-items-center mb-2">
-                      <Form.Check
-                        type="checkbox"
-                        name="enabled_domain_filter"
-                        id="enabled_domain_filter"
-                        checked={values.enabled_domain_filter || false}
-                        onChange={handleChange}
-                      />
-                      <Form.Label className="mb-0 ms-1 me-2" htmlFor='enabled_domain_filter'>
-                        {t('LABEL_ENABLED_DOMAIN_FILTER')}
-                      </Form.Label>
-                      <i className="mdi mdi-information-outline text-muted"
-                        title={t('TXT_DOMAIN_FILTER_DESCRIPTION')}
-                        style={{ cursor: 'help' }}>
-                      </i>
+                  </Form.Group> */}
+                  <div className="response-level-section">
+                    <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
+                      <div className="d-flex align-items-center gap-2 mb-2 mb-lg-0">
+                        <span className="fw-semibold text-info">{t('LABEL_RESPONSE_LENGTH_LEVEL')}</span>
+                      </div>
+                      <div className="d-flex flex-wrap gap-2">
+                        {RESPONSE_LIST.map((item) => (
+                          <button
+                            key={item.value}
+                            type="button"
+                            className={`btn st-btn-material-outline rounded-pill d-flex align-items-center quick-filter-chip ${values.response_length_level} ${
+                              item.value === values.response_length_level
+                                ? ' text-white shadow-sm active'
+                                : ' bg-white text-info border-info border-opacity-50 hover-lift'
+                            }`}
+                            style={{
+                              fontSize: '0.85rem',
+                              fontWeight: '500',
+                              transition: 'all 0.2s ease-in-out',
+                            }}
+                            onClick={() => {
+                              setResponseState(item.value);
+                              setFieldValue('response_length_level', item.value);
+                            }}
+                          >
+                            <i className={item.icon} style={{ fontSize: '1.1rem' }}></i>
+                            <span>{item.label}</span>
+                            {item.value === values.response_length_level && (
+                              <i className="mdi mdi-check-circle ms-1" style={{ fontSize: '0.9rem' }}></i>
+                            )}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                    <Form.Text className="text-muted">
-                      {t('TXT_DOMAIN_FILTER_DESCRIPTION')}
-                    </Form.Text>
+                  </div>
+                </div>
+
+                <Col md={7} className="mb-3">
+                  <Form.Group>
+                    <Form.Label className="fw-bold text-base mb-1 d-flex align-items-center ">
+                      <span className='me-2 mdi mdi-message-text'></span>
+                      {t('LABEL_SYSTEM_PROMPT')}
+                    </Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={12}
+                      name="system_prompt"
+                      value={values.system_prompt || ''}
+                      onChange={handleChange}
+                      placeholder={t('TXT_SYSTEM_PROMPT_PLACEHOLDER')}
+                      className="dashboard-promt"
+                    />
                   </Form.Group>
                 </Col>
 
-                {values.enabled_domain_filter && (
-                  <>
-                    <Col md={12} className="mb-4">
-                      <Card className="border-success border-opacity-25 bg-light bg-opacity-50">
-                        <Card.Body className="p-3">
-                          <Form.Group>
-                            <div className="d-flex align-items-center mb-2">
-                              <Form.Label className="mb-0 me-2 fw-semibold text-success">
-                                <i className="mdi mdi-check-circle me-1"></i>
-                                {t('LABEL_SEARCH_DOMAIN_FILTER')}
-                              </Form.Label>
-                              <i className="mdi mdi-information-outline text-muted" title={t('TXT_SEARCH_DOMAIN_HELP')} style={{ cursor: 'help' }}></i>
-                            </div>
-
-                            <Row>
-                              <Col md="6">
-                                <Form.Text className="text-muted mb-2 d-block">
-                                  {t('TXT_SEARCH_DOMAIN_HELP')}
-                                </Form.Text>
-                                <div className="d-flex flex-column flex-sm-row">
-                                  <Form.Control
-                                    type="text"
-                                    placeholder={t('TXT_SEARCH_DOMAIN_PLACEHOLDER')}
-                                    value={currentSearchDomain}
-                                    onChange={(e) => setCurrentSearchDomain(e.target.value)}
-                                    onKeyPress={(e) => {
-                                      if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        addSearchDomain(setFieldValue, values);
-                                      }
-                                    }}
-                                    className="border-success border-opacity-50 mb-2 mb-sm-0"
-                                  />
-                                  <Button
-                                    type="button"
-                                    variant="outline-success"
-                                    className="ms-sm-2 px-3 d-flex align-items-center justify-content-center"
-                                    onClick={() => addSearchDomain(setFieldValue, values)}
-                                    disabled={!currentSearchDomain.trim()}
-                                  >
-                                    <i className="mdi mdi-plus me-1 d-sm-none"></i>
-                                    <i className="mdi mdi-plus d-none d-sm-inline"></i>
-                                    <span className="d-sm-none">Add Domain</span>
-                                  </Button>
-                                </div>
-                              </Col>
-
-                              <Col md="6">
-                                {values.search_domain_filter && values.search_domain_filter.length > 0 ? (
-                                  <div>
-                                    <small className="text-muted d-block">
-                                      <i className="mdi mdi-label-outline me-1"></i>
-                                      {/* Allowed domains ({values.search_domain_filter.length}): */}
-                                      {t('LABEL_ALLOWED_DOMAINS', { count: values.search_domain_filter.length })}
-                                    </small>
-                                    <div className="d-flex flex-wrap gap-2">
-                                      {values.search_domain_filter.map((domain, index) => (
-                                        <span key={index} className="badge bg-success bg-opacity-90 fs-6 d-flex align-items-center">
-                                          <i className="mdi mdi-web me-1"></i>
-                                          {domain}
-                                          <button
-                                            type="button"
-                                            className="btn-close btn-close-white ms-2"
-                                            style={{ fontSize: '0.7em' }}
-                                            onClick={() => removeSearchDomain(setFieldValue, values, index)}
-                                            aria-label="Remove domain"
-                                          ></button>
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="text-center text-muted">
-                                    <i className="mdi mdi-inbox-outline me-1"></i>
-                                    <small>{t('TXT_NO_DOMAINS_ADDED')}</small>
-                                  </div>
-                                )}
-                              </Col>
-
-                            </Row>
-                          </Form.Group>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-
-                    <Col md={12} className="mb-4">
-                      <Card className="border-danger border-opacity-25 bg-light bg-opacity-50">
-                        <Card.Body className="p-3">
-                          <Form.Group>
-                            <div className="d-flex align-items-center mb-2">
-                              <Form.Label className="mb-0 me-2 fw-semibold text-danger">
-                                <i className="mdi mdi-block-helper me-1"></i>
-                                {t('LABEL_EXCLUDED_DOMAIN_FILTER')}
-                              </Form.Label>
-                              <i className="mdi mdi-information-outline text-muted" title={t('TXT_EXCLUDED_DOMAIN_HELP')} style={{ cursor: 'help' }}></i>
-                            </div>
-
-                            <Row>
-                              <Col md="6">
-                                <Form.Text className="text-muted mb-2 d-block">
-                                  {t('TXT_EXCLUDED_DOMAIN_HELP')}
-                                </Form.Text>
-                                <div className="d-flex flex-column flex-sm-row">
-                                  <Form.Control
-                                    type="text"
-                                    placeholder={t('TXT_EXCLUDED_DOMAIN_PLACEHOLDER')}
-                                    value={currentExcludedDomain}
-                                    onChange={(e) => setCurrentExcludedDomain(e.target.value)}
-                                    onKeyPress={(e) => {
-                                      if (e.key === 'Enter') {
-                                        e.preventDefault();
-                                        addExcludedDomain(setFieldValue, values);
-                                      }
-                                    }}
-                                    className="border-danger border-opacity-50 mb-2 mb-sm-0"
-                                  />
-                                  <Button
-                                    type="button"
-                                    variant="outline-danger"
-                                    className="ms-sm-2 px-3 d-flex align-items-center justify-content-center"
-                                    onClick={() => addExcludedDomain(setFieldValue, values)}
-                                    disabled={!currentExcludedDomain.trim()}
-                                  >
-                                    <i className="mdi mdi-plus me-1 d-sm-none"></i>
-                                    <i className="mdi mdi-plus d-none d-sm-inline"></i>
-                                    <span className="d-sm-none">Add Domain</span>
-                                  </Button>
-                                </div>
-                              </Col>
-
-                              <Col md="6">
-                                {values.excluded_domain_filter && values.excluded_domain_filter.length > 0 ? (
-                                  <div>
-                                    <small className="text-muted d-block">
-                                      <i className="mdi mdi-label-outline me-1"></i>
-                                      {t('LABEL_BLOCKED_DOMAINS', { count: values.excluded_domain_filter.length })}
-                                    </small>
-                                    <div className="d-flex flex-wrap gap-2">
-                                      {values.excluded_domain_filter.map((domain, index) => (
-                                        <span key={index} className="badge bg-danger bg-opacity-90 fs-6 d-flex align-items-center">
-                                          <i className="mdi mdi-web-off me-1"></i>
-                                          {domain}
-                                          <button
-                                            type="button"
-                                            className="btn-close btn-close-white ms-2"
-                                            style={{ fontSize: '0.7em' }}
-                                            onClick={() => removeExcludedDomain(setFieldValue, values, index)}
-                                            aria-label="Remove domain"
-                                          ></button>
-                                        </span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="text-center text-muted">
-                                    <i className="mdi mdi-inbox-outline me-1"></i>
-                                    <small>{t('TXT_NO_DOMAINS_ADDED')}</small>
-                                  </div>
-                                )}
-                              </Col>
-
-                            </Row>
-                          </Form.Group>
-                        </Card.Body>
-                      </Card>
-                    </Col>
-                  </>
-                )}
+                <DomainFilter 
+                  values={values}
+                  handleChange={handleChange}
+                  setFieldValue={setFieldValue}
+                />
               </Row>
             </Card>
 
             {/* Form actions */}
-            <div className='px-3 mx-2 mb-3'>
+            <Col md={6} className="action-buttons " >
               <Row className="mt-3">
                 <Col lg="8" className="mb-3 mb-lg-0">
                   <div className="d-flex flex-column flex-sm-row gap-2">
-                    <Button type="submit" disabled={loading.submitting || !isValid || (!dirty && !isSubmitting)} aria-busy={loading.submitting}>
+                    <Button className="btn st-btn-material" variant='' type="submit" disabled={loading.submitting || !isValid || (!dirty && !isSubmitting)} aria-busy={loading.submitting}>
                       {loading.submitting ? (
                         <>
                           <i className="mdi mdi-spin mdi-loading"></i>
@@ -442,7 +242,7 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                       }
                     </Button>
                     {onCancel && <Button variant="secondary" onClick={onCancel}>{t('BTN_CANCEL')}</Button>}
-                    <Button variant="outline-secondary" disabled={loading.submitting} onClick={() => resetForm()}>
+                    <Button className="btn st-btn-material-outline" variant="" disabled={loading.submitting} onClick={() => resetForm()}>
                       <i className="mdi mdi-restore"></i>
                       <span className="ms-2">{t('BTN_RESET')}</span>
                     </Button>
@@ -450,7 +250,7 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                 </Col>
                 <Col lg="4">
                   <div className="d-flex justify-content-lg-end">
-                    <Button variant="outline-danger" onClick={() => setShowConfirmResetDefaults(true)} disabled={loading.submitting || showConfirmResetDefaults} className="w-100 w-lg-auto">
+                    <Button className="btn st-btn-material-outline" variant=""  onClick={() => setShowConfirmResetDefaults(true)} disabled={loading.submitting || showConfirmResetDefaults} >
                       <i className="mdi mdi-backup-restore"></i>
                       <span className="ms-2">{t('BTN_RESET_TO_DEFAULTS')}</span>
                     </Button>
@@ -460,7 +260,7 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                   <Form.Text className="d-block text-muted mt-2">{t('TXT_FORM_SUBMIT_CONDITION')}</Form.Text>
                 </Col>
               </Row>
-            </div>
+            </Col>
             
             {/* Modal for confirm reset to defaults */}
             <Modal show={showConfirmResetDefaults} onHide={() => setShowConfirmResetDefaults(false)} centered>
