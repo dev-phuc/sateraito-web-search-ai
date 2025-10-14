@@ -285,32 +285,6 @@
       min-height: 50px;
       box-shadow: rgba(139, 92, 246, 0.1) 0px 1px 3px;
 }
-  .action-buttons {
-    background: #ffffff;
-    border: 1px solid #e8ecef;
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 1.5rem;
-
-    .btn {
-      min-height: 32px;
-
-
-      &.btn-outline-danger {
-        border-width: 2px;
-      }
-
-      i {
-        font-size: 0.9rem;
-      }
-    }
-
-    .form-text {
-      font-size: 0.8rem;
-      color: #6c757d;
-      margin-top: 0.75rem;
-    }
-  }
 
 
   .domain-filter-container{

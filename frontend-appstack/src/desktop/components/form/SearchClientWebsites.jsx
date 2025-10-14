@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Yup from "yup";
 // Library UI imports
 import { Formik } from "formik";
-import { Form, Button, Spinner } from "react-bootstrap";
+import { Form, Button, Spinner, Dropdown } from "react-bootstrap";
 
 // Hook components
 
@@ -50,7 +50,7 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
     >
       {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue, resetForm }) => (
         <Form onSubmit={handleSubmit} noValidate className="">
-          <div className="d-flex flex-wrap">
+          <div className="d-flex flex-wrap search-filter-options">
             {/* Site name */}
             {/* <Form.Group className="d-flex align-items-center justify-content-center">
               <Form.Label className="me-2 mb-0 text-nowrap">{t('LABEL_SITE_NAME')}</Form.Label>
@@ -63,30 +63,51 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
             </Form.Group> */}
 
             {/* Domain */}
-            <Form.Group className="d-flex align-items-center justify-content-center ms-2">
-              <Form.Label className="me-2 mb-0 text-nowrap">{t('LABEL_DOMAIN')}</Form.Label>
+            <Form.Group className="d-flex align-items-center justify-content-center wrap-domain-search">
+              {/* <Form.Label className="me-2 mb-0 text-nowrap">{t('LABEL_DOMAIN')}</Form.Label> */}
+              <i className="mdi mdi-magnify"></i>
               <Form.Control
                 type="text"
                 name="domain"
                 value={values.domain}
                 onChange={handleChange}
+                placeholder={t('LABEL_DOMAIN')}
               />
             </Form.Group>
 
             {/* Status */}
             <Form.Group className="d-flex align-items-center justify-content-center ms-2 me-2">
-              <Form.Label className="me-2 mb-0 text-nowrap">{t('LABEL_STATUS')}</Form.Label>
-              <Form.Select
-                name="status"
-                value={values.status}
-                onChange={handleChange}
-              >
-                <option value="">{t('TXT_OPTION_ALL')}</option>
-                <option value="active">{t('STATUS_ACTIVE')}</option>
-                <option value="disabled">{t('STATUS_DISABLED')}</option>
-              </Form.Select>
-            </Form.Group>
+              <Dropdown className='st-dropdown'>
+                <Dropdown.Toggle variant="" className="st-dropdown-toggle  rounded-5">
+                  {values.status === '' ? t('LABEL_STATUS') : 
+                   values.status === 'active' ? t('STATUS_ACTIVE') : 
+                   values.status === 'disabled' ? t('STATUS_DISABLED') : t('LABEL_STATUS')}
+                </Dropdown.Toggle>
 
+                <Dropdown.Menu>
+                  <Dropdown.Item 
+                    active={values.status === ''}
+                    onClick={() => setFieldValue('status', '')}
+                  >
+                    {t('TXT_OPTION_ALL')}
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    active={values.status === 'active'}
+                    onClick={() => setFieldValue('status', 'active')}
+                  >
+                    {t('STATUS_ACTIVE')}
+                  </Dropdown.Item>
+                  <Dropdown.Item 
+                    active={values.status === 'disabled'}
+                    onClick={() => setFieldValue('status', 'disabled')}
+                  >
+                    {t('STATUS_DISABLED')}
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Form.Group>
+            {(values.domain || values.site_name || values.status) && (
+              <div className="d-flex align-items-center justify-content-center">
             {/* Button submit */}
             <Button type="submit" className="btn st-btn-material ms-2" disabled={isLoading}>
               {isLoading ? (
@@ -102,10 +123,10 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
             </Button>
 
             {/* Clear form */}
-            {(values.domain || values.site_name || values.status) && (
               <Button
                 type="button"
-                className="btn btn-secondary ms-2"
+                className="btn st-btn-material-ico ms-2 btn-red"
+                variant='red'
                 onClick={() => {
                   resetForm();
                   if (onSearch) {
@@ -114,13 +135,10 @@ const SearchClientWebsitesForm = ({ tenant, app_id, onSearch, isLoading = false 
                 }}
                 disabled={isLoading}
               >
-                <div>
-                  <span className="text">
-                    {t('BTN_CLEAR')}
-                  </span>
-                </div>
-              </Button>
-            )}
+              <i className="icon mdi mdi-close"></i>
+                </Button>
+              </div>
+          )}
           </div>
         </Form>
       )}

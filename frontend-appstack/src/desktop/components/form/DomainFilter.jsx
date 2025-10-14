@@ -68,24 +68,24 @@ const DomainFilter = ({ values, handleChange, setFieldValue }) => {
 									<i className="mdi mdi-filter  " style={{ fontSize: '18px' }}></i>
 
 									{t('LABEL_DOMAIN_FILTER_SETTINGS')}
-
+                  <div className="form-check form-switch">
+                    <Form.Check
+                      type="switch"
+                      name="enabled_domain_filter"
+                      id="enabled_domain_filter"
+                      checked={values.enabled_domain_filter || false}
+                      onChange={handleChange}
+                      className="form-check-input-lg"
+                    />
+                    <Form.Label className="form-check-label fw-semibold text-secondary m-0" htmlFor='enabled_domain_filter'>
+                      {values.enabled_domain_filter ? 'Enabled' : 'Disabled'}
+                    </Form.Label>
+                  </div>
 								</div>
                 <small className="text-muted">{t('TXT_DOMAIN_FILTER_DESCRIPTION')}</small>
               </div>
             </div>
-            <div className="form-check form-switch">
-              <Form.Check
-                type="switch"
-                name="enabled_domain_filter"
-                id="enabled_domain_filter"
-                checked={values.enabled_domain_filter || false}
-                onChange={handleChange}
-                className="form-check-input-lg"
-              />
-              <Form.Label className="form-check-label fw-semibold text-secondary m-0" htmlFor='enabled_domain_filter'>
-                {values.enabled_domain_filter ? 'Enabled' : 'Disabled'}
-              </Form.Label>
-            </div>
+
           </div>
         </div>
       </div>
@@ -137,14 +137,17 @@ const DomainFilter = ({ values, handleChange, setFieldValue }) => {
                       <span className="fw-medium">{domain}</span>
                       <button
                         type="button"
-                        className="btn-close btn-close-white ms-1"
-                        style={{ fontSize: '0.5em', width: '12px', height: '12px' }}
+                        variant=""
+                        className="btn st-btn-material-ico ms-1 ico-white"
+                        style={{ fontSize: '0.5em', width: '12px', height: '12px', color: '#fff' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           removeSearchDomain(setFieldValue, values, index);
                         }}
                         aria-label="Remove domain"
-                      ></button>
+                      >
+                        <span className="mdi mdi-close"></span>
+                      </button>
                     </span>
                   ))}
                   
@@ -247,14 +250,17 @@ const DomainFilter = ({ values, handleChange, setFieldValue }) => {
                       <span className="fw-medium">{domain}</span>
                       <button
                         type="button"
-                        className="btn-close btn-close-white ms-1"
+                        className="btn st-btn-material-ico ms-1 ico-white"
                         style={{ fontSize: '0.5em', width: '12px', height: '12px' }}
                         onClick={(e) => {
                           e.stopPropagation();
                           removeExcludedDomain(setFieldValue, values, index);
                         }}
                         aria-label="Remove domain"
-                      ></button>
+                      >
+
+                        <span className="mdi mdi-close"></span>
+                      </button>
                     </span>
                   ))}
                   

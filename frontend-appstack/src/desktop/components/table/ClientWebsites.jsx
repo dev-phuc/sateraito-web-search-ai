@@ -247,7 +247,7 @@ const ClientWebsitesTable = ({
               {item.isRemoving ? (
                 <Spinner animation="border" />
               ) : (
-                <i className="mdi mdi-delete"></i>
+                  <i className="mdi mdi-trash-can-outline"></i>
               )}
             </Button>
           </OverlayTrigger>
@@ -261,7 +261,7 @@ const ClientWebsitesTable = ({
     <div className="client-websites-table">
       <Card className="shadow-none border-0">
         {/* Header Toolbar */}
-        <Card.Header className="bg-white border-bottom">
+        <Card.Header className="bg-white ps-0 pt-0">
           <div className="d-flex justify-content-between align-items-center">
             <div className="">
               {/* Search Form */}
@@ -279,11 +279,11 @@ const ClientWebsitesTable = ({
                   <Button
                     variant="red"
                     type="button"
-                    className='btn st-btn-material'
+                    className='btn st-btn-material-outline'
                     disabled={isLoading}
                     onClick={() => onDeleteSelectedWebsites && onDeleteSelectedWebsites()}
                   >
-                    <i className="mdi mdi-delete"></i>
+                    <i className="mdi mdi-trash-can-outline"></i>
                     Delete ({checkedList.length})
                   </Button>
                 )}

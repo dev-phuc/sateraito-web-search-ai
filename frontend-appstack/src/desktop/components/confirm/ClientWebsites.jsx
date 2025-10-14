@@ -85,7 +85,7 @@ const ClientWebsitesConfirmDelete = ({ tenant, app_id, data, onCancel, afterSubm
           disabled={loading}
           onClick={handleDelete}
         >
-          <i className="mdi mdi-delete me-1"></i>
+          <i className="mdi mdi-trash-can-outline me-1"></i>
           {loading ? t('TXT_LOADING') + '...' : t('BTN_DELETE')}
         </Button>
       </div>

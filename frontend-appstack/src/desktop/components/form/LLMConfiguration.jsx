@@ -131,18 +131,22 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
           <Form onSubmit={handleSubmit} noValidate className=''>
             <Card className='shadow-none mx-2 mt-2 mb-3'>
               <Row>
-                <div className="model-intro p-3 mb-3 bg-gradient-light rounded-3 border border-primary border-opacity-25 d-flex align-items-center justify-content-between flex-wrap gap-3">
-                  <div className="d-flex align-items-center gap-3">
-                    <div className="d-flex align-items-center gap-2">
-                      <span className="fw-semibold text-primary">{t('LABEL_MODEL_NAME')}</span>
-                    </div>
-                    <span className="badge ai-model px-2 py-1 rounded-pill small chip">
-                      <i className="mdi mdi-robot me-2"></i>
-                      <span className="fw-semibold">{values.model_name}</span>
-                    </span>
-                  </div>
 
-                  {/* <Form.Group>
+
+                <Col md={12} className="mb-3">
+                  <div className="model-intro ">
+                    <div className="intro-header">Current Plan</div>
+                    <div className="">
+                      <div className="d-flex align-items-center gap-2">
+                        <span className="sub-text">{t('LABEL_MODEL_NAME')}</span>
+                      </div>
+                      <span className="badge ai-model px-2 py-1 rounded-pill small chip">
+                        <i className="mdi mdi-robot me-2"></i>
+                        <span className="fw-semibold">{values.model_name}</span>
+                      </span>
+                    </div>
+
+                    {/* <Form.Group>
                     <Form.Label className="mb-0 me-2 fw-semibold text-secondary">
                       <span className='me-2 mdi mdi-chart-bubble'></span>
                       {t('LABEL_MODEL_NAME')}
@@ -160,47 +164,44 @@ const LLMConfigurationForm = ({ tenant, app_id, onCancel, afterSubmit }) => {
                     />
                     <Form.Control.Feedback type="invalid">{touched.model_name && errors.model_name}</Form.Control.Feedback>
                   </Form.Group> */}
-                  <div className="response-level-section">
-                    <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center gap-2">
-                      <div className="d-flex align-items-center gap-2 mb-2 mb-lg-0">
-                        <span className="fw-semibold text-info">{t('LABEL_RESPONSE_LENGTH_LEVEL')}</span>
-                      </div>
-                      <div className="d-flex flex-wrap gap-2">
-                        {RESPONSE_LIST.map((item) => (
-                          <button
-                            key={item.value}
-                            type="button"
-                            className={`btn st-btn-material-outline rounded-pill d-flex align-items-center quick-filter-chip ${values.response_length_level} ${
-                              item.value === values.response_length_level
-                                ? ' text-white shadow-sm active'
-                                : ' bg-white text-info border-info border-opacity-50 hover-lift'
-                            }`}
-                            style={{
-                              fontSize: '0.85rem',
-                              fontWeight: '500',
-                              transition: 'all 0.2s ease-in-out',
-                            }}
-                            onClick={() => {
-                              setResponseState(item.value);
-                              setFieldValue('response_length_level', item.value);
-                            }}
-                          >
-                            <i className={item.icon} style={{ fontSize: '1.1rem' }}></i>
-                            <span>{item.label}</span>
-                            {item.value === values.response_length_level && (
-                              <i className="mdi mdi-check-circle ms-1" style={{ fontSize: '0.9rem' }}></i>
-                            )}
-                          </button>
-                        ))}
+                    <div className="response-level-section">
+                      <div className="d-flex flex-column falign-items-start ">
+                        <div className="d-flex align-items-center gap-2 mb-2 mb-lg-0">
+                          <span className="sub-text">{t('LABEL_RESPONSE_LENGTH_LEVEL')}</span>
+                        </div>
+                        <div className="d-flex flex-wrap gap-2">
+                          {RESPONSE_LIST.map((item) => (
+                            <button
+                              key={item.value}
+                              type="button"
+                              className={`btn st-btn-material-outline rounded-pill d-flex align-items-center quick-filter-chip ${values.response_length_level} ${item.value === values.response_length_level
+                                  ? ' text-white shadow-sm active'
+                                  : ' bg-white text-info border-info border-opacity-50 hover-lift'
+                                }`}
+                              style={{
+                                fontSize: '0.85rem',
+                                fontWeight: '500',
+                                transition: 'all 0.2s ease-in-out',
+                              }}
+                              onClick={() => {
+                                setResponseState(item.value);
+                                setFieldValue('response_length_level', item.value);
+                              }}
+                            >
+                              <i className={item.icon} style={{ fontSize: '1.1rem' }}></i>
+                              <span>{item.label}</span>
+                              {item.value === values.response_length_level && (
+                                <i className="mdi mdi-check-circle ms-1" style={{ fontSize: '0.9rem' }}></i>
+                              )}
+                            </button>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-
-                <Col md={7} className="mb-3">
                   <Form.Group>
-                    <Form.Label className="fw-bold text-base mb-1 d-flex align-items-center ">
-                      <span className='me-2 mdi mdi-message-text'></span>
+                    <Form.Label className="fw-bold text-base mb-1 d-flex align-items-center sub-text">
+                      {/* <span className='me-2 mdi mdi-message-text'></span> */}
                       {t('LABEL_SYSTEM_PROMPT')}
                     </Form.Label>
                     <Form.Control

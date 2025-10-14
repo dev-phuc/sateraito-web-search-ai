@@ -44,6 +44,12 @@ body{
   .text-base {
   	color: var(--base-color);
   }
+	.ico-white{
+		color: #fff!important;
+		.mdi{
+			color: #fff!important;
+		}
+	}
 .form-check-input{
 	width: 14px;
 	height: 14px;
@@ -674,6 +680,111 @@ i.notyf__icon--success{
 	box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
 .btn-red{
-	    --base-color: #F44336;
-	    color: var(--base-color) !important;
+	--base-color: #F44336;
+	// color: var(--base-color) !important;
+	&.st-btn-material-ico{
+		&:after{
+			background-color: var(--base-color);
+			opacity: 0.1;
+		}
+		.mdi{
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0!important;
+		}
+	}
+	&.st-btn-material-outline{
+		color: var(--base-color) !important;
+	}
+}
+.st-dropdown {
+	.dropdown-item {
+		max-width: 200px;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+}
+.st-dropdown-toggle {
+	border: 1px solid #f1f3f4;
+	border-radius: 3px;
+	height: 32px;
+	padding: 0 12px;
+	color: var(--base-text-color);
+	background: #fff;
+	box-shadow: none;
+	min-width: 100px;
+	justify-content: space-between;
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	.mdi{
+		font-size: 18px;
+		color: var(--base-color);
+	}
+	&:focus {
+		box-shadow: none;
+		border-color: var(--base-color);
+	}
+
+	&:hover {
+		border-color: var(--base-color);
+	}
+
+	&::after {
+		font-size: 18px;
+		color: var(--base-icon-color);
+	}
+
+}
+}
+.st-date-input-wrapper {
+	cursor: pointer;
+	width: 120px;
+
+	.st-dropdown-toggle {
+		&.form-control[type="date"] {
+			border-radius: 26px;
+			border: none;
+			background: #f6f8fc;
+			height: 32px;
+
+			&:hover {
+				box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+			}
+
+		}
+	}
+
+	input[type="date"]::-webkit-calendar-picker-indicator {
+		opacity: 0;
+		cursor: pointer;
+		z-index: 2;
+	}
+
+	span.st-date-placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		// width: 100%;
+		&:after {
+			content: '';
+			display: inline-block;
+			font: normal normal normal 24px / 1 "Material Design Icons";
+			font-size: inherit;
+			text-rendering: auto;
+			line-height: inherit;
+			-webkit-font-smoothing: antialiased;
+			content: "\F00ED";
+			position: absolute;
+			right: -48px;
+			z-index: -1;
+			color: var(--base-color);
+			font-size: 16px;
+			/* opacity: 0.2; */
+			pointer-events: none;
+		}
+	}
 }

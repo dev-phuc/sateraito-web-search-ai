@@ -199,7 +199,7 @@ const OperationLogsTable = ({
     <div className="operation-logs-table">
       <Card className="shadow-none border-0">
         {/* Simple Header */}
-        <Card.Header className="bg-white border-bottom">
+        <Card.Header className="bg-white  ps-0 pt-0">
           <div className="d-flex justify-content-between align-items-center">
             {/* Title */}
             {/* <div className="wrap-title">
