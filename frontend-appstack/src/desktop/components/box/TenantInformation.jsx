@@ -58,7 +58,7 @@ const TenantInformationBox = ({ }) => {
                 </div>
                 <div className="box-warning px-4">
                   <div className="alert mb-0">
-                    <span className="mb-0 text-warning">
+                    <span className="mb-0 text-warning">                
                       {t("PLEASE_CONTACT_SATERAITO_IF_YOU_WANT_TO_USE_SUBDOMAIN_AS_WELL")}
                     </span>
                   </div>
@@ -69,7 +69,7 @@ const TenantInformationBox = ({ }) => {
             {loading && <MakerLoading opacity="10"/>}
           </div>
         </div>
-      </div>
+      </div> 
     </>
   );
 };

@@ -257,7 +257,7 @@ const BoxSearchConfigForm = ({ tenant, app_id, data, onCancel, afterSubmit }) =>
                       <Form.Control.Feedback type="invalid">{touched.search_box?.options?.background_color && errors.search_box?.options?.background_color}</Form.Control.Feedback>
                       {/* <Form.Text>{t('TXT_PICK_BACKGROUND_COLOR')}</Form.Text> */}
                     </Col>
-                    <Col lg={4} md={4} className="mb-3 ">
+                    <Col lg={4} md={4} className={`mb-3 ${values.search_box.type === 'box' ? '' : 'd-none'}`}>
                       <Form.Label>{t('LABEL_BORDER_RADIUS')}</Form.Label>
                       <div className="number-input-group">
                         <InputGroup className="form-group-number-short">

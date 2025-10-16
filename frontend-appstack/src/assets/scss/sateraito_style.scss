@@ -695,3 +695,40 @@ input[type=checkbox]:focus::before {
     transform: scale(1.2);
   }
 }
+.panel-box-search .wrap-header {
+    order: 2;
+    margin-top: 10px;
+}
+
+.panel-box-search .wrap-header .wrap-input-search {
+    height: 60px;
+}
+.panel-box-search .wrap-header .wrap-input-search form{
+  height: 100%;
+}
+input.input-search-box {
+    height: 100%!important;
+    border-radius: 60px!important;
+}
+
+.panel-box-search .wrap-header .wrap-input-search::after {
+    right: unset;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    top: 0;
+}
+
+.panel-box-search .wrap-header .wrap-input-search .input-search-box {
+    padding-left: 60px;
+}
+.panel-box-search .wrap-header .logo-app {
+  display: none;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}

@@ -599,6 +599,8 @@ th {
 		min-height: 50px;
 		box-shadow: rgba(139, 92, 246, 0.1) 0px 1px 3px;
 		border-radius: 8px;
+		max-height: 300px;
+    overflow: auto;
 	}
 	.quick-filter-chip {
 		position: relative;

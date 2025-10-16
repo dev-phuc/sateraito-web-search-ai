@@ -69,7 +69,7 @@ const LLMConfigurationBox = ({ }) => {
         <div className="card ">
           
           {/* Header Section */}
-          <div className="card-header border-0 ">
+          <div className="card-header border-0 pb-0">
             <div className="d-flex align-items-center justify-content-between flex-wrap">
               {/* Header Left */}
               <div className="d-flex align-items-center mb-2 mb-lg-0">
@@ -130,9 +130,10 @@ const LLMConfigurationBox = ({ }) => {
                     </div>
                     
                     <div className="position-relative">
-                      <div 
-                        className="p-4 rounded-3 shadow-sm dashboard-promt"
-                      >
+                      <div className="fw-bold text-base mb-1 d-flex align-items-center sub-text">
+                      {t('LABEL_SYSTEM_PROMPT')}
+                      </div>
+                      <div className="p-4 rounded-3 shadow-sm dashboard-promt">
                         <div style={{
                           fontFamily: 'SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
                           fontSize: '0.875rem',
