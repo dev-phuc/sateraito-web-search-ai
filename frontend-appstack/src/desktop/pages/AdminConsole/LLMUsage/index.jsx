@@ -281,6 +281,21 @@ const LLMUsageAdminConsolePage = () => {
                           }
                         }}
                       >
+                        {frame.value === 'day' && (
+                          <i className="mdi mdi-calendar-today me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {frame.value === 'week' && (
+                          <i className="mdi mdi-calendar-week me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {frame.value === 'month' && (
+                          <i className="mdi mdi-calendar-month me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {frame.value === 'last_month' && (
+                          <i className="mdi mdi-calendar-month-outline me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {frame.value === 'all' && (
+                          <i className="mdi mdi-calendar-multiselect me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
                         {timeFrame === frame.value && (
                           <i className="mdi mdi-check me-1" style={{ fontSize: '0.65rem' }}></i>
                         )}
@@ -320,23 +335,33 @@ const LLMUsageAdminConsolePage = () => {
                         onClick={() => setChartType(type.value)}
                         onMouseEnter={(e) => {
                           if (chartType !== type.value) {
-                            e.target.style.transform = 'translateY(-1px)';
-                            e.target.style.boxShadow = '0 2px 8px rgba(81, 207, 102, 0.3)';
-                            e.target.style.backgroundColor = '#e8f5e8';
+                            // e.target.style.transform = 'translateY(-1px)';
+                            // e.target.style.boxShadow = '0 2px 8px rgba(81, 207, 102, 0.3)';
+                            // e.target.style.backgroundColor = '#e8f5e8';
                           }
                         }}
                         onMouseLeave={(e) => {
                           if (chartType !== type.value) {
-                            e.target.style.transform = 'translateY(0)';
-                            e.target.style.boxShadow = 'none';
-                            e.target.style.backgroundColor = 'white';
+                            // e.target.style.transform = 'translateY(0)';
+                            // e.target.style.boxShadow = 'none';
+                            // e.target.style.backgroundColor = 'white';
                           }
                         }}
                       >
-                        {chartType === type.value && (
-                          <i className="mdi mdi-check me-1" style={{ fontSize: '0.65rem' }}></i>
+
+                        {type.value === 'bar' && (
+                          <i className="mdi mdi-chart-bar me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {type.value === 'area' && (
+                          <i className="mdi mdi-chart-areaspline me-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
+                        {type.value === 'line' && (
+                          <i className="mdi mdi-chart-line me-1" style={{ fontSize: '0.65rem' }}></i>
                         )}
                         {type.label}
+                        {chartType === type.value && (
+                          <i className="mdi mdi-check-circle ms-1" style={{ fontSize: '0.65rem' }}></i>
+                        )}
                       </button>
                     ))}
                   </div>

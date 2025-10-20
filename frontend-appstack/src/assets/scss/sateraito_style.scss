@@ -732,3 +732,99 @@ input.input-search-box {
 ::-webkit-scrollbar {
   width: 6px;
 }
+
+// Status dropdown styles
+.badge-dropdown {
+  &::after {
+    margin-left: 0.5rem !important;
+  }
+  
+  &:focus {
+    box-shadow: none !important;
+  }
+}
+
+.client-websites-table {
+  .dropdown-menu {
+    min-width: 140px;
+  }
+  
+  .dropdown-item {
+    padding: 0.375rem 1rem;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+    
+    &.active {
+      background-color: rgba(var(--bs-primary-rgb), 0.1);
+      color: var(--bs-primary);
+    }
+  }
+  .status-dropdown {
+    .dropdown-item {
+      padding: 0;
+      margin-bottom: 5px;
+      .badge.rounded-pill {
+        width: 100%;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: start;
+        padding: 5px 15px;
+        border-radius: 4px!important;
+      }
+      &:before{
+        display: none;
+      }
+    }
+
+    .badge-dropdown {
+      min-width: 120px;
+      border-radius: 4px;
+      font-weight: 500;
+      border-radius: 18px !important;
+      text-align: left;
+      padding: 5px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      gap: 5px;
+    }
+  }
+  .badge-dropdown::after {
+    margin-left: auto !important;
+  }
+  .dot-status {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    margin-right: 2px;
+    &.status_over_quota {
+      background-color: #FF5722!important;  
+    }
+    &.status_active {
+      background-color: #4CAF50!important;
+    }
+    &.status_disabled {
+      background-color: #424242!important;
+    }
+  }
+}
+.status {
+&_disabled {
+  background-color: #42424221 !important;
+  color: #424242;
+}
+
+&_active {
+    background-color: #4caf5017 !important;
+    color: #4CAF50 !important;
+}
+
+&_over_quota {
+    background-color: #ff572229 !important;
+    color: #FF5722 !important;
+}
+
+}

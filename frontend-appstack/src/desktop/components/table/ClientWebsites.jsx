@@ -11,7 +11,8 @@ import {
   Spinner,
   Badge,
   OverlayTrigger,
-  Tooltip
+  Tooltip,
+  Dropdown
 } from "react-bootstrap";
 
 // Hook components
@@ -21,7 +22,7 @@ import useTheme from '@/hooks/useTheme';
 import { formatDate, truncateText } from '@/utils';
 
 // Constants
-import { STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED, STATUS_CLIENT_WEBSITES_OVER_QUOTA } from '@/constants';
+import { STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED, STATUS_CLIENT_WEBSITES_OVER_QUOTA, STATUS_CLIENT_WEBSITES_LIST } from '@/constants';
 
 // Zustand
 import useStoreClientWebsites from '@/store/client_websites';
@@ -47,7 +48,7 @@ const ClientWebsitesTable = ({
   const { showNotice } = useTheme();
 
   // Zustand stores
-  const { isLoading, clientWebsites, setClientWebsites, fetchClientWebsites } = useStoreClientWebsites();
+  const { isLoading, clientWebsites, setClientWebsites, fetchClientWebsites, editClientWebsites } = useStoreClientWebsites();
 
   // States
 
@@ -60,6 +61,16 @@ const ClientWebsitesTable = ({
 
     const config = statusConfig[status?.toLowerCase()] || { bg: 'secondary', text: status || 'Unknown' };
     return <Badge bg={config.bg} pill>{config.text}</Badge>;
+  };
+
+  // Helper function to get status config for dropdown
+  const getStatusConfig = (status) => {
+    let statusConfig = {};
+    statusConfig[STATUS_CLIENT_WEBSITES_ACTIVE] = { bg: 'success', text: t('STATUS_ACTIVE') };
+    statusConfig[STATUS_CLIENT_WEBSITES_DISABLED] = { bg: 'danger', text: t('STATUS_DISABLED') };
+    statusConfig[STATUS_CLIENT_WEBSITES_OVER_QUOTA] = { bg: 'warning', text: t('STATUS_OVER_QUOTA') };
+
+    return statusConfig[status?.toLowerCase()] || { bg: 'secondary', text: status || 'Unknown' };
   };
 
   // Handlers
@@ -94,6 +105,40 @@ const ClientWebsitesTable = ({
       setClientWebsites(filteredWebsites);
     } else {
       handlerLoadClientWebsites();
+    }
+  };
+
+  // Handler for status change
+  const handlerOnStatusChange = async (item, newStatus) => {
+    if (item.status === newStatus) return;
+
+    const updateData = {
+      status: newStatus
+    };
+
+    const { success, message } = await editClientWebsites(tenant, app_id, item.id, updateData);
+    
+    if (!success) {
+      showNotice("danger", t(message));
+    } else {
+      showNotice("success", t('STATUS_UPDATED_SUCCESSFULLY'));
+    }
+  };
+
+  // Handler for AI enabled change
+  const handlerOnAiEnabledChange = async (item, enabled) => {
+    if (item.ai_enabled === enabled) return;
+
+    const updateData = {
+      ai_enabled: enabled
+    };
+
+    const { success, message } = await editClientWebsites(tenant, app_id, item.id, updateData);
+    
+    if (!success) {
+      showNotice("danger", t(message));
+    } else {
+      showNotice("success", t('AI_SETTING_UPDATED_SUCCESSFULLY'));
     }
   };
 
@@ -189,16 +234,56 @@ const ClientWebsitesTable = ({
 
       <td>
         {/* Switch for ai_enabled */}
-        {item.ai_enabled ? (
-          <Form.Check type="switch" id={`ai_enabled_${item.id}`} label="AI" checked disabled />
-        ) : (
-          <Form.Check type="switch" id={`ai_enabled_${item.id}`} label="AI" disabled />
-        )}
+        <div className="text-center">
+          <Form.Check 
+            type="switch" 
+            id={`ai_enabled_${item.id}`} 
+            // label="AI" 
+            checked={item.ai_enabled || false}
+            disabled={item.isUpdating}
+            className={` ${item.ai_enabled ? 'active' : ''}`}
+            onChange={(e) => handlerOnAiEnabledChange(item, e.target.checked)}
+          />
+        </div>
       </td>
 
       <td>
         <div className="text-center">
-          {getStatusBadge(item.status)}
+          <Dropdown className="status-dropdown">
+            <Dropdown.Toggle 
+              // variant={} 
+              variant=''
+              size="sm" 
+              className={`badge-dropdown status_${item.status}`}
+              disabled={item.isUpdating}
+            >
+              {item.isUpdating ? (
+                <Spinner animation="border" size="sm" />
+              ) : (
+                  <>
+                    <div className={`dot-status status_${item.status}`}></div>
+                    {getStatusConfig(item.status).text}
+                  </>
+              )}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {STATUS_CLIENT_WEBSITES_LIST.map((status) => {
+                const config = getStatusConfig(status);
+                return (
+                  <Dropdown.Item
+                    key={status}
+                    onClick={() => handlerOnStatusChange(item, status)}
+                    active={item.status === status}
+                  >
+                    <Badge className={`status_${status}`} pill >
+                      {config.text}
+                    </Badge>
+                  </Dropdown.Item>
+                );
+              })}
+            </Dropdown.Menu>
+          </Dropdown>
         </div>
       </td>
 
@@ -305,7 +390,7 @@ const ClientWebsitesTable = ({
         {/* Table Body */}
         <Card.Body className="p-0">
           <div className="table-responsive">
-            <Table className="mb-0" hover borderless striped>
+            <Table className="mb-0" hover >
               <thead >
                 <tr>
                   <th className="text-center" style={{ width: '40px' }}>

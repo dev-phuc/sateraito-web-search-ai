@@ -615,6 +615,7 @@ th {
 
 		.mdi {
 			font-size: 18px !important;
+			background-color: transparent!important;
 		}
 
 		&::before {
@@ -646,10 +647,10 @@ th {
 				color: white !important;
 			}
 			&.low {
-				background: green !important;
+				background: #4CAF50 !important;
 			}
 			&.medium {
-				background: orange !important;
+				background: #FF9800 !important;
 			}
 			&.high {
 				background: #F44336 !important;
@@ -743,10 +744,19 @@ th {
 	
 	.operation-logs-table,
 	.client-websites-table {
+		--bs-border-color: #f1f3f4;
 		.card-header {
 			border-bottom: 1px solid #f1f3f4;
 			button{
 				min-height: 32px;
+			}
+		}
+		.form-switch {
+			&.active {
+				.form-check-input {
+					background-color: #4CAF50 !important;
+					border-color: #4CAF50 !important;
+				}
 			}
 		}
 	}

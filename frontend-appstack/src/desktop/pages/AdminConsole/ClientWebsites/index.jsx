@@ -148,7 +148,7 @@ const ClientWebsitesAdminConsolePage = () => {
       <Modal
         show={showForm}
         onHide={onCloseForm}
-        size="lg"
+        size="md"
         centered
         scrollable
       >

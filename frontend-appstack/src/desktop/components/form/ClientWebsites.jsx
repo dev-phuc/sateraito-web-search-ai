@@ -18,6 +18,7 @@ import useStoreClientWebsites from '@/store/client_websites';
 
 // Utils
 import { removeTrailingSlash } from '@/utils';
+import style from './Style.scss';
 
 // Constants
 import { STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED } from '@/constants';
@@ -131,184 +132,208 @@ const ClientWebsitesForm = ({ tenant, app_id, data, onCancel, afterSubmit }) => 
 
   // Return the component
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handlerOnSubmit}
-    >
-      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
-        <Form onSubmit={handleSubmit} className="w-100 pb-2">
-          {/* Avatar/Favicon Display */}
-          <div className="text-center mb-3">
-            {faviconUrl ? (
-              <img
-                src={faviconUrl}
-                alt="Favicon"
-                style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover' }}
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextSibling.style.display = 'flex';
-                }}
-              />
-            ) : null}
-            <div
-              className={`d-flex align-items-center justify-content-center ${faviconUrl ? 'd-none' : ''}`}
-              style={{
-                width: 64,
-                height: 64,
-                borderRadius: '50%',
-                backgroundColor: '#f0f0f0',
-                margin: '0 auto',
-                color: '#999'
-              }}
-            >
-              <i className="mdi mdi-web" style={{ fontSize: '1.5rem' }}></i>
+    <div className="modern-form-container">
+
+
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handlerOnSubmit}
+      >
+        {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values, setFieldValue }) => (
+          <Form onSubmit={handleSubmit} className="client-website-form"
+>
+            {/* Header */}
+            <div className="form-header">
+              <div className="favicon-display">
+                {faviconUrl ? (
+                  <img
+                    src={faviconUrl}
+                    alt="Favicon"
+                    className="favicon-image"
+                    onError={(e) => {
+                      e.target.style.display = 'none';
+                      e.target.nextSibling.style.display = 'flex';
+                    }}
+                  />
+                ) : null}
+                <div
+                  className={`favicon-placeholder ${faviconUrl ? 'd-none' : 'd-flex'} align-items-center justify-content-center w-100 h-100`}
+                >
+                  <i className="mdi mdi-web"></i>
+                </div>
+              </div>
+              <h3 className="form-title">
+                {isEdit ? t('BTN_UPDATE') : t('BTN_CREATE')} Website
+              </h3>
+              <p className="form-subtitle">
+                {isEdit ? 'Update website information' : 'Add a new website to your collection'}
+              </p>
             </div>
-          </div>
 
-          {/* Domain Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>{t('LABEL_DOMAIN')}</Form.Label>
-            <InputGroup>
-              <FormControl
-                type="text"
-                name="domain"
-                value={values.domain || ''}
-                onChange={handleChange}
-                onBlur={(e) => {
-                  handleBlur(e);
-                  handleDomainBlur(e, setFieldValue);
-                }}
-                disabled={isEdit || loading.fetchingPageInfo || loading.submitting}
-                placeholder={t('PLACEHOLDER_CLIENT_WEBSITES_DOMAIN')}
-                isInvalid={touched.domain && !!errors.domain}
-              />
+            {/* Domain Field */}
+            <div className="modern-form-group">
+              <label className="modern-form-label">{t('LABEL_DOMAIN')}</label>
+              <div className="domain-input-container">
+                <i className="mdi mdi-web domain-input-icon"></i>
+                <input
+                  type="text"
+                  name="domain"
+                  className={`modern-form-control domain-input ${touched.domain && errors.domain ? 'input-error' : ''}`}
+                  value={values.domain || ''}
+                  onChange={handleChange}
+                  onBlur={(e) => {
+                    handleBlur(e);
+                    handleDomainBlur(e, setFieldValue);
+                  }}
+                  disabled={isEdit || loading.fetchingPageInfo || loading.submitting}
+                  placeholder="https://example.com"
+                />
+              </div>
               {loading.fetchingPageInfo && (
-                <InputGroup.Text>
-                  <small className="text-muted">{t('TXT_LOADING')}...</small>
-                </InputGroup.Text>
+                <div className="loading-indicator">
+                  <div className="loading-spinner"></div>
+                  <span>{t('TXT_FETCHING_PAGE_INFO')}...</span>
+                </div>
               )}
-            </InputGroup>
-            {touched.domain && errors.domain && (
-              <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
-                {errors.domain}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
+              {touched.domain && errors.domain && (
+                <div className="error-message">
+                  <i className="mdi mdi-alert-circle-outline"></i>
+                  {errors.domain}
+                </div>
+              )}
+            </div>
 
-          {/* Favicon URL Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>{t('LABEL_FAVICON_URL')}</Form.Label>
-            <FormControl
-              type="text"
-              name="favicon_url"
-              value={values.favicon_url || ''}
-              onChange={(e) => {
-                handleChange(e);
-                setFaviconUrl(e.target.value);
-              }}
-              onBlur={handleBlur}
-              disabled={loading.fetchingPageInfo || loading.submitting}
-              placeholder={t('PLACEHOLDER_CLIENT_WEBSITES_FAVICON_URL')}
-            />
-          </Form.Group>
+            {/* Site Name Field */}
+            <div className="modern-form-group">
+              <label className="modern-form-label">{t('LABEL_SITE_NAME')}</label>
+              <input
+                type="text"
+                name="site_name"
+                className="modern-form-control"
+                value={values.site_name || ''}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={loading.fetchingPageInfo || loading.submitting}
+                placeholder="Website Name"
+              />
+            </div>
 
-          {/* Site Name Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>{t('LABEL_SITE_NAME')}</Form.Label>
-            <FormControl
-              type="text"
-              name="site_name"
-              value={values.site_name || ''}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={loading.fetchingPageInfo || loading.submitting}
-              placeholder={t('PLACEHOLDER_CLIENT_WEBSITES_SITE_NAME')}
-            />
-          </Form.Group>
+            {/* Description Field */}
+            <div className="modern-form-group">
+              <label className="modern-form-label">{t('LABEL_DESCRIPTION')}</label>
+              <textarea
+                name="description"
+                className="modern-form-control modern-textarea"
+                value={values.description || ''}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                disabled={loading.fetchingPageInfo || loading.submitting}
+                placeholder="Brief description of the website..."
+                rows={3}
+              />
+            </div>
 
-          {/* Description Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>{t('LABEL_DESCRIPTION')}</Form.Label>
-            <FormControl
-              as="textarea"
-              rows={3}
-              name="description"
-              value={values.description || ''}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={loading.fetchingPageInfo || loading.submitting}
-              placeholder={t('PLACEHOLDER_CLIENT_WEBSITES_DESCRIPTION')}
-            />
-          </Form.Group>
+            {/* Favicon URL Field */}
+            <div className="modern-form-group">
+              <label className="modern-form-label">{t('LABEL_FAVICON_URL')}</label>
+              <input
+                type="text"
+                name="favicon_url"
+                className="modern-form-control"
+                value={values.favicon_url || ''}
+                onChange={(e) => {
+                  handleChange(e);
+                  setFaviconUrl(e.target.value);
+                }}
+                onBlur={handleBlur}
+                disabled={loading.fetchingPageInfo || loading.submitting}
+                placeholder="https://example.com/favicon.ico"
+              />
+            </div>
 
-          {/* AI Enabled Field */}
-          <Form.Group className="mb-3">
-            <Form.Check
-              type="switch"
-              id="ai_enabled"
-              name="ai_enabled"
-              label={t('LABEL_AI_ENABLED')}
-              checked={values.ai_enabled}
-              onChange={handleChange}
-              disabled={loading.fetchingPageInfo || loading.submitting}
-            />
-          </Form.Group>
+            {/* AI Enabled & Status Fields */}
+            <div className="state-website-form d-flex gap-3">
+              {/* AI Enabled Field */}
+              <div className="modern-form-group mb-0">
+                <label className="modern-form-label mb-2">{t('LABEL_AI_ENABLED')}</label>
+                <div className="modern-switch-container py-2">
+                  <span className="modern-switch-label me-3">{values.ai_enabled ? 'Enabled' : 'Disabled'}</span>
+                  <div
+                    className={`modern-switch ${values.ai_enabled ? 'active' : ''}`}
+                    onClick={() => !loading.fetchingPageInfo && !loading.submitting && setFieldValue('ai_enabled', !values.ai_enabled)}
+                    style={{ cursor: (loading.fetchingPageInfo || loading.submitting) ? 'not-allowed' : 'pointer' }}
+                  >
+                    <div className="modern-switch-thumb"></div>
+                  </div>
+                </div>
+              </div>
 
-          {/* Status Field */}
-          <Form.Group className="mb-3">
-            <Form.Label>{t('LABEL_STATUS')}</Form.Label>
-            <Form.Select
-              name="status"
-              value={values.status || STATUS_CLIENT_WEBSITES_ACTIVE}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              disabled={loading.fetchingPageInfo || loading.submitting}
-              isInvalid={touched.status && !!errors.status}
-            >
-              {[STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED].map(status => (
-                <option key={status} value={status}>
-                  {t(`STATUS_${status.toUpperCase()}`)}
-                </option>
-              ))}
-            </Form.Select>
-            {touched.status && errors.status && (
-              <Form.Control.Feedback type="invalid" style={{ display: 'block' }}>
-                {errors.status}
-              </Form.Control.Feedback>
-            )}
-          </Form.Group>
+              {/* Status Field */}
+              <div className="modern-form-group mb-0">
+                <label className="modern-form-label">{t('LABEL_STATUS')}</label>
+                <select
+                  name="status"
+                  className={`modern-form-control modern-select ${touched.status && errors.status ? 'input-error' : ''}`}
+                  value={values.status || STATUS_CLIENT_WEBSITES_ACTIVE}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  disabled={loading.fetchingPageInfo || loading.submitting}
+                >
+                  {[STATUS_CLIENT_WEBSITES_ACTIVE, STATUS_CLIENT_WEBSITES_DISABLED].map(status => (
+                    <option key={status} value={status}>
+                      {t(`STATUS_${status.toUpperCase()}`)}
+                    </option>
+                  ))}
+                </select>
+                {touched.status && errors.status && (
+                  <div className="error-message">
+                    <i className="mdi mdi-alert-circle-outline"></i>
+                    {errors.status}
+                  </div>
+                )}
+              </div>
+            </div>
 
-          {/* Submit Buttons */}
-          <div className="d-flex justify-content-end gap-2">
-            <Button
-              variant="outline-secondary"
-              disabled={loading.submitting || loading.fetchingPageInfo}
-              onClick={() => onCancel && onCancel()}
-            >
-              <i className="mdi mdi-close me-1"></i>
-              {t('BTN_CANCEL')}
-            </Button>
-            <Button
-              type="submit"
-              variant="primary"
-              disabled={loading.fetchingPageInfo || loading.submitting}
-            >
-              <i className={`mdi ${isEdit ? 'mdi-pencil' : 'mdi-plus'} me-1`}></i>
-              {
-                loading.fetchingPageInfo ?
-                  t('TXT_FETCHING_PAGE_INFO') :
-                  loading.submitting ?
-                    t('TXT_LOADING') :
-                    (isEdit ?
-                      t('BTN_UPDATE') :
-                      t('BTN_CREATE'))
-              }
-            </Button>
-          </div>
-        </Form>
-      )}
-    </Formik>
+
+            {/* Action Buttons */}
+            <div className="form-actions">
+              <button
+                type="button"
+                className="modern-btn st-btn-material-outline"
+                disabled={loading.submitting || loading.fetchingPageInfo}
+                onClick={() => onCancel && onCancel()}
+              >
+                <i className="mdi mdi-close"></i>
+                {t('BTN_CANCEL')}
+              </button>
+              <button
+                type="submit"
+                className="modern-btn st-btn-material"
+                disabled={loading.fetchingPageInfo || loading.submitting}
+              >
+                {loading.fetchingPageInfo ? (
+                  <>
+                    <div className="loading-spinner"></div>
+                    {t('TXT_FETCHING_PAGE_INFO')}
+                  </>
+                ) : loading.submitting ? (
+                  <>
+                    <div className="loading-spinner"></div>
+                    {t('TXT_LOADING')}
+                  </>
+                ) : (
+                  <>
+                    <i className={`mdi ${isEdit ? 'mdi-pencil' : 'mdi-plus'}`}></i>
+                    {isEdit ? t('BTN_UPDATE') : t('BTN_CREATE')}
+                  </>
+                )}
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </div>
   );
 };
 
